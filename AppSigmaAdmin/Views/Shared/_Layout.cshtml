@@ -1,0 +1,59 @@
+﻿@{
+    string absolutePath = Request.Url.AbsolutePath.Split('/')[1];
+    //string userName = Session[AppSigmaAdmin.Library.SessionNames.SIGMA_TOKEN] == null ? null: Session[AppSigmaAdmin.Library.SessionNames.UserName].ToString();
+    string userName = "";
+    AppSigmaAdmin.Models.UserInfoEntity userInfoEntity = null;
+    if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO] != null)
+    {
+        userInfoEntity = (AppSigmaAdmin.Models.UserInfoEntity)Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO];
+        userName = userInfoEntity.KanaLastName + "　" + userInfoEntity.KanaFirstName;
+    }
+
+}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <title>プロジェクトΣ</title>
+    @Styles.Render("~/Content/css")
+    @RenderSection("Style", false)
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+
+    <section id="header">
+        <div class="headerBox">
+            <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>
+            @if (!string.IsNullOrEmpty(absolutePath) && absolutePath != "Login")
+            {
+                <div class="logoutCaption">
+                    <a href="@Url.Action("Index","Logout")">ログアウト</a>
+                </div>
+                <div class="loginCaption">
+                    <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
+                </div>
+
+                if (absolutePath != "Menu")
+                {
+                    <div class="toMenuCaption">
+                        <button class="action-menu" onclick="location.href = '@Url.Action("Index", "Menu")';">メニューに戻る</button>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    <section id="funcTitle">
+        @RenderSection("funcTitle")
+    </section>
+
+    <section id="body">
+        @RenderBody()
+    </section>
+
+</body>
+</html>

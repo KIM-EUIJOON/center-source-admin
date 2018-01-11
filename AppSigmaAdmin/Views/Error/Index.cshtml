@@ -1,0 +1,30 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>プロジェクトΣ</title>
+</head>
+<body>
+    <h2>プロジェクトΣ</h2>
+    <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+
+    <br />
+    <br />
+
+    @{
+#if DEBUG
+        <pre style="background:#e6e6e6">
+        @ViewBag.ErrorStack
+    </pre>
+#endif
+    }
+    <br />
+</body>
+</html>
