@@ -1,5 +1,49 @@
-﻿
-@{
+﻿@using AppSigmaAdmin.Library
+
+@section style {
+    <style>
+
+        .paymentBox {
+            margin-top: 45px;
+            margin-left: 20%;
+            padding: 40px;
+            padding-top: 50px;
+            font-size: 15pt;
+        }
+
+        table.paymentTable {
+            width: 730px;
+        }
+
+            table.paymentTable tr {
+                height: 50px;
+            }
+
+            table.paymentTable th {
+                width: 200px;
+            }
+
+
+        input[type="text"]#fromYear,
+        input[type="text"]#toYear {
+            width: 60px;
+        }
+
+        input[type="text"]#fromMonth,
+        input[type="text"]#fromDay,
+        input[type="text"]#toDay,
+        input[type="text"]#toMonth {
+            width: 40px;
+        }
+    </style>
+}
+
+@section scripts {
+    <script>
+        function doSubmit() {
+            $("#validate").html("");
+        }
+    </script>
 }
 
 @section funcTitle {
@@ -7,3 +51,58 @@
         決済管理
     </div>
 }
+
+<div class="ContentsBase">
+    <div class="paymentBox">
+
+        <form action="/PaymentManage/Download" method="post">
+            <table class="paymentTable">
+                <tr>
+                    <th><a href="@Html.Raw(AppSigmaAdmin.Library.ApplicationConfig.GMOSiteManageURI)" target="_blank">サイト管理</a></th>
+                    <td>：GMO-PG提供のサイト管理</td>
+                </tr>
+                <tr>
+                    <th><a href="@Html.Raw(AppSigmaAdmin.Library.ApplicationConfig.GMOShopManageURI)" target="_blank">ショップ管理</a></th>
+                    <td>：GMO-PG提供のショップ管理</td>
+                </tr>
+                <tr>
+                    <th>決済情報出力期間：</th>
+                    <td>
+                        <input name="model.fromYear" id="fromYear" maxlength="4" type="text" value="@TempData["fromYear"]" />
+                        <label>年</label>
+                        <input name="model.fromMonth" id="fromMonth" maxlength="2" type="text" value="@TempData["fromMonth"]" />
+                        <label>月</label>
+                        <input name="model.fromDay" id="fromDay" maxlength="2" type="text" value="@TempData["fromDay"]" />
+                        <label>日</label>
+                        <span>～</span>
+                        <input name="model.toYear" id="toYear" maxlength="4" type="text" value="@TempData["toYear"]" />
+                        <label>年</label>
+                        <input name="model.toMonth" id="toMonth" maxlength="2" type="text" value="@TempData["toMonth"]" />
+                        <label>月</label>
+                        <input name="model.toDay" id="toDay" maxlength="2" type="text" value="@TempData["toDay"]" />
+                        <label>日</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="model.paymentOver" id="paymentOver" checked="@TempData["paymentOver"]" />
+                        <label for="paymentOver">未決済分のみ</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="clearfix" style="text-align:center; padding-top:15px;">
+                            <input type="submit" name="paymentInfo" value="決済情報出力" onclick="doSubmit()" />
+                        </div>
+
+                        <div id="validate" class="clearfix" style="text-align:left; height:50px; padding-top:15px;">
+                            @Html.ValidationSummary(false, "")
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+

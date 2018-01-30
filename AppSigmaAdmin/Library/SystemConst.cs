@@ -5,6 +5,9 @@ using System.Web;
 
 namespace AppSigmaAdmin.Library
 {
+    /// <summary>
+    /// システム定数クラス
+    /// </summary>
     public class SystemConst
     {
         /// <summary>

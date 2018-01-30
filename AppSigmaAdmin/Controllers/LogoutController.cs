@@ -11,8 +11,15 @@ using AppSigmaAdmin.Library;
 
 namespace AppSigmaAdmin.Controllers
 {
+    /// <summary>
+    /// ログアウトコントローラクラス
+    /// </summary>
     public class LogoutController : Controller
     {
+        /// <summary>
+        /// ログアウト
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             HttpContext.Session.RemoveAll();

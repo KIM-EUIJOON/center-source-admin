@@ -5,6 +5,9 @@ using System.Web;
 
 namespace AppSigmaAdmin.Models
 {
+    /// <summary>
+    /// ユーザ情報エンティティクラス
+    /// </summary>
     public class UserInfoEntity
     {
         /// <summary>

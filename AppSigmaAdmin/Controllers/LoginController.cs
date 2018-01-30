@@ -12,13 +12,25 @@ using AppSigmaAdmin.Library;
 
 namespace AppSigmaAdmin.Controllers
 {
+    /// <summary>
+    /// ログインコントローラクラス
+    /// </summary>
     public class LoginController : Controller
     {
+        /// <summary>
+        /// ログイン画面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             return View();
         }
 
+        /// <summary>
+        /// ログイン処理
+        /// </summary>
+        /// <param name="model">ログインリクエスト</param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Index(LoginModel model)
         {

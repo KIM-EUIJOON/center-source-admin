@@ -46,6 +46,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper, Version=6.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.6.1.0\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Azure.KeyVault.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.KeyVault.Core.1.0.0\lib\net40\Microsoft.Azure.KeyVault.Core.dll</HintPath>
     </Reference>
@@ -173,11 +176,15 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Library\ApplicationConfig.cs" />
     <Compile Include="Library\SystemConst.cs" />
+    <Compile Include="Models\PaymentOverPeriodEntity.cs" />
+    <Compile Include="Models\PaymentManageModel.cs" />
+    <Compile Include="Models\PaymentEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
     <Compile Include="Models\UserInfoEntity.cs" />
     <Compile Include="ResponseData\LoginResponseEntity.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Library\ApiResultConst.cs" />
+    <Compile Include="Attribute\SessionCheckAttribute.cs" />
     <Compile Include="Utility\LogEventSource.cs" />
     <Compile Include="Utility\SqlDbInterface.cs" />
     <Compile Include="Utility\SendHttpRequest.cs" />
@@ -213,7 +220,9 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

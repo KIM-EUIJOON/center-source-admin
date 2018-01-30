@@ -6,6 +6,9 @@ using System.Web.Mvc;
 
 namespace AppSigmaAdmin.Controllers
 {
+    /// <summary>
+    /// エラーコントローラクラス
+    /// </summary>
     public class ErrorController : Controller
     {
         public ActionResult Index()

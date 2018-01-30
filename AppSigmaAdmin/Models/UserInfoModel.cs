@@ -9,10 +9,15 @@ using System.Data;
 namespace AppSigmaAdmin.Models
 {
     /// <summary>
-    /// ユーザ情報クラス
+    /// ユーザ情報取得クラス
     /// </summary>
     public class UserInfoModel
     {
+        /// <summary>
+        /// ユーザ情報取得処理
+        /// </summary>
+        /// <param name="userId">ユーザID</param>
+        /// <returns>ユーザ情報</returns>
         public UserInfoEntity GetUserInfoModel(string userId)
         {
             StringBuilder sb = new StringBuilder();

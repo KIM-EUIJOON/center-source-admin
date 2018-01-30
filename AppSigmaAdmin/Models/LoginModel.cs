@@ -8,7 +8,7 @@ using System.Web;
 namespace AppSigmaAdmin.Models
 {
     /// <summary>
-    /// ユーザ認証　レスポンスクラス
+    /// ユーザ認証リクエストクラス
     /// </summary>
     [DataContract]
     public class LoginModel
