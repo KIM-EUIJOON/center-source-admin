@@ -1,9 +1,37 @@
-﻿
-@{
+﻿@section style {
+<style>
+    .menuBox {
+        margin-top: 45px;
+        margin-left: 20%;
+        padding: 40px;
+        padding-top: 50px;
+        font-size: 15pt;
+    }
+</style>
 }
+
 
 @section funcTitle {
     <div class="funcTitleBer">
         運用監視
     </div>
 }
+
+<div class="ContentsBase">
+    <div class="menuBox">
+        <a href="https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/overview" target="_blank">運用管理</a>
+        <b>：Azure Moniter</b>
+        <br />
+        <form action="/OperationMonitoring/PutMoniteringReport" method="post">
+            <label>運用レポート出力：</label>
+            <input name="model.year" id="year" maxlength="4" type="text" value=@TempData["year"] />
+            <label>年</label>
+            <input name="model.month" id="month" maxlength="2" type="text" value=@TempData["month"] />
+            <label>月</label>
+            <br />
+            <input type="submit" value="運用レポート出力" />
+            <br />
+            <label>@TempData["message"]</label>
+        </form>
+    </div>
+</div>

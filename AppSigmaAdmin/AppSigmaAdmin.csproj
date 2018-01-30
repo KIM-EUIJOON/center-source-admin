@@ -176,6 +176,7 @@
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Library\ApplicationConfig.cs" />
     <Compile Include="Library\SystemConst.cs" />
+    <Compile Include="Models\OperationMonitoringModel.cs" />
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\PaymentManageModel.cs" />
     <Compile Include="Models\PaymentEntity.cs" />
