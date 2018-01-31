@@ -20,79 +20,66 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// ユーザID
         /// </summary>
-        [Name("ユーザID")]
         public string UserId { get; set; }
 
         /// <summary>
         /// カナ名字
         /// </summary>
-        [Name("名字")]
         public string KanaLastName { get; set; }
 
         /// <summary>
         /// カナ名前
         /// </summary>
-        [Name("名前")]
         public string KanaFirstName { get; set; }
 
         /// <summary>
         /// 電話番号
         /// </summary>
-        [Name("電話番号")]
         public string TelNo { get; set; }
 
         /// <summary>
         /// 経路No
         /// </summary>
-        [Name("経路No")]
         public string RouteNo { get; set; }
 
         /// <summary>
         /// 地点No
         /// </summary>
-        [Name("地点No")]
         public string PointNo { get; set; }
 
         /// <summary>
         /// 交通手段
         /// </summary>
-        [Name("交通手段")]
         public string Transportation { get; set; }
 
         /// <summary>
         /// 出発地名称
         /// </summary>
-        [Name("出発地名称")]
         public string Departure { get; set; }
 
         /// <summary>
         /// 目的地名称
         /// </summary>
-        [Name("目的地名称")]
         public string Destination { get; set; }
 
         /// <summary>
         /// 会社名
         /// </summary>
-        [Name("会社名")]
         public string CompanyName { get; set; }
 
         /// <summary>
         /// 乗車時刻
         /// </summary>
-        [Name("乗車時刻")]
         public DateTime PickUpDatetime { get; set; }
 
         /// <summary>
         /// 料金
         /// </summary>
-        [Name("料金")]
         public int? Price { get; set; }
 
         /// <summary>
         /// 支払い方法
         /// </summary>
-        [Name("支払い方法")]
         public string Payment { get; set; }
 
         /// <summary>
@@ -101,7 +88,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("乗車緯度")]
         public double? DepLat { get; set; }
 
         /// <summary>
@@ -110,7 +96,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("乗車経度")]
         public double? DepLng { get; set; }
 
         /// <summary>
@@ -119,7 +104,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("目的地緯度")]
         public double? DesLat { get; set; }
 
         /// <summary>
@@ -128,7 +112,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("目的地経度")]
         public double? DesLng { get; set; }
 
         /// <summary>
@@ -137,7 +120,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("無線番号")]
         public string RadioNo { get; set; }
 
         /// <summary>
@@ -146,7 +128,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("迎車料金")]
         public int? PickUpPrice { get; set; }
 
         /// <summary>
@@ -155,7 +136,6 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("ナンバープレート")]
         public string NumberPlate { get; set; }
 
         /// <summary>
@@ -164,13 +144,11 @@ namespace AppSigmaAdmin.Models
         /// <remarks>
         /// タクシーの場合に使用
         /// </remarks>
-        [Name("オーダID")]
         public string OrderId { get; set; }
 
         /// <summary>
         /// 予約状況
         /// </summary>
-        [Name("予約状況")]
         public string Status { get; set; }
 
     }
@@ -182,28 +160,28 @@ namespace AppSigmaAdmin.Models
     {
         public PaymentOverPeriodClassMap()
         {
-            Map(m => m.UserId).Index(0);
-            Map(m => m.KanaLastName).Index(1);
-            Map(m => m.KanaFirstName).Index(2);
-            Map(m => m.TelNo).Index(3);
-            Map(m => m.RouteNo).Index(4);
-            Map(m => m.PointNo).Index(5);
-            Map(m => m.Transportation).Index(6);
-            Map(m => m.Departure).Index(7);
-            Map(m => m.Destination).Index(8);
-            Map(m => m.CompanyName).Index(9);
-            Map(m => m.PickUpDatetime).Index(10);
-            Map(m => m.Price).Index(11);
-            Map(m => m.Payment).Index(12);
-            Map(m => m.DepLat).Index(13);
-            Map(m => m.DepLng).Index(14);
-            Map(m => m.DesLat).Index(13);
-            Map(m => m.DesLng).Index(14);
-            Map(m => m.RadioNo).Index(15);
-            Map(m => m.PickUpPrice).Index(16);
-            Map(m => m.NumberPlate).Index(17);
-            Map(m => m.OrderId).Index(18);
-            Map(m => m.Status).Index(19);
+            Map(m => m.UserId).Index(0).Name("ユーザID");
+            Map(m => m.KanaLastName).Index(1).Name("名字");
+            Map(m => m.KanaFirstName).Index(2).Name("名前");
+            Map(m => m.TelNo).Index(3).Name("電話番号");
+            Map(m => m.RouteNo).Index(4).Name("経路No");
+            Map(m => m.PointNo).Index(5).Name("地点No");
+            Map(m => m.Transportation).Index(6).Name("交通手段");
+            Map(m => m.Departure).Index(7).Name("出発地名称");
+            Map(m => m.Destination).Index(8).Name("目的地名称");
+            Map(m => m.CompanyName).Index(9).Name("会社名");
+            Map(m => m.PickUpDatetime).Index(10).Name("乗車時刻");
+            Map(m => m.Price).Index(11).Name("料金");
+            Map(m => m.Payment).Index(12).Name("支払方法");
+            Map(m => m.DepLat).Index(13).Name("乗車緯度");
+            Map(m => m.DepLng).Index(14).Name("乗車経度");
+            Map(m => m.DesLat).Index(15).Name("目的地緯度");
+            Map(m => m.DesLng).Index(16).Name("目的地経度");
+            Map(m => m.RadioNo).Index(17).Name("無線番号");
+            Map(m => m.PickUpPrice).Index(18).Name("迎車料金");
+            Map(m => m.NumberPlate).Index(19).Name("ナンバープレート");
+            Map(m => m.OrderId).Index(20).Name("オーダID");
+            Map(m => m.Status).Index(21).Name("予約状況");
         }
     }
 

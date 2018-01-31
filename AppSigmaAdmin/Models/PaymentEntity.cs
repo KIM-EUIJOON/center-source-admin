@@ -19,97 +19,81 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// サービス名
         /// </summary>
-        [Name("サービス名")]
         public string ServiceName { get; set; }
 
         /// <summary>
         /// 会員ID
         /// </summary>
-        [Name("会員ID")]
         public string MemberId { get; set; }
 
         /// <summary>
         /// オーダーID
         /// </summary>
-        [Name("オーダーID")]
         public string OrderId { get; set; }
 
         /// <summary>
         /// 取引ID
         /// </summary>
-        [Name("取引ID")]
         public string AccessId { get; set; }
 
         /// <summary>
         /// 取引パスワード
         /// </summary>
-        [Name("取引パスワード")]
         public string AccessPass { get; set; }
 
         /// <summary>
         /// 注文日付
         /// </summary>
-        [Name("注文日付")]
         public DateTime OrderDate { get; set; }
 
         /// <summary>
         /// 予約注文日付
         /// </summary>
-        [Name("予約注文日付")]
         public DateTime ReserveOrderDate { get; set; }
 
         /// <summary>
         /// 料金
         /// </summary>
-        [Name("料金")]
         public int Amount { get; set; }
 
         /// <summary>
         /// 注文番号
         /// </summary>
-        [Name("注文番号")]
         public string OrderNo { get; set; }
 
         /// <summary>
         /// 仕向先コード
         /// </summary>
-        [Name("仕向先コード")]
         public string ForwardCode { get; set; }
 
         /// <summary>
         /// 支払方法
         /// </summary>
-        [Name("支払方法")]
         public string PaymentMethod { get; set; }
 
         /// <summary>
         /// 支払回数
         /// </summary>
-        [Name("支払回数")]
         public int? PayTimes { get; set; }
 
         /// <summary>
         /// 承認番号
         /// </summary>
-        [Name("承認番号")]
         public string ApproveNo { get; set; }
         
         /// <summary>
         /// トランザクションID
         /// </summary>
-        [Name("トランザクションID")]
         public string TranId { get; set; }
 
         /// <summary>
-        /// 取引パスワード
+        /// 決済日時
         /// </summary>
-        [Name("決済日時")]
         public DateTime? TranDate { get; set; }
 
         /// <summary>
         /// GMOステータス
         /// </summary>
-        [Name("ステータス")]
         public string Status { get; set; }
 
     }
@@ -121,23 +105,22 @@ namespace AppSigmaAdmin.Models
     {
         public PaymentClassMap()
         {
-            Map(m => m.ServiceName).Index(0);
-            Map(m => m.MemberId).Index(1);
-            Map(m => m.OrderId).Index(2);
-            Map(m => m.AccessId).Index(3);
-            Map(m => m.AccessPass).Index(4);
-            Map(m => m.OrderDate).Index(5);
-            Map(m => m.ReserveOrderDate).Index(6);
-            Map(m => m.Amount).Index(7);
-            Map(m => m.OrderNo).Index(8);
-            Map(m => m.ForwardCode).Index(9);
-            Map(m => m.PaymentMethod).Index(10);
-            Map(m => m.PayTimes).Index(11);
-            Map(m => m.ApproveNo).Index(12);
-            Map(m => m.TranId).Index(13);
-            Map(m => m.TranDate).Index(14);
-            Map(m => m.Status).Index(15);
-
+            Map(m => m.ServiceName).Index(0).Name("サービス名");
+            Map(m => m.MemberId).Index(1).Name("会員ID");
+            Map(m => m.OrderId).Index(2).Name("オーダーID");
+            Map(m => m.AccessId).Index(3).Name("取引ID");
+            Map(m => m.AccessPass).Index(4).Name("取引パスワード");
+            Map(m => m.OrderDate).Index(5).Name("注文日付");
+            Map(m => m.ReserveOrderDate).Index(6).Name("予約注文日付");
+            Map(m => m.Amount).Index(7).Name("料金");
+            Map(m => m.OrderNo).Index(8).Name("注文番号");
+            Map(m => m.ForwardCode).Index(9).Name("仕向先コード");
+            Map(m => m.PaymentMethod).Index(10).Name("支払方法");
+            Map(m => m.PayTimes).Index(11).Name("支払回数");
+            Map(m => m.ApproveNo).Index(12).Name("承認番号");
+            Map(m => m.TranId).Index(13).Name("トランザクションID");
+            Map(m => m.TranDate).Index(14).Name("決済日時");
+            Map(m => m.Status).Index(15).Name("ステータス");
         }
     }
 
