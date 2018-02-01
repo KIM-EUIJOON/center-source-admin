@@ -188,9 +188,9 @@ namespace AppSigmaAdmin.Models
                         PaymentEntity paymentEntity = new PaymentEntity()
                         {
                             ServiceName = row["ServiceName"].ToString(),
-                            UserId = row["MemberId"].ToString(),
+                            UserId = row["UserId"].ToString(),
                             OrderId = row["OrderId"] == DBNull.Value ? null : row["OrderId"].ToString(),
-                            No = row["No"] == DBNull.Value ? null : ((int)row["No"]).ToString("00"),
+                            No = row["No"] == DBNull.Value ? null : ((byte)row["No"]).ToString("00"),
                             AccessId = row["AccessId"] == DBNull.Value ? null : row["AccessId"].ToString(),
                             AccessPass = row["AccessPass"] == DBNull.Value ? null : row["AccessPass"].ToString(),
                             FixedAmountDate = (DateTime)row["FixedAmountDate"],
