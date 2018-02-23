@@ -56,6 +56,7 @@
     <div class="paymentBox">
 
         <form action="/PaymentManage/Download" method="post">
+            @Html.AntiForgeryToken()
             <table class="paymentTable">
                 <tr>
                     <th><a href="@Html.Raw(AppSigmaAdmin.Library.ApplicationConfig.GMOSiteManageURI)" target="_blank">サイト管理</a></th>

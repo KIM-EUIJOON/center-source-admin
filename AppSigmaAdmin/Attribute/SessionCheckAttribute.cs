@@ -24,8 +24,12 @@ namespace AppSigmaAdmin.Attribute
                 (filterContext.HttpContext.Session[SystemConst.SESSION_SIGMA_TOKEN] == null))
             {
                 Logger.TraceInfo(Common.GetNowTimestamp(), null, "セッションタイムアウト", null);
+                filterContext.HttpContext.Session.Abandon();
+                filterContext.HttpContext.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+
                 // ログイン画面へリダイレクト
                 filterContext.Result = new RedirectResult("/Login");
+
                 return;
             }
             else

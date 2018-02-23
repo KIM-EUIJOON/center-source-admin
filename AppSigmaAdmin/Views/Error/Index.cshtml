@@ -15,15 +15,14 @@
     <h2>プロジェクトΣ</h2>
     <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
 
+    <a href="@Url.Action("Index","Menu")">メニューへ</a>
     <br />
     <br />
-
-    @{
-#if DEBUG
+    @if (ViewBag.ErrorStack != null)
+    {
         <pre style="background:#e6e6e6">
-        @ViewBag.ErrorStack
-    </pre>
-#endif
+            @ViewBag.ErrorStack
+        </pre>
     }
     <br />
 </body>

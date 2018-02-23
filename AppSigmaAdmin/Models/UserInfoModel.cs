@@ -5,6 +5,7 @@ using System.Web;
 using System.Text;
 using AppSigmaAdmin.Utility;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace AppSigmaAdmin.Models
 {
@@ -31,11 +32,15 @@ namespace AppSigmaAdmin.Models
             sb.Append("  from UserInfo ui");
             sb.Append("  left join UserDetail ud");
             sb.Append("    on ui.UserId = ud.UserId");
-            sb.Append(" where ui.UserId = '" + userId + "'");
+            sb.Append(" where ui.UserId = @UserId");
 
             using (SqlDbInterface dbInterFace = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
             {
-                DataTable dt = dbInterFace.ExecuteReader(sb.ToString());
+                cmd.CommandText = sb.ToString();
+                cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = int.Parse(userId);
+
+                DataTable dt = dbInterFace.ExecuteReader(cmd);
                 if(dt != null || dt.Rows.Count > 0)
                 {
                     userInfoEntity.UserId = dt.Rows[0]["UserId"].ToString();

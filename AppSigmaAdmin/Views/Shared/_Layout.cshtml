@@ -22,9 +22,21 @@
     @RenderSection("Style", false)
     @Scripts.Render("~/bundles/jquery")
     @RenderSection("scripts", required: false)
+    <style id="antiClickjack">
+        body {
+            display: none !important;
+        }
+    </style>
+    <script type="text/javascript">
+        if (self === top) {
+            var antiClickjack = document.getElementById("antiClickjack");
+            antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            top.location = self.location;
+        }
+    </script>
 </head>
 <body>
-
     <section id="header">
         <div class="headerBox">
             <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>

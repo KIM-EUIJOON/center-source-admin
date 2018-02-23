@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using AppSigmaAdmin.Attribute;
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
 
@@ -18,14 +19,9 @@ namespace AppSigmaAdmin.Controllers
         /// 運用監視画面
         /// </summary>
         /// <returns></returns>
+        [SessionCheck(WindowName = "運用監視画面")]
         public ActionResult Index()
         {
-            if (HttpContext.Session[SystemConst.SESSION_SIGMA_TOKEN] == null)
-            {
-                // セッションタイムアウト時はログイン画面に遷移
-                return RedirectToAction("Index", "Login");
-            }
-
             // 画面表示時に事前設定は不要
             // 運用レポート出力の年月を事前設定/前回指定値を設定する場合はこちらで。
 
@@ -37,12 +33,11 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <param name="model">運用レポート出力リクエスト</param>
         /// <returns></returns>
+        [ValidateAntiForgeryToken]
+        [SessionCheck(WindowName = "運用監視画面")]
         [HttpPost]
         public ActionResult PutMoniteringReport(OperationMonitoringModel model)
         {
-            TempData["year"] = model.Year;
-            TempData["month"] = model.Month;
-
             // 未設定時は無視する
             if (string.IsNullOrEmpty(model.Year) || string.IsNullOrEmpty(model.Month) ||
                 !DateTime.TryParse(model.Year + "/" + model.Month, CultureInfo.CreateSpecificCulture("ja-JP"), DateTimeStyles.None, out DateTime requestTime))
@@ -51,6 +46,10 @@ namespace AppSigmaAdmin.Controllers
 
                 return View("Index");
             }
+
+            TempData["year"] = HttpUtility.HtmlEncode(model.Year);
+            TempData["month"] = HttpUtility.HtmlEncode(model.Month);
+
             // 運用レポート出力の実行
 
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.Configuration;
+using System.Data.SqlClient;
 
 namespace AppSigmaAdmin.Models
 {
@@ -49,12 +50,12 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 料金確定日付
         /// </summary>
-        public DateTime FixedAmountDate { get; set; }
+        public DateTime? FixedAmountDate { get; set; }
 
         /// <summary>
         /// 予約注文日付
         /// </summary>
-        public DateTime ReserveOrderDate { get; set; }
+        public DateTime? ReserveOrderDate { get; set; }
 
         /// <summary>
         /// 料金
@@ -151,6 +152,7 @@ namespace AppSigmaAdmin.Models
             List<PaymentEntity> payment = new List<PaymentEntity>();
 
             using (SqlDbInterface dbInterface = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("select ServiceId as ServiceName");
@@ -177,9 +179,13 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("            end as Status");
                 sb.AppendLine("     , ErrorContents");
                 sb.AppendLine("  from PaymentManage");
-                sb.AppendLine(" where FixedAmountDate between '" + fromDate.ToString("yyyy-MM-dd") + "' and '" + toDate.ToString("yyyy-MM-dd") + " 23:59:59'");
+                sb.AppendLine(" where FixedAmountDate between @FromDate and @ToDate");
 
-                DataTable dt = dbInterface.ExecuteReader(sb.ToString());
+                cmd.CommandText = sb.ToString();
+                cmd.Parameters.Add("@FromDate", SqlDbType.DateTime).Value = fromDate;
+                cmd.Parameters.Add("@ToDate", SqlDbType.DateTime).Value = toDate.AddDays(1).AddSeconds(-1);
+
+                DataTable dt = dbInterface.ExecuteReader(cmd);
 
                 if(dt != null || dt.Rows.Count > 0)
                 {
@@ -189,12 +195,12 @@ namespace AppSigmaAdmin.Models
                         {
                             ServiceName = row["ServiceName"].ToString(),
                             UserId = row["UserId"].ToString(),
-                            OrderId = row["OrderId"] == DBNull.Value ? null : row["OrderId"].ToString(),
-                            No = row["No"] == DBNull.Value ? null : ((byte)row["No"]).ToString("00"),
+                            OrderId = row["OrderId"].ToString(),
+                            No = ((byte)row["No"]).ToString("00"),
                             AccessId = row["AccessId"] == DBNull.Value ? null : row["AccessId"].ToString(),
                             AccessPass = row["AccessPass"] == DBNull.Value ? null : row["AccessPass"].ToString(),
-                            FixedAmountDate = (DateTime)row["FixedAmountDate"],
-                            ReserveOrderDate = (DateTime)row["ReserveOrderDate"],
+                            FixedAmountDate = row["FixedAmountDate"] == DBNull.Value ? null : (DateTime?)row["FixedAmountDate"],
+                            ReserveOrderDate = row["ReserveOrderDate"] == DBNull.Value ? null : (DateTime?)row["ReserveOrderDate"],
                             Amount = (int)row["Amount"],
                             OrderNo = row["OrderNo"] == DBNull.Value ? null : row["OrderNo"].ToString(),
                             ForwardCode = row["ApproveNo"] == DBNull.Value ? null : row["ForwardCode"].ToString(),

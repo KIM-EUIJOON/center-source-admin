@@ -23,6 +23,9 @@ namespace AppSigmaAdmin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
+            HttpContext.Session.Abandon();
+            HttpContext.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
+
             return View();
         }
 
@@ -32,6 +35,7 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="model">ログインリクエスト</param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Index(LoginModel model)
         {
             if (model.MailAddress == null || model.Password == null)

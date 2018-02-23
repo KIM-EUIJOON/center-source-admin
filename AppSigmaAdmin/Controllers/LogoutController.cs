@@ -22,7 +22,8 @@ namespace AppSigmaAdmin.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            HttpContext.Session.RemoveAll();
+            HttpContext.Session.Abandon();
+            HttpContext.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
             return RedirectToAction("Index", "Login");
         }
     }

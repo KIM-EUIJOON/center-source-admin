@@ -19,7 +19,7 @@
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44338</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -309,4 +309,8 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\WebApplications\Microsoft.WebApplication.targets" />
+  <Target Name="BeforeBuild" Condition="'$(PublishProfileName)' == '' And '$(WebPublishProfileFile)' == ''">
+    <TransformXml Source="Web.config" Transform="Web.$(Configuration).config" Destination="Web.config" />
+  </Target>
 </Project>

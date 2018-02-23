@@ -24,6 +24,7 @@
         <br />
         <br />
         <form action="/OperationMonitoring/PutMoniteringReport" method="post">
+            @Html.AntiForgeryToken()
             <label>運用レポート出力：</label>
             <input name="model.year" id="year" maxlength="4" type="text" value=@TempData["year"] />
             <label>年</label>

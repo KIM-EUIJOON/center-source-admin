@@ -13,7 +13,10 @@ namespace AppSigmaAdmin.Controllers
     {
         public ActionResult Index()
         {
+#if DEBUG
             ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
+            HttpContext.Application["ErrorStack"] = "";
+#endif
             return View();
         }
     }

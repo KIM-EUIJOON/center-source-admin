@@ -65,7 +65,7 @@
             <br />
             <div class="clearfix">
                 パスワード：
-                @Html.PasswordFor(m => m.Password, new { placeholder = "パスワード", required = "required" })
+                @Html.PasswordFor(m => m.Password, new { placeholder = "パスワード", required = "required", autocomplete = "off" })
                 @Html.ValidationMessageFor(m => m.Password)
             </div>
             <div class="clearfix" style="text-align:left; height:50px; padding-top:15px;">

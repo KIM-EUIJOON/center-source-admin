@@ -8,6 +8,7 @@ using System.Text;
 using System.Web;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.Configuration;
+using System.Data.SqlClient;
 
 namespace AppSigmaAdmin.Models
 {
@@ -195,6 +196,7 @@ namespace AppSigmaAdmin.Models
             List<PaymentOverPeriodEntity> payment = new List<PaymentOverPeriodEntity>();
 
             using (SqlDbInterface dbInterface = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("select mr.UserId");
@@ -223,9 +225,13 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine(" left join UserDetail ud");
                 sb.AppendLine("    on mr.UserId = ud.UserId");
                 sb.AppendLine(" where mr.Status = '5'");
-                sb.AppendLine("   and PickUpDatetime between '" + fromDate.ToString("yyyy-MM-dd") + "' and '" + toDate.ToString("yyyy-MM-dd") + " 23:59:59'");
+                sb.AppendLine("   and PickUpDatetime between @FromDate and @ToDate");
 
-                DataTable dt = dbInterface.ExecuteReader(sb.ToString());
+                cmd.CommandText = sb.ToString();
+                cmd.Parameters.Add("@FromDate", SqlDbType.DateTime).Value = fromDate;
+                cmd.Parameters.Add("@ToDate", SqlDbType.DateTime).Value = toDate.AddDays(1).AddSeconds(-1);
+
+                DataTable dt = dbInterface.ExecuteReader(cmd);
 
                 if(dt != null || dt.Rows.Count > 0)
                 {

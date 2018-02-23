@@ -38,20 +38,13 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [ValidateAntiForgeryToken]
         [SessionCheck(WindowName = "決済管理画面")]
         [HttpPost]
         public ActionResult Download(PaymentManageModel model)
         {
             DateTime fromDate;
             DateTime toDate;
-
-            TempData["fromYear"] = model.FromYear;
-            TempData["fromMonth"] = model.FromMonth;
-            TempData["fromDay"] = model.FromDay;
-            TempData["toYear"] = model.ToYear;
-            TempData["toMonth"] = model.ToMonth;
-            TempData["toDay"] = model.ToDay;
-            TempData["paymentOver"] = model.PaymentOver;
 
             if (string.IsNullOrEmpty(model.FromYear) ||
                 string.IsNullOrEmpty(model.FromMonth) ||
@@ -77,7 +70,15 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "検索開始日＜検索終了日となるよう入力してください。");
                 return View("Index");
             }
-            
+
+            TempData["fromYear"] = HttpUtility.HtmlEncode(model.FromYear);
+            TempData["fromMonth"] = HttpUtility.HtmlEncode(model.FromMonth);
+            TempData["fromDay"] = HttpUtility.HtmlEncode(model.FromDay);
+            TempData["toYear"] = HttpUtility.HtmlEncode(model.ToYear);
+            TempData["toMonth"] = HttpUtility.HtmlEncode(model.ToMonth);
+            TempData["toDay"] = HttpUtility.HtmlEncode(model.ToDay);
+            TempData["paymentOver"] = HttpUtility.HtmlEncode(model.PaymentOver);
+
             string datetime = Common.GetNowTimestamp().ToString("yyyyMMddHHmmss");
             string fileName = "";
             byte[] buffer = null;
