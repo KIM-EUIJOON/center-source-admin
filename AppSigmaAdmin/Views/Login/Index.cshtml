@@ -1,5 +1,5 @@
 ﻿@model AppSigmaAdmin.Models.LoginModel
-
+@using AppSigmaAdmin.Utility
 @{
 }
 
@@ -19,10 +19,10 @@
             width: 445px;
         }
 
-        input[type="text"]::-moz-placeholder,
-        input[type="password"]::-moz-placeholder {
-            color: #aaaaaa;
-        }
+            input[type="text"]::-moz-placeholder,
+            input[type="password"]::-moz-placeholder {
+                color: #aaaaaa;
+            }
 
         .loginBox {
             width: 550px;
@@ -51,9 +51,7 @@
         ログイン
     </div>
 }
-
-@using (Html.BeginForm("Index", "Login"))
-{
+<form action="@Common.CreateUrl("/", false)" method="post">
     @Html.AntiForgeryToken()
     <div class="ContentsBase">
         <div class="loginBox">
@@ -76,4 +74,4 @@
             </div>
         </div>
     </div>
-}
+</form>

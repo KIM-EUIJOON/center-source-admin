@@ -121,7 +121,7 @@ namespace AppSigmaAdmin.Controllers
         /// ダウンロードデータ取得
         /// </summary>
         /// <param name="list"></param>
-        /// <param name="list"></param>
+        /// <param name="map"></param>
         /// <returns>ダウンロードデータ</returns>
         private byte[] GetCsvDownloadStream<T, TMap>(List<T> list, TMap map) where TMap : ClassMap
         {

@@ -1,13 +1,15 @@
-﻿@section style {
-<style>
-    .menuBox {
-        margin-top: 45px;
-        margin-left: 20%;
-        padding: 40px;
-        padding-top: 50px;
-        font-size: 15pt;
-    }
-</style>
+﻿@using AppSigmaAdmin.Utility
+
+@section style {
+    <style>
+        .menuBox {
+            margin-top: 45px;
+            margin-left: 20%;
+            padding: 40px;
+            padding-top: 50px;
+            font-size: 15pt;
+        }
+    </style>
 }
 
 
@@ -19,11 +21,11 @@
 
 <div class="ContentsBase">
     <div class="menuBox">
-        <a href="https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AzureMonitoringBrowseBlade/overview" target="_blank">運用管理</a>
+        <a href="@Html.Raw(AppSigmaAdmin.Library.ApplicationConfig.AzureMonitorURI)" target="_blank">運用管理</a>
         <b>：Azure Monitor</b>
         <br />
         <br />
-        <form action="/OperationMonitoring/PutMoniteringReport" method="post">
+        <form action="@Common.CreateUrl("/OperationMonitoring/PutMoniteringReport", false)" method="post">
             @Html.AntiForgeryToken()
             <label>運用レポート出力：</label>
             <input name="model.year" id="year" maxlength="4" type="text" value=@TempData["year"] />

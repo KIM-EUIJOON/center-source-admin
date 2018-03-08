@@ -23,7 +23,7 @@ namespace AppSigmaAdmin
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
-            bundles.Add(new StyleBundle("~sigma/Content/css").Include(
+            bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
                       "~/sigma/Content/bootstrap.css",
                       "~/sigma/Content/site.css"));
         }

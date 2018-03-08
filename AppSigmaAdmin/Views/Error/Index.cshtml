@@ -1,4 +1,5 @@
-﻿
+﻿@using AppSigmaAdmin.Utility
+
 @{
     Layout = null;
 }
@@ -15,7 +16,7 @@
     <h2>プロジェクトΣ</h2>
     <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
 
-    <a href="@Url.Action("Index","Menu")">メニューへ</a>
+    <a href="@Common.CreateUrl("/Menu", false)">メニューへ</a>
     <br />
     <br />
     @if (ViewBag.ErrorStack != null)

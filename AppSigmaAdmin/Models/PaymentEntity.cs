@@ -125,14 +125,14 @@ namespace AppSigmaAdmin.Models
             Map(m => m.ReserveOrderDate).Index(7).Name("予約注文日付");
             Map(m => m.Amount).Index(8).Name("料金");
             Map(m => m.OrderNo).Index(9).Name("注文番号");
-            Map(m => m.ForwardCode).Index(10).Name("仕向先コード");
+            Map(m => m.ForwardCode).Index(10).Name("仕向け先コード");
             Map(m => m.PaymentMethod).Index(11).Name("支払方法");
             Map(m => m.PayTimes).Index(12).Name("支払回数");
             Map(m => m.ApproveNo).Index(13).Name("承認番号");
             Map(m => m.TranId).Index(14).Name("トランザクションID");
-            Map(m => m.TranDate).Index(15).Name("決済日時");
+            Map(m => m.TranDate).Index(15).Name("決済日付");
+            Map(m => m.ErrorContents).Index(17).Name("エラー内容");
             Map(m => m.Status).Index(16).Name("ステータス");
-            Map(m => m.Status).Index(17).Name("エラー内容");
         }
     }
 
@@ -193,7 +193,7 @@ namespace AppSigmaAdmin.Models
                     {
                         PaymentEntity paymentEntity = new PaymentEntity()
                         {
-                            ServiceName = row["ServiceName"].ToString(),
+                            ServiceName = row["ServiceName"].ToString() == "1" ? "JapanTaxi" : "Others",
                             UserId = row["UserId"].ToString(),
                             OrderId = row["OrderId"].ToString(),
                             No = ((byte)row["No"]).ToString("00"),
@@ -209,8 +209,8 @@ namespace AppSigmaAdmin.Models
                             ApproveNo = row["ApproveNo"] == DBNull.Value ? null : row["ApproveNo"].ToString(),
                             TranId = row["TranId"] == DBNull.Value ? null : row["TranId"].ToString(),
                             TranDate = row["TranDate"] ==DBNull.Value ? null : (DateTime?)row["TranDate"],
-                            Status = row["Status"] == DBNull.Value ? null : row["Status"].ToString(),
-                            ErrorContents = row["ErrorContents"] == DBNull.Value ? null : row["ErrorContents"].ToString()
+                            ErrorContents = row["ErrorContents"] == DBNull.Value ? null : row["ErrorContents"].ToString(),
+                            Status = row["Status"] == DBNull.Value ? null : row["Status"].ToString()
                         };
 
                         payment.Add(paymentEntity);

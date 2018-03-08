@@ -24,7 +24,8 @@ namespace AppSigmaAdmin.Controllers
         {
             HttpContext.Session.Abandon();
             HttpContext.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
-            return RedirectToAction("Index", "Login");
+
+            return Redirect(Common.CreateUrl("/"));
         }
     }
 }

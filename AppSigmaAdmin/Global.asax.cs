@@ -40,7 +40,7 @@ namespace AppSigmaAdmin
             Application["ErrorStack"] = Logger.GetExceptionMessage(exception);
 
             // エラー表示画面へリダイレクト
-            Response.Redirect("~/Error/Index");
+            Response.Redirect(Common.CreateUrl("/Error"));
         }
 
         /// <summary>

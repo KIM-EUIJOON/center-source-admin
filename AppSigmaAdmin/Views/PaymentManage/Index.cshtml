@@ -1,4 +1,4 @@
-﻿@using AppSigmaAdmin.Library
+﻿@using AppSigmaAdmin.Utility
 
 @section style {
     <style>
@@ -55,7 +55,7 @@
 <div class="ContentsBase">
     <div class="paymentBox">
 
-        <form action="/PaymentManage/Download" method="post">
+        <form action="@Common.CreateUrl("/PaymentManage/Download", false)" method="post">
             @Html.AntiForgeryToken()
             <table class="paymentTable">
                 <tr>

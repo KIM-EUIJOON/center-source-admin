@@ -1,4 +1,5 @@
-﻿
+﻿@using AppSigmaAdmin.Utility
+
 @section style {
     <style>
 
@@ -13,13 +14,14 @@
         table.menuTable {
             width: 800px;
         }
+
             table.menuTable tr {
                 height: 50px;
             }
+
             table.menuTable th {
                 width: 100px;
             }
-
     </style>
 }
 
@@ -29,17 +31,17 @@
     </div>
 }
 
-    <div class="ContentsBase">
-        <div class="menuBox">
-            <table class="menuTable">
-                <tr>
-                    <th><a href="@Url.Action("Index","PaymentManage")">決済管理</a></th>
-                    <td>：決済状況の管理、決済情報の出力</td>
-                </tr>
-                <tr>
-                    <th><a href="@Url.Action("Index","OperationMonitoring")">運用監視</a></th>
-                    <td>：プロジェクトΣシステムの各種リソースの監視、運用レポート出力</td>
-                </tr>
-            </table>
-        </div>
+<div class="ContentsBase">
+    <div class="menuBox">
+        <table class="menuTable">
+            <tr>
+                <th><a href="@Common.CreateUrl("/PaymentManage", false)">決済管理</a></th>
+                <td>：決済状況の管理、決済情報の出力</td>
+            </tr>
+            <tr>
+                <th><a href="@Common.CreateUrl("/OperationMonitoring", false)">運用監視</a></th>
+                <td>：プロジェクトΣシステムの各種リソースの監視、運用レポート出力</td>
+            </tr>
+        </table>
     </div>
+</div>

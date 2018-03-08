@@ -1,4 +1,6 @@
-﻿@{
+﻿@using AppSigmaAdmin.Utility
+
+@{
     string absolutePath = Request.Url.AbsolutePath.Split('/')[1];
     //string userName = Session[AppSigmaAdmin.Library.SessionNames.SIGMA_TOKEN] == null ? null: Session[AppSigmaAdmin.Library.SessionNames.UserName].ToString();
     string userName = "";
@@ -18,9 +20,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <title>プロジェクトΣ</title>
-    @Styles.Render("~/sigma/Content/css")
+    <link href="/sigma/Content/Site.css" rel="stylesheet" />
+    <link href="/sigma/Content/bootstrap.css" rel="stylesheet">
+    <script src="/sigma/Scripts/jquery-1.10.2.min.js"></script>
+
+    @*@Styles.Render("~/sigma/Content/css")*@
     @RenderSection("Style", false)
-    @Scripts.Render("~/sigma/bundles/jquery")
+    @*@Scripts.Render("~/sigma/bundles/jquery")*@
     @RenderSection("scripts", required: false)
     <style id="antiClickjack">
         body {
@@ -35,6 +41,8 @@
             top.location = self.location;
         }
     </script>
+
+    <link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
 </head>
 <body>
     <section id="header">
@@ -43,7 +51,7 @@
             @if (!string.IsNullOrEmpty(absolutePath) && absolutePath != "Login")
             {
                 <div class="logoutCaption">
-                    <a href="@Url.Action("Index","Logout")">ログアウト</a>
+                    <a href="@Common.CreateUrl("/Logout", false)">ログアウト</a>
                 </div>
                 <div class="loginCaption">
                     <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
@@ -52,7 +60,7 @@
                 if (absolutePath != "Menu")
                 {
                     <div class="toMenuCaption">
-                        <button class="action-menu" onclick="location.href = '@Url.Action("Index", "Menu")';">メニューに戻る</button>
+                        <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>
                     </div>
                 }
             }

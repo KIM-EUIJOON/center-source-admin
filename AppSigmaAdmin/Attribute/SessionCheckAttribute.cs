@@ -28,7 +28,7 @@ namespace AppSigmaAdmin.Attribute
                 filterContext.HttpContext.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", ""));
 
                 // ログイン画面へリダイレクト
-                filterContext.Result = new RedirectResult("/Login");
+                filterContext.Result = new RedirectResult(Common.CreateUrl("/"));
 
                 return;
             }

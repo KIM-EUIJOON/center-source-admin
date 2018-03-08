@@ -39,5 +39,21 @@ namespace AppSigmaAdmin.Utility
             return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
 
         }
+
+        /// <summary>
+        /// ビルド環境に合わせてURLを変更する
+        /// </summary>
+        /// <param name="url">URL（コントローラ名）</param>
+        /// <param name="isTilde">チルダを表示するか</param>
+        /// <returns>整形後のURL</returns>
+        public static string CreateUrl(string url, bool isTilde = true)
+        {
+            string tilde = isTilde ? "~" : "";
+#if DEBUG
+            return tilde + url;
+#else
+            return tilde + "/sigma" + url;
+#endif
+        }
     }
 }

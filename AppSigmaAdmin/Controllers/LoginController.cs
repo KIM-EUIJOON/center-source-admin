@@ -79,7 +79,7 @@ namespace AppSigmaAdmin.Controllers
                     HttpContext.Session.Add(SystemConst.SESSION_SIGMA_TOKEN, response.Token);
                     HttpContext.Session.Add(SystemConst.SESSION_USER_INFO, userInfo);
 
-                    return RedirectToAction("Index", "Menu");
+                    return Redirect(Common.CreateUrl("/Menu"));
                 }
             }
             // ログインAPIからユーザ情報を取得できなかった
