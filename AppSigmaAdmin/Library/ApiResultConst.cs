@@ -23,5 +23,11 @@ namespace AppSigmaAdmin.Library
 
         /// <summary>未認証（または、認証切れ）</summary>
         public const string AUTH_TIMEOUT = "109";
+
+        /// <summary>アプリバージョンエラー（バージョンアップが必要）</summary>
+        public const string VERSION_INCOMPLETE = "900";
+
+        /// <summary>アカウントロック中</summary>
+        public const string ACCOUNT_LOCKED = "901";
     }
 }

@@ -51,6 +51,9 @@ namespace AppSigmaAdmin.Controllers
 
             // HTTP通信
             SendHttpRequest serv = new SendHttpRequest(server);
+            // TODO:バージョンチェックAPIではアプリのみのため、暫定でアプリバージョンをセット
+            serv.DicHttpHeader.Add("aplVersion", "MyRoute:A:0.0.2");
+
             string responseJson = serv.HttpCon("Api/Login", requestJson);
 
             if (!string.IsNullOrEmpty(responseJson) && serv.HttpResponseStatusCode == "OK")
@@ -58,7 +61,12 @@ namespace AppSigmaAdmin.Controllers
                 //クラスへ変換
                 LoginResponseEntity response = JsonConvert.DeserializeObject<LoginResponseEntity>(responseJson);
 
-                if (response.ProcCode != ApiResultConst.SUCCESS)
+                if (response.ProcCode == ApiResultConst.ACCOUNT_LOCKED)
+                {
+                    ModelState.AddModelError("", response.ProcMessage);
+                    return View(model);
+                }
+                else if (response.ProcCode != ApiResultConst.SUCCESS)
                 {
                     ModelState.AddModelError("", "アカウントもしくはパスワードが間違っています。");
                     return View(model);
