@@ -90,10 +90,15 @@ namespace AppSigmaAdmin.Controllers
                     return Redirect(Common.CreateUrl("/Menu"));
                 }
             }
+            // ログインAPIでタイムアウト
+            else if (serv.HttpResponseStatusCode == SystemConst.HTTP_STATUS_CODE_TIMEOUT)
+            {
+                ModelState.AddModelError("", "センター通信中にタイムアウトが発生しました。");
+            }
             // ログインAPIからユーザ情報を取得できなかった
             else if(string.IsNullOrEmpty(responseJson))
             {
-                ModelState.AddModelError("", "AppSigmaが停止しているためログインできません。");
+                ModelState.AddModelError("", "センター通信に失敗しました。");
             }
 
             Logger.TraceInfo(Common.GetNowTimestamp(), null, "管理者画面ログイン失敗", null);

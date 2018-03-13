@@ -21,9 +21,8 @@ namespace AppSigmaAdmin.Models
         /// <returns>ユーザ情報</returns>
         public UserInfoEntity GetUserInfoModel(string userId)
         {
+            UserInfoEntity userInfoEntity = null;
             StringBuilder sb = new StringBuilder();
-            UserInfoEntity userInfoEntity = new UserInfoEntity();
-
             sb.Append("select ui.UserId");
             sb.Append("     , ui.RoleId");
             sb.Append("     , ui.EMailAddress");
@@ -41,13 +40,16 @@ namespace AppSigmaAdmin.Models
                 cmd.Parameters.Add("@UserId", SqlDbType.Int).Value = int.Parse(userId);
 
                 DataTable dt = dbInterFace.ExecuteReader(cmd);
-                if(dt != null || dt.Rows.Count > 0)
+                if (dt != null || dt.Rows.Count > 0)
                 {
-                    userInfoEntity.UserId = dt.Rows[0]["UserId"].ToString();
-                    userInfoEntity.RoleId = dt.Rows[0]["RoleId"].ToString();
-                    userInfoEntity.EMailAddress = dt.Rows[0]["EMailAddress"].ToString();
-                    userInfoEntity.KanaLastName = dt.Rows[0]["KanaLastName"].ToString();
-                    userInfoEntity.KanaFirstName = dt.Rows[0]["KanaFirstName"].ToString();
+                    userInfoEntity = new UserInfoEntity()
+                    {
+                        UserId = dt.Rows[0]["UserId"].ToString(),
+                        RoleId = dt.Rows[0]["RoleId"].ToString(),
+                        EMailAddress = dt.Rows[0]["EMailAddress"].ToString(),
+                        KanaLastName = dt.Rows[0]["KanaLastName"] == DBNull.Value ? null : dt.Rows[0]["KanaLastName"].ToString(),
+                        KanaFirstName = dt.Rows[0]["KanaFirstName"] == DBNull.Value ? null : dt.Rows[0]["KanaFirstName"].ToString()
+                    };
                 }
             }
 

@@ -124,15 +124,17 @@ namespace AppSigmaAdmin.Utility
         public string HttpCon(string methodName, string postJson)
         {
             string responseJson = "";         // レスポンスJSONの初期化
+            HttpWebRequest request = null;
+            // URL
+            string requestUri = this.Server + methodName;
+
             try
             {
-                // URL
-                string requestUri = this.Server + methodName;
-                if (MethodType == "GET")
+                if (MethodType == SystemConst.HTTP_METHOD_GET)
                 {
                     requestUri += postJson;
                 }
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(requestUri);
+                request = (HttpWebRequest)WebRequest.Create(requestUri);
 
                 // Httpリクエストヘッダを設定
                 request.ContentType = ContentType;
@@ -158,7 +160,7 @@ namespace AppSigmaAdmin.Utility
                     request.Headers.Add(pair.Key, pair.Value);
                 }
 
-                if (MethodType == "POST")
+                if (MethodType == SystemConst.HTTP_METHOD_POST)
                 {
                     // リクエストデータを保持するストリームの取得
                     using (var requestStream = new StreamWriter(request.GetRequestStream()))
@@ -184,6 +186,8 @@ namespace AppSigmaAdmin.Utility
             catch (WebException e)
             {
                 HttpResponseStatusCode = ApiResultConst.FAIL;
+                string requestString = "\r\nリクエスト：" + postJson + Environment.NewLine + this.RequestString(request);
+
                 if (e.Status == WebExceptionStatus.ProtocolError)
                 {
                     using (var response = e.Response as HttpWebResponse)
@@ -193,31 +197,47 @@ namespace AppSigmaAdmin.Utility
                         HttpResponseDescription = response.StatusDescription;
 
                         if (response.ContentType.IndexOf("text") >= 0 ||
-                            response.ContentType.IndexOf("json") >= 0)
+                            response.ContentType.IndexOf("json") >= 0 ||
+                            response.ContentType.IndexOf("xml") >= 0)
                         {
                             using (var reader = new StreamReader(response.GetResponseStream()))
                             {
                                 responseJson = reader.ReadToEnd();
                                 if (IsErrorTrace)
                                 {
-                                    //Logger.Log.Error(responseJson);
+                                    LogEventSource.Log.Error(Logger.GetExceptionMessage(e) + requestString + "\r\nステータスコード：" + HttpResponseStatusCode + "\r\nレスポンス：" + responseJson);
                                 }
+                            }
+                        }
+                        else
+                        {
+                            if (IsErrorTrace)
+                            {
+                                LogEventSource.Log.Error(Logger.GetExceptionMessage(e) + requestString + "\r\nステータスコード：" + HttpResponseStatusCode);
                             }
                         }
                     }
                 }
                 else
                 {
+                    if (IsErrorTrace)
+                    {
+                        LogEventSource.Log.Error(Logger.GetExceptionMessage(e) + requestString);
+                    }
+
                     switch (e.Status)
                     {
                         case WebExceptionStatus.Timeout:
+                            HttpResponseStatusCode = SystemConst.HTTP_STATUS_CODE_TIMEOUT;
                             break;
                         case WebExceptionStatus.ReceiveFailure:
+                            HttpResponseStatusCode = SystemConst.HTTP_STATUS_CODE_RECEIVE_FAIL;
                             break;
                         case WebExceptionStatus.SendFailure:
+                            HttpResponseStatusCode = SystemConst.HTTP_STATUS_CODE_SEND_FAIL;
                             break;
                         default:
-                            break;
+                            throw;
                     }
                 }
             }
@@ -228,5 +248,41 @@ namespace AppSigmaAdmin.Utility
         }
 
         #endregion
+
+        private string RequestString(HttpWebRequest request)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (request != null)
+            {
+                if (request.Address != null)
+                {
+                    sb.AppendLine("URL:" + request.Address.AbsoluteUri);
+                }
+                if (!string.IsNullOrEmpty(request.Method))
+                {
+                    sb.AppendLine("Method:" + request.Method);
+                }
+                if (!string.IsNullOrEmpty(request.ContentType))
+                {
+                    sb.AppendLine("ContentType:" + request.ContentType);
+                }
+                if (!string.IsNullOrEmpty(request.UserAgent))
+                {
+                    sb.AppendLine("UserAgent:" + request.UserAgent);
+                }
+                if (!string.IsNullOrEmpty(request.Referer))
+                {
+                    sb.AppendLine("Referer:" + request.Referer);
+                }
+                sb.AppendLine("Timeout:" + request.Timeout);
+                if (request.Headers != null)
+                {
+                    sb.AppendLine("Headers:" + request.Headers.ToString());
+                }
+
+            }
+            return sb.ToString();
+        }
     }
 }

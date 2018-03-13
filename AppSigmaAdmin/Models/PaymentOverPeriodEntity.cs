@@ -9,6 +9,7 @@ using System.Web;
 using CsvHelper.Configuration.Attributes;
 using CsvHelper.Configuration;
 using System.Data.SqlClient;
+using AppSigmaAdmin.Library;
 
 namespace AppSigmaAdmin.Models
 {
@@ -69,7 +70,7 @@ namespace AppSigmaAdmin.Models
         public string CompanyName { get; set; }
 
         /// <summary>
-        /// 乗車時刻
+        /// 乗車日時
         /// </summary>
         public DateTime PickUpDatetime { get; set; }
 
@@ -132,6 +133,19 @@ namespace AppSigmaAdmin.Models
         public int? PickUpPrice { get; set; }
 
         /// <summary>
+        /// 予約日時
+        /// </summary>
+        public DateTime? BookingDatetime { get; set; }
+
+        /// <summary>
+        /// 予約料金
+        /// </summary>
+        /// <remarks>
+        /// タクシーの場合に使用
+        /// </remarks>
+        public int? BookingPrice { get; set; }
+
+        /// <summary>
         /// ナンバープレート
         /// </summary>
         /// <remarks>
@@ -171,7 +185,7 @@ namespace AppSigmaAdmin.Models
             Map(m => m.Departure).Index(7).Name("出発地名称");
             Map(m => m.Destination).Index(8).Name("目的地名称");
             Map(m => m.CompanyName).Index(9).Name("会社名");
-            Map(m => m.PickUpDatetime).Index(10).Name("乗車時刻");
+            Map(m => m.PickUpDatetime).Index(10).Name("乗車日時");
             Map(m => m.Price).Index(11).Name("料金");
             Map(m => m.Payment).Index(12).Name("支払方法");
             Map(m => m.DepLat).Index(13).Name("乗車緯度");
@@ -180,9 +194,10 @@ namespace AppSigmaAdmin.Models
             Map(m => m.DesLng).Index(16).Name("目的地経度");
             Map(m => m.RadioNo).Index(17).Name("無線番号");
             Map(m => m.PickUpPrice).Index(18).Name("迎車料金");
-            Map(m => m.NumberPlate).Index(19).Name("ナンバープレート");
-            Map(m => m.OrderId).Index(20).Name("オーダID");
-            Map(m => m.Status).Index(21).Name("予約状況");
+            Map(m => m.BookingDatetime).Index(19).Name("予約日時");
+            Map(m => m.BookingPrice).Index(20).Name("予約料金");
+            Map(m => m.OrderId).Index(21).Name("オーダID");
+            Map(m => m.Status).Index(22).Name("予約状況");
         }
     }
 
@@ -219,17 +234,20 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("     , mr.RadioNo");
                 sb.AppendLine("     , mr.PickUpPrice");
                 sb.AppendLine("     , mr.NumberPlate");
+                sb.AppendLine("     , mr.BookingDatetime");
+                sb.AppendLine("     , mr.BookingPrice");
                 sb.AppendLine("     , mr.OrderId");
                 sb.AppendLine("     , mr.Status");
                 sb.AppendLine("  from MobilityReserve mr");
                 sb.AppendLine(" left join UserDetail ud");
                 sb.AppendLine("    on mr.UserId = ud.UserId");
-                sb.AppendLine(" where mr.Status = '5'");
+                sb.AppendLine(" where mr.Status = @Status");
                 sb.AppendLine("   and PickUpDatetime between @FromDate and @ToDate");
 
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.Add("@FromDate", SqlDbType.DateTime).Value = fromDate;
                 cmd.Parameters.Add("@ToDate", SqlDbType.DateTime).Value = toDate.AddDays(1).AddSeconds(-1);
+                cmd.Parameters.Add("@Status", SqlDbType.NVarChar).Value = SystemConst.MOBRSV_STATUS_SETTLEMENT_PERIOD_OVER;
 
                 DataTable dt = dbInterface.ExecuteReader(cmd);
 
@@ -258,6 +276,8 @@ namespace AppSigmaAdmin.Models
                             DesLng = row["DesLng"] == DBNull.Value ? null : (double?)row["DesLng"],
                             RadioNo = row["RadioNo"].ToString(),
                             PickUpPrice = row["PickUpPrice"] == DBNull.Value ? null : (int?)row["PickUpPrice"],
+                            BookingDatetime = row["BookingDatetime"] == DBNull.Value ? null : (DateTime?)row["BookingDatetime"],
+                            BookingPrice = row["BookingPrice"] == DBNull.Value ? null : (int?)row["BookingPrice"],
                             NumberPlate = row["NumberPlate"].ToString(),
                             OrderId = row["OrderId"].ToString(),
                             Status = row["Status"].ToString()
