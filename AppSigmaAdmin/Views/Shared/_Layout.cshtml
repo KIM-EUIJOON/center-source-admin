@@ -1,8 +1,7 @@
 ﻿@using AppSigmaAdmin.Utility
 
 @{
-    string absolutePath = Request.Url.AbsolutePath.Split('/')[1];
-    //string userName = Session[AppSigmaAdmin.Library.SessionNames.SIGMA_TOKEN] == null ? null: Session[AppSigmaAdmin.Library.SessionNames.UserName].ToString();
+    string controllerName = ViewContext.RouteData.Values["controller"].ToString();
     string userName = "";
     AppSigmaAdmin.Models.UserInfoEntity userInfoEntity = null;
     if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO] != null)
@@ -48,7 +47,7 @@
     <section id="header">
         <div class="headerBox">
             <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>
-            @if (!string.IsNullOrEmpty(absolutePath) && absolutePath != "Login")
+            @if (!string.IsNullOrEmpty(controllerName) && controllerName != "Login")
             {
                 <div class="logoutCaption">
                     <a href="@Common.CreateUrl("/Logout", false)">ログアウト</a>
@@ -57,7 +56,7 @@
                     <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
                 </div>
 
-                if (absolutePath != "Menu")
+                if (controllerName != "Menu")
                 {
                     <div class="toMenuCaption">
                         <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>

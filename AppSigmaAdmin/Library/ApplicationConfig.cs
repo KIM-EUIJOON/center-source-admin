@@ -25,6 +25,11 @@ namespace AppSigmaAdmin.Library
         private const string STORAGE_CONNECTION_STRING = "StorageConnectionString";
 
         /// <summary>
+        /// ストレージ接続文字列(パフォーマンスカウンター)
+        /// </summary>
+        private const string STORAGE_CONNECTION_STRING2 = "StorageConnectionString2";
+
+        /// <summary>
         /// AppSigmaAPIサーバURI
         /// </summary>
         private const string SIGMA_API_SERVER_URI = "SigmaAPIServerURI";
@@ -66,6 +71,17 @@ namespace AppSigmaAdmin.Library
             get
             {
                 return GetStorageString(STORAGE_CONNECTION_STRING);
+            }
+        }
+
+        /// <summary>
+        /// ストレージ接続文字列
+        /// </summary>
+        public static string StorageConnectionString2
+        {
+            get
+            {
+                return GetStorageString(STORAGE_CONNECTION_STRING2);
             }
         }
 

@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using AppSigmaAdmin.Attribute;
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
+using AppSigmaAdmin.Utility;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -15,6 +20,10 @@ namespace AppSigmaAdmin.Controllers
     /// </summary>
     public class OperationMonitoringController : Controller
     {
+
+        private const string FILE_NAME_OPERATION = "{0}運用レポート{1}.csv";
+        private string FILE_CONTENTTYPE = "text/csv";
+
         /// <summary>
         /// 運用監視画面
         /// </summary>
@@ -49,15 +58,49 @@ namespace AppSigmaAdmin.Controllers
 
             TempData["year"] = HttpUtility.HtmlEncode(model.Year);
             TempData["month"] = HttpUtility.HtmlEncode(model.Month);
-
+            
             // 運用レポート出力の実行
+            AzureStorageIO azureStorage = new AzureStorageIO();
+            // TODO:暫定処置としてパフォーマンスカウンターはCPU使用率のみとし、直近1日のデータを対象とする
+            List<OperationMonitoringEntity> table = azureStorage.GetPerformanceCounterTable();
 
+            var buffer = GetCsvDownloadStream(table, new OperationMonitoringtClassMap());
+
+            if (buffer == null)
+            {
+                TempData["message"] = "該当データがありません。";
+                return View("Index");
+            }
 
             // 結果
             TempData["message"] = "運用レポート出力が完了しました。";
 
-            return View("Index");
+            string fileName = string.Format(FILE_NAME_OPERATION, Common.GetNowTimestamp().ToString("yyyyMMddHHmmss"), requestTime.ToString("yyyyMM"));
+            return File(buffer, FILE_CONTENTTYPE, fileName);
         }
 
+        /// <summary>
+        /// ダウンロードデータ取得
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="map"></param>
+        /// <returns>ダウンロードデータ</returns>
+        private byte[] GetCsvDownloadStream<T, TMap>(List<T> list, TMap map) where TMap : ClassMap
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(memoryStream, Encoding.GetEncoding("Shift_JIS")))
+                using (var csvWriter = new CsvWriter(streamWriter))
+                {
+                    csvWriter.Configuration.HasHeaderRecord = true;
+                    csvWriter.Configuration.QuoteAllFields = true;
+                    csvWriter.Configuration.RegisterClassMap<TMap>();
+                    csvWriter.WriteRecords(list);
+                    streamWriter.Flush();
+                }
+
+                return memoryStream.ToArray();
+            }
+        }
     }
 }
