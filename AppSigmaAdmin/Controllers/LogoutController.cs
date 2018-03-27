@@ -17,9 +17,9 @@ namespace AppSigmaAdmin.Controllers
     public class LogoutController : Controller
     {
         /// <summary>
-        /// ログアウト
+        /// ログアウト画面
         /// </summary>
-        /// <returns></returns>
+        /// <returns>ログアウト画面</returns>
         public ActionResult Index()
         {
             HttpContext.Session.Abandon();

@@ -86,13 +86,12 @@ namespace AppSigmaAdmin.Utility
         }
 
         /// <summary>
-        /// インフォメーション
+        /// ログ出力（インフォメーション）
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="key"></param>
-        /// <param name="file"></param>
-        /// <param name="line"></param>
-        /// <param name="name"></param>
+        /// <param name="timestamp">タイムスタンプ</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="message">メッセージ</param>
+        /// <param name="inputParams">入力値</param>
         public static void TraceInfo(DateTime timestamp, string userId, string message, string inputParams)
         {
             // 日付が変わった場合
@@ -214,8 +213,16 @@ namespace AppSigmaAdmin.Utility
         Debug,
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class LogLevelExt
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logLevel"></param>
+        /// <returns></returns>
         public static string ToString(this LogLevel logLevel)
         {
             string[] names = { "Error", "Warning", "Information", "Debug" };

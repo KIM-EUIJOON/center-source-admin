@@ -14,15 +14,28 @@ namespace AppSigmaAdmin.Utility
     [EventSource(Name = "sigma-service-app")]
     public sealed class LogEventSource : EventSource
     {
+        /// <summary>
+        /// ログイベントソース
+        /// </summary>
         public static readonly LogEventSource Log = new LogEventSource();
+        /// <summary>
+        /// キーワード
+        /// </summary>
         public class Keywords
         {
+            /// <summary>
+            /// イベントキーワード
+            /// </summary>
             public const EventKeywords Logging = (EventKeywords)1;
         }
 
 
         #region パブリップ メソッド
 
+        /// <summary>
+        /// トレースログ（エラー出力）
+        /// </summary>
+        /// <param name="message">エラーメッセージ</param>
         [NonEvent]
         //public void Error(string message)
         public void Error(string message)
@@ -65,8 +78,8 @@ namespace AppSigmaAdmin.Utility
         /// <summary>
         /// トレースログ（エラー出力）
         /// </summary>
-        /// <param name="serviceName"></param>
-        /// <param name="message"></param>
+        /// <param name="serviceName">サービス名</param>
+        /// <param name="message">エラーメッセージ</param>
         [Event(1, Level = EventLevel.Error, Keywords = Keywords.Logging, Message = "An error has occurred")]
         private void errorTrace(
             string serviceName,

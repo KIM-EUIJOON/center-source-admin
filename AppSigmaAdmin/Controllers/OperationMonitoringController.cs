@@ -27,7 +27,7 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 運用監視画面
         /// </summary>
-        /// <returns></returns>
+        /// <returns>運用監視画面</returns>
         [SessionCheck(WindowName = "運用監視画面")]
         public ActionResult Index()
         {
@@ -41,7 +41,7 @@ namespace AppSigmaAdmin.Controllers
         /// 運用監視：運用レポート出力
         /// </summary>
         /// <param name="model">運用レポート出力リクエスト</param>
-        /// <returns></returns>
+        /// <returns>運用監視画面</returns>
         [ValidateAntiForgeryToken]
         [SessionCheck(WindowName = "運用監視画面")]
         [HttpPost]

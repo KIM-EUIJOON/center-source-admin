@@ -173,6 +173,9 @@ namespace AppSigmaAdmin.Models
     /// </summary>
     public sealed class PaymentOverPeriodClassMap : ClassMap<PaymentOverPeriodEntity>
     {
+        /// <summary>
+        /// 未決済データCSVマッピング
+        /// </summary>
         public PaymentOverPeriodClassMap()
         {
             Map(m => m.UserId).Index(0).Name("ユーザID");
@@ -206,6 +209,12 @@ namespace AppSigmaAdmin.Models
     /// </summary>
     public class PaymentOverPeriodModel
     {
+        /// <summary>
+        /// 未決済データ取得
+        /// </summary>
+        /// <param name="fromDate">取得開始日</param>
+        /// <param name="toDate">取得終了日</param>
+        /// <returns>未決済データ</returns>
         public List<PaymentOverPeriodEntity> GetPaymentOverPeriodModel(DateTime fromDate, DateTime toDate)
         {
             List<PaymentOverPeriodEntity> payment = new List<PaymentOverPeriodEntity>();

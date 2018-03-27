@@ -11,6 +11,10 @@ namespace AppSigmaAdmin.Controllers
     /// </summary>
     public class ErrorController : Controller
     {
+        /// <summary>
+        /// エラー画面
+        /// </summary>
+        /// <returns>エラー画面</returns>
         public ActionResult Index()
         {
 #if DEBUG

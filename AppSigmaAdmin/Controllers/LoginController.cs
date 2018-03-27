@@ -20,7 +20,7 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// ログイン画面
         /// </summary>
-        /// <returns></returns>
+        /// <returns>ログイン画面</returns>
         public ActionResult Index()
         {
             HttpContext.Session.Abandon();
@@ -33,7 +33,7 @@ namespace AppSigmaAdmin.Controllers
         /// ログイン処理
         /// </summary>
         /// <param name="model">ログインリクエスト</param>
-        /// <returns></returns>
+        /// <returns>ログイン画面</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Index(LoginModel model)

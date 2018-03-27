@@ -26,7 +26,7 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 決済管理画面
         /// </summary>
-        /// <returns></returns>
+        /// <returns>決済管理画面</returns>
         [SessionCheck(WindowName = "決済管理画面")]
         public ActionResult Index()
         {
@@ -36,8 +36,8 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 決済データダウンロード処理
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="model">決済管理出力リクエスト</param>
+        /// <returns>決済管理画面</returns>
         [ValidateAntiForgeryToken]
         [SessionCheck(WindowName = "決済管理画面")]
         [HttpPost]

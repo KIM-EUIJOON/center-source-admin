@@ -45,7 +45,7 @@ namespace AppSigmaAdmin.Library
         private const string GMO_SHOP_MANAGE_URI = "GMOShopManageURI";
 
         /// <summary>
-        /// GMOショップ管理URI
+        /// AzureモニターURI
         /// </summary>
         private const string AZURE_MONITOR_URI = "AzureMonitorURI";
 
@@ -86,7 +86,7 @@ namespace AppSigmaAdmin.Library
         }
 
         /// <summary>
-        /// 
+        /// AppSigmaAPIサーバURI
         /// </summary>
         public static string SigmaAPIServerURI
         {
@@ -97,7 +97,7 @@ namespace AppSigmaAdmin.Library
         }
 
         /// <summary>
-        /// 
+        /// GMOサイト管理URI
         /// </summary>
         public static string GMOSiteManageURI
         {
@@ -108,7 +108,7 @@ namespace AppSigmaAdmin.Library
         }
 
         /// <summary>
-        /// 
+        /// GMOショップ管理URI
         /// </summary>
         public static string GMOShopManageURI
         {
@@ -119,7 +119,7 @@ namespace AppSigmaAdmin.Library
         }
 
         /// <summary>
-        /// 
+        /// AzureモニターURI
         /// </summary>
         public static string AzureMonitorURI
         {

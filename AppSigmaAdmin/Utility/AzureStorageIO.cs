@@ -137,7 +137,7 @@ namespace AppSigmaAdmin.Utility
         /// <summary>
         /// StorageTableよりパフォーマンスカウンターデータを取得
         /// </summary>
-        /// <returns></returns>
+        /// <returns>パフォーマンスカウンター</returns>
         public List<OperationMonitoringEntity> GetPerformanceCounterTable()
         {
             DateTime dateTime = Common.GetNowTimestamp().ToUniversalTime();
@@ -168,7 +168,6 @@ namespace AppSigmaAdmin.Utility
         /// <summary>
         /// ログ出力メソッド
         /// </summary>
-        /// <param name="procTimestamp">タイムスタンプ</param>
         /// <param name="role">ロールインスタンス</param>
         /// <param name="counterName">パフォーマンスカウンタ名</param>
         /// <param name="counterValue">パフォーマンスカウンタ値</param>

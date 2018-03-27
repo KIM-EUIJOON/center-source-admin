@@ -15,9 +15,15 @@ namespace AppSigmaAdmin.Attribute
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class SessionCheckAttribute : ActionFilterAttribute
     {
+        /// <summary>
+        /// 画面名
+        /// </summary>
         public string WindowName { set; get; }
 
-        /// <param name="filterContext"></param>
+        /// <summary>
+        /// セッション確認
+        /// </summary>
+        /// <param name="filterContext">コンテキスト</param>
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             if (filterContext.HttpContext.Session == null ||

@@ -18,7 +18,7 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// メニュー画面
         /// </summary>
-        /// <returns></returns>
+        /// <returns>メニュー画面</returns>
         [SessionCheck(WindowName ="メニュー画面")]
         public ActionResult Index()
         {

@@ -36,6 +36,9 @@ namespace AppSigmaAdmin.Models
     /// </summary>
     public sealed class OperationMonitoringtClassMap : ClassMap<OperationMonitoringEntity>
     {
+        /// <summary>
+        /// 運用レポートデータCSVマッピング
+        /// </summary>
         public OperationMonitoringtClassMap()
         {
             Map(m => m.Timestamp).Index(0).Name("タイムスタンプ");
