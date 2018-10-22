@@ -3,11 +3,11 @@
 @{
     string controllerName = ViewContext.RouteData.Values["controller"].ToString();
     string userName = "";
-    AppSigmaAdmin.Models.UserInfoEntity userInfoEntity = null;
-    if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO] != null)
+    AppSigmaAdmin.Models.UserInfoAdminEntity userInfoAdminEntity = null;
+    if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO_ADMIN] != null)
     {
-        userInfoEntity = (AppSigmaAdmin.Models.UserInfoEntity)Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO];
-        userName = userInfoEntity.KanaLastName + "　" + userInfoEntity.KanaFirstName;
+        userInfoAdminEntity = (AppSigmaAdmin.Models.UserInfoAdminEntity)Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO_ADMIN];
+        userName = userInfoAdminEntity.Name;
     }
 
 }

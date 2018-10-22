@@ -170,6 +170,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
+    <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Controllers\PaymentManageController.cs" />
     <Compile Include="Controllers\OperationMonitoringController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
@@ -181,7 +182,8 @@
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\PaymentManageModel.cs" />
     <Compile Include="Models\PaymentEntity.cs" />
-    <Compile Include="Models\UserInfoModel.cs" />
+    <Compile Include="Models\UserInfoAdminEntity.cs" />
+    <Compile Include="Utility\DbAccessUserInfo.cs" />
     <Compile Include="Models\UserInfoEntity.cs" />
     <Compile Include="ResponseData\LoginResponseEntity.cs" />
     <Compile Include="Models\LoginModel.cs" />
@@ -242,6 +244,7 @@
     <Content Include="Views\PaymentManage\Index.cshtml" />
     <Content Include="Views\OperationMonitoring\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
+    <Content Include="Views\UserInfo\Index.cshtml" />
     <None Include="Web.Prod.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

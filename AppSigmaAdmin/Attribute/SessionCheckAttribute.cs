@@ -40,8 +40,8 @@ namespace AppSigmaAdmin.Attribute
             }
             else
             {
-                UserInfoEntity userInfo = (UserInfoEntity)filterContext.HttpContext.Session[SystemConst.SESSION_USER_INFO];
-                Logger.TraceInfo(Common.GetNowTimestamp(), userInfo.UserId, WindowName, null);
+                UserInfoAdminEntity userInfoAdmin = (UserInfoAdminEntity)filterContext.HttpContext.Session[SystemConst.SESSION_USER_INFO_ADMIN];
+                Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);
             }
         }
     }

@@ -21,9 +21,9 @@ namespace AppSigmaAdmin.Library
         public const string SESSION_SIGMA_TOKEN = "SigmaToken";
 
         /// <summary>
-        /// セッション名（ユーザ情報）
+        /// セッション名（管理ユーザ情報）
         /// </summary>
-        public const string SESSION_USER_INFO = "UserInfo";
+        public const string SESSION_USER_INFO_ADMIN = "UserInfoAdmin";
 
         /// <summary>
         /// HTTP通信(POST)
