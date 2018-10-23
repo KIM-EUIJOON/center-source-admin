@@ -1,36 +1,69 @@
-﻿@using AppSigmaAdmin.Utility
+﻿@model AppSigmaAdmin.Models.UserInfoModel
+@using AppSigmaAdmin.Utility
 
 @section style {
     <style>
-
-        .menuBox {
+        .userInfoBox {
+            width: 550px;
             margin-top: 45px;
-            margin-left: 20%;
+            margin-left: 33%;
             padding: 40px;
             padding-top: 50px;
-            font-size: 15pt;
+            text-align: center;
+            background-color: #ffffff;
+            border-radius: 3px;
+            box-shadow: 0px 0px 1px 1px #dddddd;
         }
 
-        table.menuTable {
-            width: 800px;
+        input {
+            width:250px
+            
         }
 
-            table.menuTable tr {
-                height: 50px;
-            }
+        .validation-summary-errors {
+            color: #ff0000;
+            text-align: left;
+        }
 
-            table.menuTable th {
-                width: 100px;
-            }
+        .validation-summary-valid ul:first-line {
+            display: none;
+        }
+
+        #errorMessage {
+            padding-top: 10px;
+        }
+
+        #message {
+            font-size:18px;
+            padding-bottom: 10px;
+        }
     </style>
 }
 
 @section funcTitle {
     <div class="funcTitleBer">
-        メニュー
+        ユーザ情報参照
     </div>
 }
+<form action="@Common.CreateUrl("/UserInfo", false)" method="post">
+    @Html.AntiForgeryToken()
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="clearfix">
+                メールアドレス（完全一致）：
+                @Html.TextBoxFor(m => m.MailAddress, new { placeholder = "メールアドレス", required = "required" })
+                @Html.ValidationMessageFor(m => m.MailAddress)
+            </div>
+            <div class="clearfix" id="errorMessage">
+                @Html.ValidationSummary(false, "")
+            </div>
+            <div class="clearfix" id="message">
+                @Html.Label(ViewData["message"].ToString())
+            </div>
+            <div class="clearfix">
+                <input type="submit" value="照会" class="action-enter" style="margin-bottom:10px" />
+            </div>
+        </div>
+    </div>
 
-<div class="ContentsBase">
-    ユーザ情報
-</div>
+</form>
