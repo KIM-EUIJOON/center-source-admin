@@ -67,59 +67,5 @@ namespace AppSigmaAdmin.Utility
                 if (tdesProvider != null) tdesProvider.Dispose();
             }
         }
-
-        /// <summary>
-        /// 復号化
-        /// </summary>
-        /// <param name="applicationId">アプリケーションID</param>
-        /// <param name="targetBuff">復号化対象の文字列</param>
-        /// <returns>復号化された文字列</returns>
-        public static String Decryption(string applicationId, string targetBuff)
-        {
-            TripleDESCryptoServiceProvider tdesProvider = null;
-            MemoryStream ms = null;
-            CryptoStream cs = null;
-
-            try
-            {
-                // TripleDESサービスプロバイダを生成 
-                tdesProvider = new TripleDESCryptoServiceProvider();
-
-                // 復号対象文字列をバイト配列に変換
-                byte[] byteBuff = System.Convert.FromBase64String(targetBuff);
-
-                // 暗号化キーをバイト配列に変換
-                byte[] byteDesKey = Encoding.UTF8.GetBytes(applicationId);
-
-                // ベクターをバイト配列に変換
-                byte[] byteDesIV = Encoding.UTF8.GetBytes(EncryptIV);
-
-                // CryptoStreamを生成
-                ms = new MemoryStream();
-                cs = new CryptoStream(ms, tdesProvider.CreateDecryptor(byteDesKey, byteDesIV), CryptoStreamMode.Write);
-
-                // 対象文字列を復号化してCryptoStreamに格納
-                cs.Write(byteBuff, 0, byteBuff.Length);
-                cs.FlushFinalBlock();
-
-                // 復号化されたデータをbyte配列で取得 
-                byte[] decryptData = ms.ToArray();
-
-                // 復号化されたデータを文字列に変換して返却
-                return Encoding.UTF8.GetString(decryptData);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                //ガベージコレクションに委ねる
-                //ms.Close();
-                //cs.Close();
-                tdesProvider.Dispose();
-            }
-
-        }
     }
 }

@@ -185,7 +185,6 @@
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
     <Compile Include="Utility\Crypto.cs" />
-    <Compile Include="Utility\DbAccessUserInfo.cs" />
     <Compile Include="Models\UserInfoEntity.cs" />
     <Compile Include="ResponseData\LoginResponseEntity.cs" />
     <Compile Include="Models\LoginModel.cs" />

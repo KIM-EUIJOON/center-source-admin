@@ -15,17 +15,11 @@ namespace AppSigmaAdmin.Models
 
         /// <summary>メールアドレス</summary>
         public string EMailAddress { get; set; }
-
-        /// <summary>パスワード</summary>
-        public string Password { get; set; }
         
         /// <summary>氏名</summary>
         public string Name { get; set; }
 
-        /// <summary>ログイン失敗回数</summary>
-        public int? FailureCount { get; set; }
-
-        /// <summary>ログイン失敗日時</summary>
-        public DateTime? FailureDatetime { get; set; }
+        /// <summary>権限</summary>
+        public string Role { get; set; }
     }
 }
