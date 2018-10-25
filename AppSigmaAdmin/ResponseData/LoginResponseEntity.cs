@@ -20,12 +20,6 @@ namespace AppSigmaAdmin.ResponseData
         public string ProcCode { get; set; }
 
         /// <summary>
-        /// 処理結果詳細コード
-        /// </summary>
-        [DataMember(Name = "detailCode")]
-        public string DetailCode { get; set; }
-
-        /// <summary>
         /// 処理結果メッセージ
         /// </summary>
         [DataMember(Name = "procMsg")]
@@ -42,5 +36,17 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         [DataMember(Name = "userId")]
         public string UserId { get; set; }
+
+        /// <summary>
+        /// 名前
+        /// </summary>
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 権限
+        /// </summary>
+        [DataMember(Name = "role")]
+        public string Role { get; set; }
     }
 }

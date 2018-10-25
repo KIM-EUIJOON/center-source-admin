@@ -20,7 +20,7 @@
             }
 
             table.menuTable th {
-                width: 100px;
+                width: 150px;
             }
     </style>
 }
@@ -35,13 +35,18 @@
     <div class="menuBox">
         <table class="menuTable">
             <tr>
+                <th><a href="@Common.CreateUrl("/UserInfo", false)">ユーザ情報参照</a></th>
+                <td>：ユーザ情報の閲覧</td>
+            </tr>
+
+            @*<tr>
                 <th><a href="@Common.CreateUrl("/PaymentManage", false)">決済管理</a></th>
                 <td>：決済状況の管理、決済情報の出力</td>
             </tr>
             <tr>
                 <th><a href="@Common.CreateUrl("/OperationMonitoring", false)">運用監視</a></th>
                 <td>：プロジェクトΣシステムの各種リソースの監視、運用レポート出力</td>
-            </tr>
+            </tr>*@
         </table>
     </div>
 </div>

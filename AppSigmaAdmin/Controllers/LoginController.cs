@@ -54,7 +54,7 @@ namespace AppSigmaAdmin.Controllers
             // TODO:バージョンチェックAPIではアプリのみのため、暫定でアプリバージョンをセット
             serv.DicHttpHeader.Add("aplVersion", "MyRoute:A:0.0.2");
 
-            string responseJson = serv.HttpCon("Api/Login", requestJson);
+            string responseJson = serv.HttpCon("Api/AdminLogin", requestJson);
 
             if (!string.IsNullOrEmpty(responseJson) && serv.HttpResponseStatusCode == "OK")
             {
@@ -72,23 +72,20 @@ namespace AppSigmaAdmin.Controllers
                     return View(model);
                 }
 
-                UserInfoModel userInfoModel = new UserInfoModel();
-                UserInfoEntity userInfo = userInfoModel.GetUserInfoModel(response.UserId);
-
-                // ロールIDが管理者か
-                if (userInfo.RoleId != SystemConst.ROLE_ID_ADMIN)
+                UserInfoAdminEntity userInfo = new UserInfoAdminEntity()
                 {
-                    ModelState.AddModelError("", "管理者のみログイン可能です。");
-                }
-                else
-                {
-                    Logger.TraceInfo(Common.GetNowTimestamp(), response.UserId, "管理者画面ログイン成功", null);
-                    ViewBag.ErrorMessage = "";
-                    HttpContext.Session.Add(SystemConst.SESSION_SIGMA_TOKEN, response.Token);
-                    HttpContext.Session.Add(SystemConst.SESSION_USER_INFO, userInfo);
+                    AdminId = response.UserId,
+                    EMailAddress = model.MailAddress,
+                    Name = response.Name,
+                    Role = response.Role
+                };
 
-                    return Redirect(Common.CreateUrl("/Menu"));
-                }
+                Logger.TraceInfo(Common.GetNowTimestamp(), response.UserId, "管理者画面ログイン成功", null);
+                ViewBag.ErrorMessage = "";
+                HttpContext.Session.Add(SystemConst.SESSION_SIGMA_TOKEN, response.Token);
+                HttpContext.Session.Add(SystemConst.SESSION_USER_INFO_ADMIN, userInfo);
+
+                return Redirect(Common.CreateUrl("/Menu"));
             }
             // ログインAPIでタイムアウト
             else if (serv.HttpResponseStatusCode == SystemConst.HTTP_STATUS_CODE_TIMEOUT)

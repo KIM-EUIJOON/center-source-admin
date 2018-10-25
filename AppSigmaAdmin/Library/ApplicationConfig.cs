@@ -49,6 +49,11 @@ namespace AppSigmaAdmin.Library
         /// </summary>
         private const string AZURE_MONITOR_URI = "AzureMonitorURI";
 
+        /// <summary>
+        /// アプリケーションID
+        /// </summary>
+        private const string APPLICATION_ID = "ApplicationID";
+
 
         #region パブリックメソッド
 
@@ -126,6 +131,17 @@ namespace AppSigmaAdmin.Library
             get
             {
                 return GetString(AZURE_MONITOR_URI);
+            }
+        }
+
+        /// <summary>
+        /// アプリケーションID
+        /// </summary>
+        public static string ApplicationID
+        {
+            get
+            {
+                return GetString(APPLICATION_ID);
             }
         }
 
