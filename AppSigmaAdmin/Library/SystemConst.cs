@@ -11,9 +11,10 @@ namespace AppSigmaAdmin.Library
     public class SystemConst
     {
         /// <summary>
-        /// ロールID（管理者）
+        /// アプリバージョン
         /// </summary>
-        public const string ROLE_ID_ADMIN = "9";
+        /// <remarks>作成時時点（20181026）では、真ん中文字が「C」の場合、アプリバージョンはチェックしていない</remarks>
+        public const string APL_VERSION = "MyRoute:C:0.0.1";
 
         /// <summary>
         /// セッション名（トークン）

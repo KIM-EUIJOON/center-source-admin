@@ -51,8 +51,7 @@ namespace AppSigmaAdmin.Controllers
 
             // HTTP通信
             SendHttpRequest serv = new SendHttpRequest(server);
-            // TODO:バージョンチェックAPIではアプリのみのため、暫定でアプリバージョンをセット
-            serv.DicHttpHeader.Add("aplVersion", "MyRoute:A:0.0.2");
+            serv.DicHttpHeader.Add("aplVersion", SystemConst.APL_VERSION);
 
             string responseJson = serv.HttpCon("Api/AdminLogin", requestJson);
 
