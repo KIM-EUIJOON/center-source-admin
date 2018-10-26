@@ -40,6 +40,8 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index(UserInfoModel model)
         {
             ViewData["message"] = "";
+            UserInfoAdminEntity userInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            Logger.TraceInfo(Common.GetNowTimestamp(), userInfo.AdminId, "ユーザ情報画面-ID紐づけ実施", null);
 
             if (string.IsNullOrEmpty(model.MailAddress))
             {
