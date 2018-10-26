@@ -31,10 +31,13 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "運用監視画面")]
         public ActionResult Index()
         {
+            // URL直叩きされた場合を考慮して、、エラーを表示する
+            throw new HttpException(404, "Not Found");
+
             // 画面表示時に事前設定は不要
             // 運用レポート出力の年月を事前設定/前回指定値を設定する場合はこちらで。
 
-            return View();
+            //return View();
         }
 
         /// <summary>

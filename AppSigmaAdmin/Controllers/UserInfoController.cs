@@ -23,6 +23,7 @@ namespace AppSigmaAdmin.Controllers
         /// ユーザ情報画面
         /// </summary>
         /// <returns>ログイン画面</returns>
+        [SessionCheck(WindowName = "ユーザ情報画面")]
         public ActionResult Index()
         {
             ViewData["message"] = "";

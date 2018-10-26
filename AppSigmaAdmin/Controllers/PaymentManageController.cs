@@ -30,7 +30,10 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "決済管理画面")]
         public ActionResult Index()
         {
-            return View();
+            // URL直叩きされた場合を考慮して、、エラーを表示する
+            throw new HttpException(404, "Not Found");
+
+            //return View();
         }
 
         /// <summary>
