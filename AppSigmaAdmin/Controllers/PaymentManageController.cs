@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,7 +30,10 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "決済管理画面")]
         public ActionResult Index()
         {
-            return View();
+            // URL直叩きされた場合を考慮して、、エラーを表示する
+            throw new HttpException(404, "Not Found");
+
+            //return View();
         }
 
         /// <summary>
@@ -141,4 +144,4 @@ namespace AppSigmaAdmin.Controllers
             }
         }
     }
-}
+}*/

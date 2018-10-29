@@ -23,6 +23,7 @@ namespace AppSigmaAdmin.Controllers
         /// ユーザ情報画面
         /// </summary>
         /// <returns>ログイン画面</returns>
+        [SessionCheck(WindowName = "ユーザ情報画面")]
         public ActionResult Index()
         {
             ViewData["message"] = "";
@@ -39,6 +40,8 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index(UserInfoModel model)
         {
             ViewData["message"] = "";
+            UserInfoAdminEntity userInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            Logger.TraceInfo(Common.GetNowTimestamp(), userInfo.AdminId, "ユーザ情報画面-ID紐づけ実施", null);
 
             if (string.IsNullOrEmpty(model.MailAddress))
             {
