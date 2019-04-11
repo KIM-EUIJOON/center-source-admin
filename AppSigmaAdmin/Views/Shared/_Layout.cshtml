@@ -19,9 +19,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <title>プロジェクトΣ</title>
-    <link href="/sigma/Content/Site.css" rel="stylesheet" />
-    <link href="/sigma/Content/bootstrap.css" rel="stylesheet">
-    <script src="/sigma/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="@Common.CreateUrl("/Content/Site.css", false)" rel="stylesheet" />
+    <link href="@Common.CreateUrl("/Content/bootstrap.css", false)" rel="stylesheet">
+    <script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>
 
     @*@Styles.Render("~/sigma/Content/css")*@
     @RenderSection("Style", false)

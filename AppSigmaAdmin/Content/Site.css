@@ -96,6 +96,12 @@ section#header {
         background-color: #84bffe;
     }
 
+
+    section#body {
+
+    }
+
+
 input[type="submit"].action-menu,
 input[type="button"].action-menu,
 button.action-menu {
