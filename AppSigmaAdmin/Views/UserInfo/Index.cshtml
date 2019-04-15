@@ -32,182 +32,91 @@
         #errorMessage {
             padding-top: 10px;
         }
-
-        #message-left {
-            display: table-cell;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #1da4b8;
-            color: #ffffff;
-            background-color: #1da4b8;
-            vertical-align: middle;
-            width: 80px;
-            height:30px;
-        }
-        #message-right {
-            display: table-cell;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-right: solid 1px #1da4b8;
-            vertical-align: middle;
-            color: #ffffff;
-            background-color: #1da4b8;
-            width: 180px;
-            height: 30px;
-        }
-        #messagelong {
-            display: table-cell;
-            font-size: 16px;
-            color: #ffffff;
-            background-color: #1da4b8;
-            width: 180px;
-            height: 30px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #ffffff;
-            border-right: solid 1px #ffffff;
-            vertical-align: middle;
-        }
-        #messagebox {
-            display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #1da4b8;
-            border-right: solid 1px #1da4b8;
-            width: 80px;
-            height: 45px;
-        }
-        #messageboxlong {
-            display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #1da4b8;
-            border-right: solid 1px #1da4b8;
-            width: 180px;
-            height: 45px;
-        }
-        #messagebox-grey {
-            display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #1da4b8;
-            border-right: solid 1px #1da4b8;
-            width: 80px;
-            height: 45px;
-            background-color: #CCCCCC;
-            color: #666666;
-        }
-        #messageboxlong-grey {
-            display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 16px;
-            border-bottom: solid 1px #1da4b8;
-            border-left: solid 1px #1da4b8;
-            border-right: solid 1px #1da4b8;
-            width: 180px;
-            height: 45px;
-            background-color: #CCCCCC;
-            color: #666666;
-        }
-        #box {
-            display: table;
-            width: 440px;
-            margin-right: auto;
-            margin-left: auto;
-            border-collapse: collapse;
-        }
-        #box2 {
-            display: table;
-            width: 440px;
-            margin-right: auto;
-            margin-left: auto;
-            border-collapse: collapse;
-        }
     </style>
 }
-
-@section funcTitle {
-    <div class="funcTitleBer">
-        ユーザ情報参照
-    </div>
-}
-<form action="@Common.CreateUrl("/UserInfo", false)" method="post">
-    @Html.AntiForgeryToken()
-    <div class="ContentsBase">
-        <div class="userInfoBox">
-            <div class="clearfix">
-                メールアドレス（完全一致）：
-                @Html.TextBoxFor(m => m.MailAddress, new { placeholder = "メールアドレス", required = "required" })
-                @Html.ValidationMessageFor(m => m.MailAddress)
-            </div>
-            <div class="clearfix" id="errorMessage">
-            </div>
-            <div class="clearfix">
-                <input type="submit" value="照会" class="action-enter" />
-            </div>
-            <div class="clearfix" id="errorMessage">
-                @Html.ValidationSummary(false, "")
-            </div>
-            @if (Model != null)
-            {
-                if (Model.UserIdInfoList != null)
+<html>
+<head>
+    <link rel="stylesheet" href="~/Content/Site.css">
+    </head>
+<body>
+    @section funcTitle {
+        <div class="funcTitleBer">
+            ユーザ情報参照
+        </div>
+    }
+    <form action="@Common.CreateUrl("/UserInfo", false)" method="post">
+        @Html.AntiForgeryToken()
+        <div class="ContentsBase">
+            <div class="userInfoBox">
+                <div class="clearfix">
+                    メールアドレス（完全一致）：
+                    @Html.TextBoxFor(m => m.MailAddress, new { placeholder = "メールアドレス", required = "required" })
+                    @Html.ValidationMessageFor(m => m.MailAddress)
+                </div>
+                <div class="clearfix" id="errorMessage">
+                </div>
+                <div class="clearfix">
+                    <input type="submit" value="照会" class="action-enter" />
+                </div>
+                <div class="clearfix" id="errorMessage">
+                    @Html.ValidationSummary(false, "")
+                </div>
+                @if (Model != null)
                 {
-                    <div class="clearfix" id="box2">
-                        <div class="clearfix" id="message-left">
-                            ユーザID
-                        </div>
-                        <div class="clearfix" id="messagelong">
-                            作成日時
-                        </div>
-                        <div class="clearfix" id="message-right">
-                            退会日時
-                        </div>
-                    </div>
-                    foreach (var IdResultList in Model.UserIdInfoList)
+                    if (Model.UserIdInfoList != null)
                     {
-                        string userid = IdResultList.UserId.ToString();
-                        string useridcreatetime = IdResultList.CreateDatetime.ToString();
-                        string deletedate = IdResultList.DeleteDate.ToString();
-                        @*退会日時判定*@
-                        if (!deletedate.Contains("―"))
-                        {
-                            @*退会していない場合は染色なしで記載する*@
-                            <div class="clearfix" id="box">
-                                <div class="clearfix" id="messagebox-grey">
-                                    @userid
-                                </div>
-                                <div class="clearfix" id="messageboxlong-grey">
-                                    @useridcreatetime
-                                </div>
-                                <div class="clearfix" id="messageboxlong-grey">
-                                    @deletedate
-                                </div>
+                        <div class="TableContent">
+                            <div class="TableCellContent-left">
+                                ユーザID
                             </div>
-                        }
-                        else
-                        {
-                            @*退会済みの場合は退会日時を記載し、行を灰色に染色して表示する*@
-                            <div class="clearfix" id="box">
-                                <div class="clearfix" id="messagebox">
-                                    @userid
-                                </div>
-                                <div class="clearfix" id="messageboxlong">
-                                    @useridcreatetime
-                                </div>
-                                <div class="clearfix" id="messageboxlong">
-                                    @deletedate
-                                </div>
+                            <div class="TableCellContent-center">
+                                作成日時
                             </div>
+                            <div class="TableCellContent-right">
+                                退会日時
+                            </div>
+                        </div>
+                        foreach (var IdResultList in Model.UserIdInfoList)
+                        {
+                            string userid = IdResultList.UserId.ToString();
+                            string useridcreatetime = IdResultList.CreateDatetime.ToString();
+                            string deletedate = IdResultList.DeleteDate.ToString();
+                            @*退会日時判定*@
+                            if (!deletedate.Contains("―"))
+                            {
+                                @*退会していない場合は染色なしで記載する*@
+                                <div class="Table">
+                                    <div class="TableCell-greyout">
+                                        @userid
+                                    </div>
+                                    <div class="TableCelllong-greyout">
+                                        @useridcreatetime
+                                    </div>
+                                    <div class="TableCelllong-greyout">
+                                        @deletedate
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @*退会済みの場合は退会日時を記載し、行を灰色に染色して表示する*@
+                                <div class="Table">
+                                    <div class="TableCell">
+                                        @userid
+                                    </div>
+                                    <div class="TableCellLong">
+                                        @useridcreatetime
+                                    </div>
+                                    <div class="TableCellLong">
+                                        @deletedate
+                                    </div>
+                                </div>
+                            }
                         }
                     }
                 }
-            }
+            </div>
         </div>
-        </div>
-            </form>
+    </form>
+</body>
+</html>
