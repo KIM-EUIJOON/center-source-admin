@@ -5,30 +5,15 @@
 
 @section style {
     <style>
-
-        input[type="text"],
-        input[type="password"] {
-            border: 1px solid #bbbbbb;
-            padding-left: 5px;
-            padding-top: 2px;
-            padding-bottom: 2px;
-            margin-left: 2px;
-            font-size: 12pt;
-            height: 35px;
-            border-radius: 3px;
-            width: 445px;
+        .std-textbox {
+            width: 400px;
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
         }
-
-            input[type="text"]::-moz-placeholder,
-            input[type="password"]::-moz-placeholder {
-                color: #aaaaaa;
-            }
 
         .loginBox {
             width: 550px;
             margin-top: 45px;
-            /*margin-left: 33%;*/
-            /*padding: 40px;*/
             padding-top: 50px;
             text-align: center;
             background-color: #ffffff;
@@ -57,20 +42,21 @@
         <div class="loginBox">
             <div class="clearfix">
                 アカウント：
-                @Html.TextBoxFor(m => m.MailAddress, new { placeholder = "アカウント", required = "required" })
+                @Html.TextBoxFor(m => m.MailAddress, new {Class = "std-textbox", placeholder = "アカウント", required = "required" })
                 @Html.ValidationMessageFor(m => m.MailAddress)
             </div>
             <br />
             <div class="clearfix">
                 パスワード：
-                @Html.PasswordFor(m => m.Password, new { placeholder = "パスワード", required = "required", autocomplete = "off" })
+                @Html.PasswordFor(m => m.Password, new {Class = "std-textbox", placeholder = "パスワード", required = "required", autocomplete = "off" })
                 @Html.ValidationMessageFor(m => m.Password)
             </div>
-            <div class="clearfix" style="text-align:left; height:50px; padding-top:15px;">
+            <div class="clearfix" style="text-align:left; padding-top:15px;">
                 @Html.ValidationSummary(false, "")
             </div>
-            <div class="clearfix">
-                <input type="submit" value="ログイン" class="action-enter" style="margin-bottom:10px" />
+            <div>
+                <input type="submit" value="ログイン" class="accent-color-button" style="margin-bottom:10px" />
             </div>
+            <br />
         </div>
 </form>

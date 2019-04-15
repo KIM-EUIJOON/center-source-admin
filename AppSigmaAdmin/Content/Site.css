@@ -242,24 +242,61 @@ button.action-menu {
     margin-top: -10px;
 }
 
-/* 明るい青色のコマンドボタン */
+/* メインカラー（青系）のコマンドボタン */
 input[type="submit"].action-enter,
 input[type="button"].action-enter,
 button.action-enter {
     width: 200px;
     font-size: 12pt;
     text-align: center;
-    /*background: none;*/
-    /*border: none;*/
-    /*background-color: rgb(54,193,244);*/
-    border-radius: 3px;
-    /*color: #ffffff;*/
+    border: none;
+    background-color: #1da4b8;
+    color: white;
+    border-radius: 25px;
     font-weight: bold !important;
     height: 35px;
     line-height: 35px;
     cursor: pointer;
-    /*box-shadow: 0px 0px 1px 1px #dddddd;*/
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
 }
+
+
+/* アクセントカラーのコマンドボタン */
+input[type="submit"].accent-color-button,
+input[type="button"].accent-color-button,
+button.accent-color-button {
+    width: 200px;
+    font-size: 12pt;
+    text-align: center;
+    border: none;
+    background-color: #f42f66;
+    color: white;
+    border-radius: 25px;
+    font-weight: bold !important;
+    height: 35px;
+    line-height: 35px;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+}
+
+
+input[type="text"].std-textbox,
+input[type="password"].std-textbox {
+    border: 1px solid #bbbbbb;
+    padding-left: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-left: 2px;
+    font-size: 12pt;
+    height: 30px;
+    border-radius: 3px;
+}
+
+    input[type="text"]::-moz-placeholder,
+    input[type="password"]::-moz-placeholder {
+        color: #bbbbbb;
+    }
+
 
 
 .funcTitleBer {

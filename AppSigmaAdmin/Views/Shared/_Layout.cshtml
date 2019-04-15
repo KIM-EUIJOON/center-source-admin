@@ -55,15 +55,23 @@
                 <div class="logoutCaption">
                     <a href="@Common.CreateUrl("/Logout", false)">ログアウト</a>
                 </div>
+                if (controllerName != "Menu")
+                {
+                    <div class="logoutCaption">
+                        <a href="@Common.CreateUrl("/Menu", false)">メニューへ</a>
+                    </div>
+                }
                 <div class="loginCaption">
                     <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
                 </div>
 
                 if (controllerName != "Menu")
                 {
+                    <!--
                     <div class="toMenuCaption">
                         <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>
                     </div>
+                    -->
                 }
             }
 
