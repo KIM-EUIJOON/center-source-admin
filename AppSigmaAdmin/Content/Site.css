@@ -2,6 +2,7 @@
     width: 100%;
     /*background-color: rgb(245,245,245) !important;*/
     height: 100%;
+    font-family: "ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","メイリオ",Meiryo,"ＭＳ Ｐゴシック","MS PGothic",sans-serif;
 }
 
 body {
@@ -9,7 +10,7 @@ body {
     margin: 0 auto;
     width: 100%;
     height: 100%;
-    /*background-color: rgb(245,245,245);*/
+    background-color: #FBFBFB;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -41,11 +42,17 @@ section#header {
         margin-left: auto;
         margin-right: auto;
         text-align: left;
-        display: table;
+        /*display: table;*/
         min-width: 100%;
-        height: 56px;
-        background-color: #000;
+        height: 48px;
+        background-color: #222222;
     }
+        section#header .headerBox .title {
+            color: white;
+            font-size: 18pt;
+            font-weight: bold;
+            padding-top: 10px;
+        }
 
         section#header .headerBox .toMenuCaption {
             float: right;
@@ -53,29 +60,34 @@ section#header {
             padding-top: 20px;
             padding-right: 10px;
             border-right: 1px solid #393939;
-            height: 56px;
+            /*height: 56px;*/
             border-right-color: #666666;
             border-left-color: #666666;
         }
 
         section#header .headerBox .loginCaption {
             float: right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: inherit;
             font-size: 11pt;
-            padding-top: 20px;
             padding-right: 10px;
             padding-left: 10px;
         }
 
         section#header .headerBox .logoutCaption {
             float: right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 11pt;
             color: #ffffff;
-            padding-top: 20px;
-            padding-left: 10px;
-            padding-right: 10px;
+            padding-left: 15px;
+            padding-right: 15px;
             border-left: 1px solid #393939;
             border-right: 1px solid #393939;
-            height: 56px;
+            height: inherit;
             border-right-color: #666666;
             border-left-color: #666666;
         }
@@ -88,6 +100,14 @@ section#header {
                 text-decoration: none;
                 color: #ffffff;
             }
+
+    section#header .headerBoxSub {
+        background-color: #1da4b8;
+        color: white;
+        height: 55px;
+        text-align: center;
+        margin-bottom:30px;
+    }
 
     section#header .headerLine {
         width: 100%;
@@ -140,7 +160,12 @@ button.action-enter {
 
 
 .funcTitleBer {
-    font-size: 20pt;
-    padding-top: 20px;
-    margin-left: 20%;
+    font-size: 19pt;
+    padding-top: 10px;
+}
+
+.clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
 }

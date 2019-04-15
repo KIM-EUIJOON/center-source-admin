@@ -20,7 +20,10 @@
     <meta name="robots" content="noindex">
     <title>プロジェクトΣ</title>
     <link href="@Common.CreateUrl("/Content/Site.css", false)" rel="stylesheet" />
+    <!--
     <link href="@Common.CreateUrl("/Content/bootstrap.css", false)" rel="stylesheet">
+    -->
+
     <script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>
 
     @*@Styles.Render("~/sigma/Content/css")*@
@@ -46,7 +49,7 @@
 <body>
     <section id="header">
         <div class="headerBox">
-            <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>
+            <img src="~/Images/hdr_logo_w.png" style="width:120px; float:left; margin-left:5px;" />
             @if (!string.IsNullOrEmpty(controllerName) && controllerName != "Login")
             {
                 <div class="logoutCaption">
@@ -63,11 +66,39 @@
                     </div>
                 }
             }
+
+
+
+            <div class="title">Management Console</div>
+
+            <!--
+    <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>
+    @if (!string.IsNullOrEmpty(controllerName) && controllerName != "Login")
+    {
+        <div class="logoutCaption">
+            <a href="@Common.CreateUrl("/Logout", false)">ログアウト</a>
+        </div>
+        <div class="loginCaption">
+            <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
+        </div>
+
+        if (controllerName != "Menu")
+        {
+            <div class="toMenuCaption">
+                <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>
+            </div>
+        }
+    }
+    -->
+
+        </div>
+        <div class="headerBoxSub">
+            @RenderSection("funcTitle")
         </div>
     </section>
 
     <section id="funcTitle">
-        @RenderSection("funcTitle")
+        @* RenderSection("funcTitle") *@
     </section>
 
     <section id="body">
