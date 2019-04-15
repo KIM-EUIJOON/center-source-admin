@@ -1,23 +1,27 @@
-﻿@model AppSigmaAdmin.Models.UserInfoModel
+﻿@model AppSigmaAdmin.Models.ResonsID
 @using AppSigmaAdmin.Utility
+@using System.Data
 
 @section style {
     <style>
+        .std-textbox {
+            width: 400px;
+        }
+
         .userInfoBox {
-            width: 550px;
+            width: 700px;
             margin-top: 45px;
-            margin-left: 33%;
-            padding: 40px;
             padding-top: 50px;
+            padding-bottom: 50px;
             text-align: center;
             background-color: #ffffff;
             border-radius: 3px;
             box-shadow: 0px 0px 1px 1px #dddddd;
+            margin: 0 auto;
         }
 
         input {
-            width:250px
-            
+            width: 250px
         }
 
         .validation-summary-errors {
@@ -32,38 +36,91 @@
         #errorMessage {
             padding-top: 10px;
         }
-
-        #message {
-            font-size:18px;
-            padding-bottom: 10px;
-        }
     </style>
 }
-
-@section funcTitle {
-    <div class="funcTitleBer">
-        ユーザ情報参照
-    </div>
-}
-<form action="@Common.CreateUrl("/UserInfo", false)" method="post">
-    @Html.AntiForgeryToken()
-    <div class="ContentsBase">
-        <div class="userInfoBox">
-            <div class="clearfix">
-                メールアドレス（完全一致）：
-                @Html.TextBoxFor(m => m.MailAddress, new { placeholder = "メールアドレス", required = "required" })
-                @Html.ValidationMessageFor(m => m.MailAddress)
-            </div>
-            <div class="clearfix" id="errorMessage">
-                @Html.ValidationSummary(false, "")
-            </div>
-            <div class="clearfix" id="message">
-                @Html.Label(ViewData["message"].ToString())
-            </div>
-            <div class="clearfix">
-                <input type="submit" value="照会" class="action-enter" style="margin-bottom:10px" />
+<html>
+<head>
+    <link rel="stylesheet" href="~/Content/Site.css">
+    </head>
+<body>
+    @section funcTitle {
+        <div class="funcTitleBer">
+            ユーザ情報参照
+        </div>
+    }
+    <form action="@Common.CreateUrl("/UserInfo", false)" method="post">
+        @Html.AntiForgeryToken()
+        <div class="ContentsBase">
+            <div class="userInfoBox">
+                <div class="clearfix">
+                    メールアドレス（完全一致）：
+                    @Html.TextBoxFor(m => m.MailAddress, new { Class = "std-textbox", placeholder = "メールアドレス", required = "required" })
+                    @Html.ValidationMessageFor(m => m.MailAddress)
+                </div>
+                <div class="clearfix" id="errorMessage">
+                </div>
+                <div class="clearfix">
+                    <input type="submit" value="照会" class="accent-color-button" />
+                </div>
+                <div class="clearfix" id="errorMessage">
+                    @Html.ValidationSummary(false, "")
+                </div>
+                @if (Model != null)
+                {
+                    if (Model.UserIdInfoList != null)
+                    {
+                        <div class="TableContent">
+                            <div class="TableCellContent-left">
+                                ユーザID
+                            </div>
+                            <div class="TableCellContent-center">
+                                作成日時
+                            </div>
+                            <div class="TableCellContent-right">
+                                退会日時
+                            </div>
+                        </div>
+                        foreach (var IdResultList in Model.UserIdInfoList)
+                        {
+                            string userid = IdResultList.UserId.ToString();
+                            string useridcreatetime = IdResultList.CreateDatetime.ToString();
+                            string deletedate = IdResultList.DeleteDate.ToString();
+                            @*退会日時判定*@
+                            if (!deletedate.Contains("―"))
+                            {
+                                @*退会していない場合は染色なしで記載する*@
+                                <div class="Table">
+                                    <div class="TableCell-greyout">
+                                        @userid
+                                    </div>
+                                    <div class="TableCelllong-greyout">
+                                        @useridcreatetime
+                                    </div>
+                                    <div class="TableCelllong-greyout">
+                                        @deletedate
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @*退会済みの場合は退会日時を記載し、行を灰色に染色して表示する*@
+                                <div class="Table">
+                                    <div class="TableCell">
+                                        @userid
+                                    </div>
+                                    <div class="TableCellLong">
+                                        @useridcreatetime
+                                    </div>
+                                    <div class="TableCellLong">
+                                        @deletedate
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                }
             </div>
         </div>
-    </div>
-
-</form>
+    </form>
+</body>
+</html>

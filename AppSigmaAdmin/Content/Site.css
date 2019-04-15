@@ -2,6 +2,7 @@
     width: 100%;
     /*background-color: rgb(245,245,245) !important;*/
     height: 100%;
+    font-family: "ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro","メイリオ",Meiryo,"ＭＳ Ｐゴシック","MS PGothic",sans-serif;
 }
 
 body {
@@ -9,7 +10,7 @@ body {
     margin: 0 auto;
     width: 100%;
     height: 100%;
-    /*background-color: rgb(245,245,245);*/
+    background-color: #FBFBFB;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -41,11 +42,17 @@ section#header {
         margin-left: auto;
         margin-right: auto;
         text-align: left;
-        display: table;
+        /*display: table;*/
         min-width: 100%;
-        height: 56px;
-        background-color: #000;
+        height: 48px;
+        background-color: #222222;
     }
+        section#header .headerBox .title {
+            color: white;
+            font-size: 18pt;
+            font-weight: bold;
+            padding-top: 10px;
+        }
 
         section#header .headerBox .toMenuCaption {
             float: right;
@@ -53,29 +60,34 @@ section#header {
             padding-top: 20px;
             padding-right: 10px;
             border-right: 1px solid #393939;
-            height: 56px;
+            /*height: 56px;*/
             border-right-color: #666666;
             border-left-color: #666666;
         }
 
         section#header .headerBox .loginCaption {
             float: right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: inherit;
             font-size: 11pt;
-            padding-top: 20px;
             padding-right: 10px;
             padding-left: 10px;
         }
 
         section#header .headerBox .logoutCaption {
             float: right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 11pt;
             color: #ffffff;
-            padding-top: 20px;
-            padding-left: 10px;
-            padding-right: 10px;
+            padding-left: 15px;
+            padding-right: 15px;
             border-left: 1px solid #393939;
             border-right: 1px solid #393939;
-            height: 56px;
+            height: inherit;
             border-right-color: #666666;
             border-left-color: #666666;
         }
@@ -89,12 +101,129 @@ section#header {
                 color: #ffffff;
             }
 
+    section#header .headerBoxSub {
+        background-color: #1da4b8;
+        color: white;
+        height: 55px;
+        text-align: center;
+        margin-bottom:30px;
+    }
+
     section#header .headerLine {
         width: 100%;
         height: 3px;
         /* background-color: #8ec9fe; */
         background-color: #84bffe;
     }
+
+
+    section#body {
+                width: 100%;
+    }
+            section#body .TableCellContent-left {
+                display: table-cell;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                color: #ffffff;
+                background-color: #1da4b8;
+                vertical-align: middle;
+                width: 80px;
+                height: 30px;
+            }
+
+            section#body .TableCellContent-right {
+                display: table-cell;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                vertical-align: middle;
+                color: #ffffff;
+                background-color: #1da4b8;
+                width: 180px;
+                height: 30px;
+            }
+
+            section#body .TableCellContent-center {
+                display: table-cell;
+                font-size: 16px;
+                color: #ffffff;
+                background-color: #1da4b8;
+                width: 180px;
+                height: 30px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #ffffff;
+                border-right: solid 1px #ffffff;
+                vertical-align: middle;
+            }
+
+            section#body .TableCell {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 80px;
+                height: 45px;
+            }
+
+            section#body .TableCellLong {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 180px;
+                height: 45px;
+            }
+
+            section#body .TableCell-greyout {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 80px;
+                height: 45px;
+                background-color: #CCCCCC;
+                color: #666666;
+            }
+
+            section#body .TableCelllong-greyout {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 180px;
+                height: 45px;
+                background-color: #CCCCCC;
+                color: #666666;
+            }
+
+            section#body .Table {
+                display: table;
+                width: 440px;
+                margin-right: auto;
+                margin-left: auto;
+                border-collapse: collapse;
+            }
+
+            section#body .TableContent {
+                display: table;
+                width: 440px;
+                margin-right: auto;
+                margin-left: auto;
+                border-collapse: collapse;
+            }
 
 input[type="submit"].action-menu,
 input[type="button"].action-menu,
@@ -113,28 +242,70 @@ button.action-menu {
     margin-top: -10px;
 }
 
-/* 明るい青色のコマンドボタン */
+/* メインカラー（青系）のコマンドボタン */
 input[type="submit"].action-enter,
 input[type="button"].action-enter,
 button.action-enter {
     width: 200px;
     font-size: 12pt;
     text-align: center;
-    /*background: none;*/
-    /*border: none;*/
-    /*background-color: rgb(54,193,244);*/
-    border-radius: 3px;
-    /*color: #ffffff;*/
+    border: none;
+    background-color: #1da4b8;
+    color: white;
+    border-radius: 25px;
     font-weight: bold !important;
     height: 35px;
     line-height: 35px;
     cursor: pointer;
-    /*box-shadow: 0px 0px 1px 1px #dddddd;*/
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
 }
 
 
+/* アクセントカラーのコマンドボタン */
+input[type="submit"].accent-color-button,
+input[type="button"].accent-color-button,
+button.accent-color-button {
+    width: 200px;
+    font-size: 12pt;
+    text-align: center;
+    border: none;
+    background-color: #f42f66;
+    color: white;
+    border-radius: 25px;
+    font-weight: bold !important;
+    height: 35px;
+    line-height: 35px;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
+}
+
+
+input[type="text"].std-textbox,
+input[type="password"].std-textbox {
+    border: 1px solid #bbbbbb;
+    padding-left: 5px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    margin-left: 2px;
+    font-size: 12pt;
+    height: 30px;
+    border-radius: 3px;
+}
+
+    input[type="text"]::-moz-placeholder,
+    input[type="password"]::-moz-placeholder {
+        color: #bbbbbb;
+    }
+
+
+
 .funcTitleBer {
-    font-size: 20pt;
-    padding-top: 20px;
-    margin-left: 20%;
+    font-size: 19pt;
+    padding-top: 10px;
+}
+
+.clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
 }

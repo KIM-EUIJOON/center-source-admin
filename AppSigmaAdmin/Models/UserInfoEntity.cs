@@ -48,36 +48,54 @@ namespace AppSigmaAdmin.Models
     public class UserInfo
     {
         /// <summary>
-        /// 内部ID取得取得（完全一致）
+        /// 内部ID取得（完全一致）
         /// </summary>
         /// <param name="EncryptedEMail">暗号化されたメールアドレス</param>
         /// <returns>内部ID</returns>
-        public string GetUserInternalId(string EncryptedEMail)
+        public List<UserIdInfoRespons> GetUserInternalId(string EncryptedEMail)
         {
-            string result = null;
+            List<UserIdInfoRespons> result = new List<UserIdInfoRespons>();
 
             using (SqlDbInterface dbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("select top 1 UserId");
+                sb.AppendLine("select UserId, UpdateDatetime, DeleteFlag, CreateDatetime");
                 sb.AppendLine(" from UserDetailOid");
                 sb.AppendLine(" where EMailAddress = @EMailAddress");
-                sb.AppendLine(" and DeleteFlag = 0");
-                sb.AppendLine(" order by No DESC");
+                sb.AppendLine(" order by CreateDatetime DESC");
 
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.Add("@EMailAddress", SqlDbType.NVarChar).Value = EncryptedEMail;
 
                 DataTable dt = dbInterface.ExecuteReader(cmd);
 
-                if (dt != null && dt.Rows.Count > 0)
+                foreach (DataRow IdDataRow in dt.Rows)
                 {
-                    result = dt.Rows[0]["UserId"].ToString();
+                    UserIdInfoRespons userInfo = new UserIdInfoRespons();
+                    //UserID
+                    userInfo.UserId = IdDataRow["UserId"].ToString();
+                    //作成日時
+                    userInfo.CreateDatetime = IdDataRow["CreateDatetime"].ToString();
+
+                    Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
+                    //削除フラグ判定
+                    if (DeleteId== true)
+                    {
+                        //更新日時(退会日時)
+                        userInfo.DeleteDate = IdDataRow["UpdateDatetime"].ToString();
+                    }
+                    else 
+                    {
+                        //削除されていないため"―"を設定する
+                        userInfo.DeleteDate = "―";
+                    }
+                    result.Add(userInfo);
                 }
             }
 
             return result;
         }
+
     }
 }

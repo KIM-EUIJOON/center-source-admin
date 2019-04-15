@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -50,17 +51,23 @@ namespace AppSigmaAdmin.Controllers
                 return View(model);
             }
 
-            string response = new UserInfo().GetUserInternalId(Crypto.Encryption(ApplicationConfig.ApplicationID, model.MailAddress));
-            if (response != null)
+            List<UserIdInfoRespons> response = null;
+            response = new UserInfo().GetUserInternalId(Crypto.Encryption(ApplicationConfig.ApplicationID, model.MailAddress));
+            ResonsID info = new ResonsID();
+
+            if (response.Count > 0)
             {
-                ViewData["message"] = "内部ID：" + response;
+                //入力メールアドレス
+                info.MailAddress = model.MailAddress;
+                //検索結果
+                info.UserIdInfoList = response;
             }
             else
             {
                 ModelState.AddModelError("", "一致するアドレスがありませんでした。");
             }
-
-            return View(model);
+            return View(info);
         }
     }
+ 
 }
