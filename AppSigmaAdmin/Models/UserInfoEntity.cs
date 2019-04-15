@@ -78,9 +78,9 @@ namespace AppSigmaAdmin.Models
                     //作成日時
                     userInfo.CreateDatetime = IdDataRow["CreateDatetime"].ToString();
 
-                    string DeleteId= IdDataRow["DeleteFlag"].ToString();
+                    Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
                     //削除フラグ判定
-                    if (DeleteId== "True")
+                    if (DeleteId== true)
                     {
                         //更新日時(退会日時)
                         userInfo.DeleteDate = IdDataRow["UpdateDatetime"].ToString();

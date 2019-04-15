@@ -35,7 +35,7 @@ namespace AppSigmaAdmin.Models
         public string CreateDatetime { get; set; }
 
         /// <summary>
-        /// 削除フラグ
+        /// 削除日時
         /// </summary>
         public string DeleteDate { get; set; }
 
