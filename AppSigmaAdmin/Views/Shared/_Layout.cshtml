@@ -49,7 +49,7 @@
 <body>
     <section id="header">
         <div class="headerBox">
-            <img src="~/Images/hdr_logo_w.png" style="width:120px; float:left; margin-left:5px;" />
+            <img src="@Common.CreateUrl("/Images/hdr_logo_w.png",false)" style="width:120px; float:left; margin-left:5px;" />
             @if (!string.IsNullOrEmpty(controllerName) && controllerName != "Login")
             {
                 <div class="logoutCaption">
