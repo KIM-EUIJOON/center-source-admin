@@ -118,9 +118,112 @@ section#header {
 
 
     section#body {
-
+                width: 100%;
     }
+            section#body .TableCellContent-left {
+                display: table-cell;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                color: #ffffff;
+                background-color: #1da4b8;
+                vertical-align: middle;
+                width: 80px;
+                height: 30px;
+            }
 
+            section#body .TableCellContent-right {
+                display: table-cell;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                vertical-align: middle;
+                color: #ffffff;
+                background-color: #1da4b8;
+                width: 180px;
+                height: 30px;
+            }
+
+            section#body .TableCellContent-center {
+                display: table-cell;
+                font-size: 16px;
+                color: #ffffff;
+                background-color: #1da4b8;
+                width: 180px;
+                height: 30px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #ffffff;
+                border-right: solid 1px #ffffff;
+                vertical-align: middle;
+            }
+
+            section#body .TableCell {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 80px;
+                height: 45px;
+            }
+
+            section#body .TableCellLong {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 180px;
+                height: 45px;
+            }
+
+            section#body .TableCell-greyout {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 80px;
+                height: 45px;
+                background-color: #CCCCCC;
+                color: #666666;
+            }
+
+            section#body .TableCelllong-greyout {
+                display: table-cell;
+                text-align: center;
+                vertical-align: middle;
+                font-size: 16px;
+                border-bottom: solid 1px #1da4b8;
+                border-left: solid 1px #1da4b8;
+                border-right: solid 1px #1da4b8;
+                width: 180px;
+                height: 45px;
+                background-color: #CCCCCC;
+                color: #666666;
+            }
+
+            section#body .Table {
+                display: table;
+                width: 440px;
+                margin-right: auto;
+                margin-left: auto;
+                border-collapse: collapse;
+            }
+
+            section#body .TableContent {
+                display: table;
+                width: 440px;
+                margin-right: auto;
+                margin-left: auto;
+                border-collapse: collapse;
+            }
 
 input[type="submit"].action-menu,
 input[type="button"].action-menu,
