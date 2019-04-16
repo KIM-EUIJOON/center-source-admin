@@ -60,10 +60,14 @@ namespace AppSigmaAdmin.Models
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("select UserId, UpdateDatetime, DeleteFlag, CreateDatetime");
-                sb.AppendLine(" from UserDetailOid");
-                sb.AppendLine(" where EMailAddress = @EMailAddress");
-                sb.AppendLine(" order by CreateDatetime DESC");
+
+                sb.AppendLine("SELECT UserId, UpdateDatetime, DeleteFlag, CreateDatetime");
+                sb.AppendLine("FROM [dbo].[UserInfoOid]");
+                sb.AppendLine("WHERE [UserId] IN (");
+                sb.AppendLine("    SELECT UserId FROM [dbo].[UserDetailOid]");
+                sb.AppendLine("    WHERE EMailAddress = @EMailAddress");
+                sb.AppendLine(")");
+                sb.AppendLine("ORDER BY CreateDatetime DESC");
 
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.Add("@EMailAddress", SqlDbType.NVarChar).Value = EncryptedEMail;
@@ -100,3 +104,4 @@ namespace AppSigmaAdmin.Models
 
     }
 }
+ 
