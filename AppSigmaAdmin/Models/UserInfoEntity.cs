@@ -60,10 +60,14 @@ namespace AppSigmaAdmin.Models
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("select UserId, UpdateDatetime, DeleteFlag, CreateDatetime");
-                sb.AppendLine(" from UserDetailOid");
-                sb.AppendLine(" where EMailAddress = @EMailAddress");
-                sb.AppendLine(" order by CreateDatetime DESC");
+
+                sb.AppendLine("SELECT UserId, UpdateDatetime, DeleteFlag, CreateDatetime");
+                sb.AppendLine("FROM [dbo].[UserInfoOid]");
+                sb.AppendLine("WHERE [UserId] IN (");
+                sb.AppendLine("    SELECT UserId FROM [dbo].[UserDetailOid]");
+                sb.AppendLine("    WHERE EMailAddress = @EMailAddress");
+                sb.AppendLine(")");
+                sb.AppendLine("ORDER BY CreateDatetime DESC");
 
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.Add("@EMailAddress", SqlDbType.NVarChar).Value = EncryptedEMail;
@@ -75,15 +79,16 @@ namespace AppSigmaAdmin.Models
                     UserIdInfoRespons userInfo = new UserIdInfoRespons();
                     //UserID
                     userInfo.UserId = IdDataRow["UserId"].ToString();
-                    //作成日時
-                    userInfo.CreateDatetime = IdDataRow["CreateDatetime"].ToString();
 
+                    //作成日時
+                    userInfo.CreateDatetime = String.Format("{0:yyyy/MM/dd HH:mm:ss}", Common.Utc2JstTime((DateTime)IdDataRow["CreateDatetime"]));
                     Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
+
                     //削除フラグ判定
                     if (DeleteId== true)
                     {
                         //更新日時(退会日時)
-                        userInfo.DeleteDate = IdDataRow["UpdateDatetime"].ToString();
+                        userInfo.DeleteDate = String.Format("{0:yyyy/MM/dd HH:mm:ss}", Common.Utc2JstTime((DateTime)IdDataRow["UpdateDatetime"]));
                     }
                     else 
                     {
@@ -99,3 +104,4 @@ namespace AppSigmaAdmin.Models
 
     }
 }
+ 

@@ -130,6 +130,7 @@ section#header {
                 vertical-align: middle;
                 width: 80px;
                 height: 30px;
+                table-layout: fixed;
             }
 
             section#body .TableCellContent-right {
@@ -140,8 +141,9 @@ section#header {
                 vertical-align: middle;
                 color: #ffffff;
                 background-color: #1da4b8;
-                width: 180px;
+                width: 220px;
                 height: 30px;
+                table-layout: fixed;
             }
 
             section#body .TableCellContent-center {
@@ -149,12 +151,13 @@ section#header {
                 font-size: 16px;
                 color: #ffffff;
                 background-color: #1da4b8;
-                width: 180px;
+                width: 220px;
                 height: 30px;
                 border-bottom: solid 1px #1da4b8;
                 border-left: solid 1px #ffffff;
                 border-right: solid 1px #ffffff;
                 vertical-align: middle;
+                table-layout: fixed;
             }
 
             section#body .TableCell {
@@ -167,6 +170,7 @@ section#header {
                 border-right: solid 1px #1da4b8;
                 width: 80px;
                 height: 45px;
+                table-layout: fixed;
             }
 
             section#body .TableCellLong {
@@ -177,8 +181,9 @@ section#header {
                 border-bottom: solid 1px #1da4b8;
                 border-left: solid 1px #1da4b8;
                 border-right: solid 1px #1da4b8;
-                width: 180px;
+                width: 220px;
                 height: 45px;
+                table-layout: fixed;
             }
 
             section#body .TableCell-greyout {
@@ -193,6 +198,7 @@ section#header {
                 height: 45px;
                 background-color: #CCCCCC;
                 color: #666666;
+                table-layout: fixed;
             }
 
             section#body .TableCelllong-greyout {
@@ -203,26 +209,29 @@ section#header {
                 border-bottom: solid 1px #1da4b8;
                 border-left: solid 1px #1da4b8;
                 border-right: solid 1px #1da4b8;
-                width: 180px;
+                width: 220px;
                 height: 45px;
                 background-color: #CCCCCC;
                 color: #666666;
+                table-layout: fixed;
             }
 
             section#body .Table {
                 display: table;
-                width: 440px;
+                width: 520px;
                 margin-right: auto;
                 margin-left: auto;
                 border-collapse: collapse;
+                table-layout:fixed;
             }
 
             section#body .TableContent {
                 display: table;
-                width: 440px;
+                width: 520px;
                 margin-right: auto;
                 margin-left: auto;
                 border-collapse: collapse;
+                table-layout: fixed;
             }
 
 input[type="submit"].action-menu,
