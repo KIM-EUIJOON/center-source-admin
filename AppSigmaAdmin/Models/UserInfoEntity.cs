@@ -75,15 +75,16 @@ namespace AppSigmaAdmin.Models
                     UserIdInfoRespons userInfo = new UserIdInfoRespons();
                     //UserID
                     userInfo.UserId = IdDataRow["UserId"].ToString();
-                    //作成日時
-                    userInfo.CreateDatetime = IdDataRow["CreateDatetime"].ToString();
 
+                    //作成日時
+                    userInfo.CreateDatetime = String.Format("{0:yyyy/MM/dd HH:mm:ss}", Common.Utc2JstTime((DateTime)IdDataRow["CreateDatetime"]));
                     Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
+
                     //削除フラグ判定
                     if (DeleteId== true)
                     {
                         //更新日時(退会日時)
-                        userInfo.DeleteDate = IdDataRow["UpdateDatetime"].ToString();
+                        userInfo.DeleteDate = String.Format("{0:yyyy/MM/dd HH:mm:ss}", Common.Utc2JstTime((DateTime)IdDataRow["UpdateDatetime"]));
                     }
                     else 
                     {
