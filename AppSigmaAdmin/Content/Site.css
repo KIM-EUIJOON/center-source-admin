@@ -42,7 +42,6 @@ section#header {
         margin-left: auto;
         margin-right: auto;
         text-align: left;
-        /*display: table;*/
         min-width: 100%;
         height: 48px;
         background-color: #222222;
@@ -52,6 +51,7 @@ section#header {
             font-size: 18pt;
             font-weight: bold;
             padding-top: 10px;
+            padding-left: 105px;
         }
 
         section#header .headerBox .toMenuCaption {
@@ -311,6 +311,7 @@ input[type="password"].std-textbox {
 .funcTitleBer {
     font-size: 19pt;
     padding-top: 10px;
+    padding-right: 105px;
 }
 
 .clearfix::after {
