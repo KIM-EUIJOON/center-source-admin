@@ -234,6 +234,31 @@ section#header {
                 table-layout: fixed;
             }
 
+            section#body .grid-table {
+            width: 1000px;
+            margin-right: auto;
+            margin-left: auto;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+        section#body .gridhead {
+            font-size: 16px;
+            border-left: solid 1px #ffffff;
+            border-right: solid 1px #ffffff;
+            color: #ffffff;
+            background-color: #1da4b8;
+            border-collapse: collapse;
+        }
+
+        section#body .gridbody {
+            font-size: 16px;
+            border-bottom: solid 1px #dddddd;
+            border-left: solid 1px #dddddd;
+            border-right: solid 1px #dddddd;
+            border-collapse: collapse;
+        }
+
+
 input[type="submit"].action-menu,
 input[type="button"].action-menu,
 button.action-menu {

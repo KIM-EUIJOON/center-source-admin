@@ -169,7 +169,9 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Models\PaymentInfoModels.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
+    <Compile Include="Controllers\PaymentListController.cs" />
     <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Controllers\PaymentManageController.cs" />
     <Compile Include="Controllers\OperationMonitoringController.cs" />
@@ -180,10 +182,9 @@
     <Compile Include="Models\OperationMonitoringEntity.cs" />
     <Compile Include="Models\OperationMonitoringModel.cs" />
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
-    <Compile Include="Models\PaymentManageModel.cs" />
-    <Compile Include="Models\PaymentEntity.cs" />
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
+    <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
     <Compile Include="Utility\Crypto.cs" />
     <Compile Include="Models\UserInfoEntity.cs" />
     <Compile Include="ResponseData\LoginResponseEntity.cs" />
@@ -249,12 +250,16 @@
     <Content Include="Views\OperationMonitoring\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
     <Content Include="Views\UserInfo\Index.cshtml" />
+    <Content Include="Views\PaymentList\JapanTaxi.cshtml" />
+    <Content Include="Views\PaymentList\Nishitetsu.cshtml" />
+    <Content Include="Views\PaymentList\Nasse.cshtml" />
     <None Include="Web.Prod.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\NassePaymentinfo\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
