@@ -35,9 +35,9 @@ namespace AppSigmaAdmin.Controllers
                  string Jtxinfo = GetALLJtxPaymentDateQuery(stDate, edDate);
                  jtxsb.Append("select * from");
                  jtxsb.Append(" (" + Jtxinfo.ToString() + ") as MA");
-                 jtxsb.Append("    where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString()+"'");      //表示するリスト番号を指定
+                 jtxsb.Append("    where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString()+"'");      //表示する件数分の情報のみ取得する
 
-                 cmd.CommandText = jtxsb.ToString();
+                cmd.CommandText = jtxsb.ToString();
 
                  cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");   
                  cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");    
@@ -175,12 +175,15 @@ namespace AppSigmaAdmin.Controllers
                     Nsb.Append("select * from");
                     if (PassID == "-")
                     {
+                        //検索条件にパスポートIDが設定されていない場合は条件を追加しない
                         Nsb.Append(" (" + NasseInfo.ToString() + ") as MA");
                     }
                     else
                     {
+                        //検索条件にパスポートIDが設定されている場合は条件を追加する
                         Nsb.Append(" (" + NasseInfo.ToString() + "   and gp.PassportId = @PassportId ) as MA");
                     }
+                    //表示する件数分の情報のみ取得する
                     Nsb.Append("    where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString() + "'");
                     
                     cmd.CommandText = Nsb.ToString();
@@ -222,7 +225,7 @@ namespace AppSigmaAdmin.Controllers
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("select ROW_NUMBER() OVER(ORDER BY pm.PaymentId, pm.PaymentType) as RecNo");
+                    sb.Append("select ROW_NUMBER() OVER(ORDER BY pm.PaymentId, pm.PaymentType) as RecNo");      //決済IDと決済種別でソートする
                     sb.Append("     , gp.UserId");
                     sb.Append("     , pm.TranDate");
                     sb.Append("     ,gp.PassportId");
@@ -314,7 +317,7 @@ namespace AppSigmaAdmin.Controllers
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");
+                    sb.Append("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");    //決済IDと決済種別でソートする
                     sb.Append("     , tbl.UserId");
                     sb.Append("     , tbl.TranDate");
                     sb.Append("     , case when tbl.TicketType = N'0' then N'1日'");

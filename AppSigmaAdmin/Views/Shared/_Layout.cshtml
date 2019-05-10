@@ -23,8 +23,14 @@
     <!--
     <link href="@Common.CreateUrl("/Content/bootstrap.css", false)" rel="stylesheet">
     -->
+    @*datepicker使用のためのscript*@
+    @*<link href="@Common.CreateUrl("/Content/jquery-ui.theme.css", false)" rel="stylesheet" />*@
+    @Scripts.Render("~/sigma/bundles/jquery")
+    @Scripts.Render("~/sigma/bundles/jquery-ui")
+    @Styles.Render("~/sigma/Content/css")
+    @*datepicker使用のためのscript*@
 
-    <script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>
+    @*<script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>*@
 
     @*@Styles.Render("~/sigma/Content/css")*@
     @RenderSection("Style", false)
@@ -42,9 +48,30 @@
         } else {
             top.location = self.location;
         }
+         function SetcalenderFrom() {
+              $('#datetimepickerFrom').datepicker(
+                  {
+                      maxDate: '0y',
+                      dateFormat: 'yy/mm/dd',
+                      changeYear: true,
+                      changeMonth: true,
+
+                  }
+              );
+              $('#datetimepickerFrom').datepicker("show");
+        };
+        function SetcalenderTo() {
+
+            $('#datetimepickerTo').datepicker({
+                maxDate: '0y',
+                    dateFormat: 'yy/mm/dd',
+            });
+            $('#datetimepickerTo').datepicker("show");
+        };
     </script>
 
-    <link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
+
+<link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
 </head>
 <body>
     <section id="header">

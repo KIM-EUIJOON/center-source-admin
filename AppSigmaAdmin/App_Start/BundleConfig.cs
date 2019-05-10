@@ -10,9 +10,12 @@ namespace AppSigmaAdmin
         {
             bundles.Add(new ScriptBundle("~/sigma/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
-
+            bundles.Add(new ScriptBundle("~/sigma/bundles/jquery-ui").Include(
+                        "~/Scripts/jquery-ui.js"));
             bundles.Add(new ScriptBundle("~/sigma/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
+
+
 
             // 開発と学習には、Modernizr の開発バージョンを使用します。次に、実稼働の準備が
             // 運用の準備が完了したら、https://modernizr.com のビルド ツールを使用し、必要なテストのみを選択します。
@@ -24,8 +27,15 @@ namespace AppSigmaAdmin
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/jquery-ui.css",
+                      "~/Content/site.css"));
+            /*ローカル確認中のため無効化中。上記と入れ替えてコミットする
+             * bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
                       "~/sigma/Content/bootstrap.css",
+                      "~/sigma/Content/jquery-ui.css",
                       "~/sigma/Content/site.css"));
+                      */
         }
     }
 }

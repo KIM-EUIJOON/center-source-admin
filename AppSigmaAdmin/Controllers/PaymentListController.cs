@@ -69,11 +69,11 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
-            //ページ数から取得するリストの終了位置を指定(5件ずつのリスト)
+            //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 5;
-            //ページ数から取得するリストの開始位置を指定(5件ずつのリスト)
-            int ListNoBegin = EndListNo - 4;
+            int EndListNo = pageNo * 10;
+            //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
+            int ListNoBegin = EndListNo - 9;
 
             List<JtxPaymentInfo> SelectPaymentDateList = null;
 
@@ -147,8 +147,8 @@ namespace AppSigmaAdmin.Controllers
             //検索ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1 ;
             
-            //5件ずつ表示する
-            int EndListNo = PageNo * 5;
+            //10件ずつ表示する
+            int EndListNo = PageNo * 10;
 
             //検索条件に一致する全リスト件数取得
             PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast);
@@ -282,7 +282,6 @@ namespace AppSigmaAdmin.Controllers
             //ファイル名を「決済データ検索開始日-終了日」で出力
             return File(JtxMem.ToArray(), FILE_CONTENTTYPE, "決済データ" + model.TargetDateBegin +"-"+model.TargetDateEnd+ FILE_EXTENSION);
         }
-        
 
           private const string SESSION_SEARCH_Nasse = "SESSION_SEARCH_Nasse";
 
@@ -314,11 +313,11 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
-            //ページ数から取得するリストの終了位置を指定(5件ずつのリスト)
+            //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 5;
-            //ページ数から取得するリストの開始位置を指定(5件ずつのリスト)
-            int ListNoBegin = EndListNo - 4;
+            int EndListNo = pageNo * 10;
+            //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
+            int ListNoBegin = EndListNo - 9;
 
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
 
@@ -392,9 +391,9 @@ namespace AppSigmaAdmin.Controllers
             //検索ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
 
-            //5件ずつ表示する
-            int EndListNo = PageNo * 5;
-            int ListNoBegin = EndListNo - 4;
+            //10件ずつ表示する
+            int EndListNo = PageNo * 10;
+            int ListNoBegin = EndListNo - 9;
             string PassID ;
 
             if (string.IsNullOrEmpty(model.PassportID))
@@ -591,11 +590,11 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
-            //ページ数から取得するリストの終了位置を指定(5件ずつのリスト)
+            //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 5;
-            //ページ数から取得するリストの開始位置を指定(5件ずつのリスト)
-            int ListNoBegin = EndListNo - 4;
+            int EndListNo = pageNo * 10;
+            //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
+            int ListNoBegin = EndListNo - 9;
 
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
@@ -676,9 +675,9 @@ namespace AppSigmaAdmin.Controllers
             //検索ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
 
-            //5件ずつ表示する
-            int EndListNo = PageNo * 5;
-            int ListNoBegin = EndListNo - 4;
+            //10件ずつ表示する
+            int EndListNo = PageNo * 10;
+            int ListNoBegin = EndListNo - 9;
             string UserId;
 
             if (string.IsNullOrEmpty(model.UserId))
@@ -756,8 +755,10 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateLast = DateTime.Parse(model.TargetDateEnd);
             //検索ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
+
             string UserId;
 
+            //検索条件としてmyrouteIDが入力されているかの判定
             if (string.IsNullOrEmpty(model.UserId))
             {
                 //myrouteID未入力の場合は空白を設定する
@@ -768,7 +769,6 @@ namespace AppSigmaAdmin.Controllers
                 //myrouteIDが指定されている場合は入力内容を設定する
                 UserId = model.UserId;
             }
-
 
             //検索条件に一致する全リスト件数取得
             NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType);

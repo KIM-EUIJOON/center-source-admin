@@ -1,44 +1,36 @@
-﻿@model AppSigmaAdmin.ResponseData.NassePaymentInfoListEntity 
+﻿@model AppSigmaAdmin.ResponseData.NassePaymentInfoListEntity
 @using AppSigmaAdmin.Utility
 @using System.Data
 
-
 @section style{
     <style>
-        table {
+        .GridTable {
             display: table;
-            border-collapse: collapse;
-            border-spacing: 0px;
-            margin-right: auto;
+            text-align: center;
             margin-left: auto;
-            width: 1000px;
+            margin-right: auto;
+            margin-top: 5px;
+            border-collapse: separate;
+            border-spacing: 50px 5px;
         }
 
-        th {
-            color: #ffffff;
-            border-left: solid 1px #dddddd;
-            border-right: solid 1px #dddddd;
-            border-bottom: solid 1px #dddddd;
-            font-weight: unset;
-            text-align: center;
+        .GridTableRow {
+            display: table-row;
         }
 
-            th a {
-                text-decoration: none;
-                color: #ffffff;
-            }
+        .GridTableCell {
+            display: table-cell;
+            text-align: left;
+        }
 
-        .userInfoBox {
-            width: 1100px;
-            margin-top: 45px;
-            padding-top: 50px;
-            padding-bottom: 50px;
-            text-align: center;
-            background-color: #ffffff;
-            border-radius: 3px;
-            box-shadow: 0px 0px 1px 1px #dddddd;
-            margin: 0 auto;
-            border-collapse: collapse;
+        .GridTableCol {
+            display: table;
+            border-collapse: separate;
+            margin-top: -5px;
+            margin-left: -50px;
+        }
+        ul {
+            list-style-type: none;
         }
     </style>
 }
@@ -53,41 +45,57 @@
 <form action="@Common.CreateUrl("/PaymentList/Nasse", false)" method="post">
     <div class="ContentsBase">
         <div class="userInfoBox">
-            <div>
-                期間:
-                @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", required = "required" })
-                @Html.ValidationMessageFor(m => m.TargetDateBegin)
-                から
-                @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", required = "required" })
-                @Html.ValidationMessageFor(m => m.TargetDateEnd)
-                まで
-            </div>
-            <div>
-                @{
-                    List<SelectListItem> PassPortID = new List<SelectListItem>();
-                    PassPortID.Add(new SelectListItem
-                    {
-                        Text = "パスポート種別未選択",
-                        Value = "-",
-                        Selected = true
-                    });
-                    PassPortID.Add(new SelectListItem
-                    {
-                        Text = "グルメパスポート",
-                        Value = "1",
-                    });
-                }
-                パスポートID：
-                @Html.DropDownListFor(m => m.PassportID, PassPortID)
-
+            <div class="GridTable">
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        期間:
+                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", required = "required", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateBegin)
+                        から
+                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", required = "required", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateEnd)
+                        まで
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="Nasse" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        @{
+                            List<SelectListItem> PassPortID = new List<SelectListItem>();
+                            PassPortID.Add(new SelectListItem
+                            {
+                                Text = "パスポート種別未選択",
+                                Value = "-",
+                                Selected = true
+                            });
+                            PassPortID.Add(new SelectListItem
+                            {
+                                Text = "グルメパスポート",
+                                Value = "1",
+                            });
+                        }
+                        パスポートID：
+                        @Html.DropDownListFor(m => m.PassportID, PassPortID, new { Class = "DropList" })
+                    </div>
+                    <div class="GridTableCol">
+                        <div class="GridTableRow">
+                            <div class="GridTableCell">
+                                <input type="submit" formaction="NasseOutPutDate" formmethod="post" id="NasseOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                            </div>
+                        </div>
+                        <div class="GridTableRow">
+                            <div class="GridTableCell">
+                                <input type="submit" formaction="Nasse" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="clearfix" id="errorMessage">
                 @Html.ValidationSummary(false, "")
             </div>
-            <div>
-                <input type="submit" formaction="Nasse" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
-            </div>
-
             <div>
                 @using (Html.BeginForm())
                 {
@@ -95,17 +103,17 @@
                     {
                         if (Model.NassePaymentInfoList != null)
                         {
-
-                            var grid = new WebGrid(null, rowsPerPage: 5);
+                            @*表示件数：10件*@
+                            var grid = new WebGrid(null, rowsPerPage: 10);
                             grid.Bind(source: Model.NassePaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
 
                             <div class="grid-table">
-                                @grid.GetHtml(headerStyle: "gridhead",
-                                    columns:grid.Columns(grid.Column("UserId",header:"myroute会員ID",style: "gridbody"),grid.Column("TranDatetime", header:"決済日", style: "gridbody"),
-                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody"), grid.Column("PassportId", header: "パスポートID", style: "gridbody"),
-                                    grid.Column("PassportName", header: "パスポート名", style: "gridbody"), grid.Column("PaymentType", header: "決済種別", style: "gridbody"),
-                                      grid.Column("Amount", header: "金額", style: "gridbody")
+                                @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
+                                    columns:grid.Columns(grid.Column("UserId",header:"myroute会員ID",style: "gridbody12"),grid.Column("TranDatetime", header:"決済日", style: "gridbody18"),
+                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("PassportId", header: "パスポートID", style: "gridbody12"),
+                                    grid.Column("PassportName", header: "パスポート名", style: "gridbody18"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                      grid.Column("Amount", header: "金額", style: "gridbody9")
                                     ))
                             </div>
 
@@ -113,9 +121,7 @@
                     }
                 }
             </div>
-            <div>
-                <input type="submit" formaction="NasseOutPutDate" formmethod="post" id="NasseOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
-            </div>
+
         </div>
     </div>
 </form>
