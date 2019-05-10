@@ -26,15 +26,11 @@
 
         .validation-summary-errors {
             color: #ff0000;
-            text-align: left;
+            @*text-align: left;*@
         }
 
         .validation-summary-valid ul:first-line {
             display: none;
-        }
-
-        #errorMessage {
-            padding-top: 10px;
         }
     </style>
 }
@@ -53,12 +49,12 @@
                     @Html.TextBoxFor(m => m.MailAddress, new { Class = "std-textbox", placeholder = "メールアドレス", required = "required" })
                     @Html.ValidationMessageFor(m => m.MailAddress)
                 </div>
-                <div class="clearfix" id="errorMessage">
+                <div class="clearfix">
                 </div>
                 <div class="clearfix">
-                    <input type="submit" value="照会" class="accent-color-button" />
+                    <input type="submit" value="照会" class="accent-color-button" style="margin-top:10px;"/>
                 </div>
-                <div class="clearfix" id="errorMessage">
+                <div class="errorMessage">
                     @Html.ValidationSummary(false, "")
                 </div>
                 @if (Model != null)

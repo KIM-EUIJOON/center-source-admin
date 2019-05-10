@@ -30,9 +30,6 @@
             margin-left: -50px;
         }
 
-        ul {
-            list-style-type: none;
-        }
     </style>
 }
 @{
@@ -57,7 +54,7 @@
                         まで
                     </div>
                     <div class="GridTableCell">
-                        <input type="submit" formaction="Index" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                        <input type="submit" formaction="Index" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:8px" />
                     </div>
                 </div>
                 <div class="GridTableRow">
@@ -93,7 +90,7 @@
                     </div>
                 </div>
             </div>
-            <div class="clearfix" id="errorMessage">
+            <div class="errorMessage">
                 @Html.ValidationSummary(false, "")
             </div>
             <div>

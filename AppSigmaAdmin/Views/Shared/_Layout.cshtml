@@ -48,30 +48,32 @@
         } else {
             top.location = self.location;
         }
-         function SetcalenderFrom() {
-              $('#datetimepickerFrom').datepicker(
-                  {
-                      maxDate: '0y',
-                      dateFormat: 'yy/mm/dd',
-                      changeYear: true,
-                      changeMonth: true,
-
-                  }
-              );
-              $('#datetimepickerFrom').datepicker("show");
+        function SetcalenderFrom() {
+            $('#datetimepickerFrom').datepicker(
+                {
+                    maxDate: '0y',
+                    dateFormat: 'yy/mm/dd',
+                    changeYear: true,
+                    changeMonth: true,
+                    showMonthAfterYear: true,
+                }
+            );
+            $('#datetimepickerFrom').datepicker("show");
         };
         function SetcalenderTo() {
-
             $('#datetimepickerTo').datepicker({
                 maxDate: '0y',
-                    dateFormat: 'yy/mm/dd',
+                dateFormat: 'yy/mm/dd',
+                changeYear: true,
+                changeMonth: true,
+                showMonthAfterYear: true,
             });
             $('#datetimepickerTo').datepicker("show");
         };
     </script>
 
 
-<link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
+    <link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
 </head>
 <body>
     <section id="header">
