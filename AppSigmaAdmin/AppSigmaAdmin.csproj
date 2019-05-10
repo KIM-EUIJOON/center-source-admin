@@ -169,10 +169,12 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\MPA0101Controller.cs" />
+    <Compile Include="Controllers\MPA0201Controller.cs" />
+    <Compile Include="Controllers\MPA0301Controller.cs" />
     <Compile Include="Models\PaymentInfoModels.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
-    <Compile Include="Controllers\PaymentListController.cs" />
-    <Compile Include="Controllers\UserInfoController.cs" />
+    <Compile Include="Controllers\MSA0101Controller.cs" />
     <Compile Include="Controllers\PaymentManageController.cs" />
     <Compile Include="Controllers\OperationMonitoringController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
@@ -261,17 +263,16 @@
     <Content Include="Views\PaymentManage\Index.cshtml" />
     <Content Include="Views\OperationMonitoring\Index.cshtml" />
     <Content Include="Views\Error\Index.cshtml" />
-    <Content Include="Views\UserInfo\Index.cshtml" />
-    <Content Include="Views\PaymentList\JapanTaxi.cshtml" />
-    <Content Include="Views\PaymentList\Nishitetsu.cshtml" />
-    <Content Include="Views\PaymentList\Nasse.cshtml" />
+    <Content Include="Views\MSA0101\Index.cshtml" />
+    <Content Include="Views\MPA0101\Index.cshtml" />
+    <Content Include="Views\MPA0201\Index.cshtml" />
+    <Content Include="Views\MPA0301\Index.cshtml" />
     <None Include="Web.Prod.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\NassePaymentinfo\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

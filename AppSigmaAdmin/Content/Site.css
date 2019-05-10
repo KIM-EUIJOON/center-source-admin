@@ -121,9 +121,6 @@ section#body {
     width: 100%;
 }
 
-    section#body table th {
-        
-    }
     section#body .userInfoBox {
         width: 90%;
         min-width: 900px;

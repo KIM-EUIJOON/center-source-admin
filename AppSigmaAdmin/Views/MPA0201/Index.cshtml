@@ -1,0 +1,103 @@
+﻿@model AppSigmaAdmin.ResponseData.JtxPaymentInfoListEntity
+@using AppSigmaAdmin.Utility
+@using System.Data
+@section style{
+    <style>
+
+        .GridTable {
+            display: table;
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 5px;
+            border-collapse: separate;
+            border-spacing: 20px 5px;
+        }
+
+        .GridTableRow {
+            display: table-row;
+        }
+
+        .GridTableCell {
+            display: table-cell;
+            text-align: left;
+        }
+
+        .GridTableCol {
+            display: table;
+            border-collapse: separate;
+            margin-top: -5px;
+        }
+    </style>
+}
+@{
+    ViewBag.Title = "Index";
+}
+@section funcTitle {
+    <div class="funcTitleBer">
+        決済データ検索及びダウンロード（JapanTaxi）
+    </div>}
+<form action="@Common.CreateUrl("/MPA0201/Index", false)" method="post">
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableCell">
+                    期間:
+                    @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", required = "required", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.TargetDateBegin)
+                    から
+                    @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", required = "required", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                    @Html.ValidationMessageFor(m => m.TargetDateEnd)
+                    まで
+                </div>
+                <div class="GridTableCol">
+                    <div class="GridTableCell">
+                        <div class="GridTableRow">
+                            <div class="GridTableCell">
+                                <input type="submit" formaction="Index" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                            </div>
+                        </div>
+                        <div class="GridTableRow">
+                            <div class="GridTableCell">
+                                <input type="submit" formaction="JtxOutPutDate" formmethod="post" id="JtxOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                            </div>
+                        </div>
+                        <div class="GridTableRow">
+                            <div class="GridTableCell">
+                                <input type="submit" formaction="Index" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix" id="errorMessage">
+                @Html.ValidationSummary(false, "")
+            </div>
+
+            <div>
+                @using (Html.BeginForm())
+                {
+                    if (Model != null)
+                    {
+                        if (Model.JtxPaymentInfoList != null)
+                        {
+                            @*表示件数：10件*@
+                            var grid = new WebGrid(null, rowsPerPage: 10);
+                            grid.Bind(source: Model.JtxPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+
+                            <div class="grid-table">
+                                @grid.GetHtml(tableStyle:"gridTable",headerStyle: "gridhead" ,
+                 columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody12"), grid.Column("TranDatetime", header: "決済日", style: "gridbody18"),
+                 grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("CompanyName", header: "加盟店屋号", style: "gridbody14"),
+                 grid.Column("OrderId", header: "JTXオーダーID", style: "gridbody35"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                   grid.Column("Amount", header: "利用金額", style: "gridbody9")
+                 ))
+                            </div>
+
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</form>

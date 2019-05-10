@@ -18,7 +18,7 @@ namespace AppSigmaAdmin.Controllers
     /// <summary>
     /// ユーザ情報コントローラクラス
     /// </summary>
-    public class UserInfoController : Controller
+    public class MSA0101Controller : Controller
     {
         /// <summary>
         /// ユーザ情報画面
