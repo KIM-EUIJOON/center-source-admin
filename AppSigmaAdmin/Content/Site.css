@@ -149,6 +149,7 @@ section#body {
     
     section#body .TableCellContent-left {
         display: table-cell;
+        color:#ffffff;
         font-size: 16px;
         border-bottom: solid 1px #1da4b8;
         border-left: solid 1px #1da4b8;
@@ -161,6 +162,7 @@ section#body {
 
     section#body .TableCellContent-right {
         display: table-cell;
+        color: #ffffff;
         font-size: 16px;
         border-bottom: solid 1px #1da4b8;
         border-right: solid 1px #1da4b8;
@@ -173,6 +175,7 @@ section#body {
 
     section#body .TableCellContent-center {
         display: table-cell;
+        color: #ffffff;
         font-size: 16px;
         background-color: #1da4b8;
         width: 220px;
@@ -258,6 +261,31 @@ section#body {
         table-layout: fixed;
     }
 
+    /*検索結果一覧表用デザイン*/
+
+    section#body .GridTable {
+        display: table;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5px;
+        border-collapse: separate;
+        border-spacing: 20px 5px;
+    }
+    section#body .GridTableRow {
+        display: table-row;
+    }
+
+    section#body .GridTableCell {
+        display: table-cell;
+        text-align: left;
+    }
+
+    section#body .GridTableCol {
+        display: table;
+        border-collapse: separate;
+        margin-top: -5px;
+    }
     section#body .gridTable {
         display: table;
         border-collapse: collapse;
@@ -272,7 +300,7 @@ section#body {
         border-left: solid 1px #dddddd;
         border-right: solid 1px #dddddd;
         border-bottom: solid 1px #dddddd;
-        font-weight: unset;
+        font-weight: normal;
         text-align: center;
     }
 
@@ -369,6 +397,7 @@ section#body {
         border-collapse: collapse;
     }
 
+    /*ドロップダウンリスト*/
     section#body .DropList {
         border: 1px solid #bbbbbb;
         padding-left: 5px;
@@ -381,8 +410,40 @@ section#body {
         border-radius: 3px;
     }
 
+    /*カレンダーカラー設定*/
+    .ui-widget-header {
+        border: 1px solid #dddddd;
+        color: #333333;
+        font-weight: bold;
+        background-color: #1da4b8;
+    }
 
+    .ui-state-highlight,
+    .ui-widget-content .ui-state-highlight,
+    .ui-widget-header .ui-state-highlight {
+        background-color: #79b0b7;
+        border: 1px double #79B0B7;
+    }
 
+    .ui-state-active,
+    .ui-widget-content .ui-state-active,
+    .ui-widget-header .ui-state-active,
+    a.ui-button:active,
+    .ui-button:active,
+    .ui-button.ui-state-active:hover {
+        font-weight: normal;
+        color: #ffffff;
+        background-color: #f42f66;
+        border: 1px solid #f42f66;
+    }
+
+    .ui-icon-background,
+    .ui-state-active .ui-icon-background {
+        background-color: #f42f66;
+        border: 1px solid #f42f66;
+    }
+
+    /*ボタンカラー設定*/
     input[type="submit"].action-menu,
     input[type="button"].action-menu,
     button.action-menu {

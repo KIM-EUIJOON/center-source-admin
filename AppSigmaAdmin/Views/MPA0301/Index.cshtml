@@ -5,28 +5,10 @@
     <style>
 
         .GridTable {
-            display: table;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 5px;
-            border-collapse: separate;
-            border-spacing: 50px 5px;
-        }
-
-        .GridTableRow {
-            display: table-row;
-        }
-
-        .GridTableCell {
-            display: table-cell;
-            text-align: left;
+            border-spacing: 50px 5px !important;
         }
 
         .GridTableCol {
-            display: table;
-            border-collapse: separate;
-            margin-top: -5px;
             margin-left: -50px;
         }
 
@@ -60,6 +42,7 @@
                 <div class="GridTableRow">
                     <div class="GridTableCell">
                         @{
+                            //パスポート種別プルダウンリスト
                             List<SelectListItem> PassPortID = new List<SelectListItem>();
                             PassPortID.Add(new SelectListItem
                             {

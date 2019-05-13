@@ -270,8 +270,11 @@ namespace AppSigmaAdmin.Controllers
             }
             Jtxsw.Close();
 
-            //ファイル名を「決済データ検索開始日-終了日」で出力
-            return File(JtxMem.ToArray(), FILE_CONTENTTYPE, "決済データ" + model.TargetDateBegin + "-" + model.TargetDateEnd + FILE_EXTENSION);
+            //出力日を取得
+            DateTime NowDate = System.DateTime.Now;
+
+            //ファイル名を「JapanTaxi_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
+            return File(JtxMem.ToArray(), FILE_CONTENTTYPE, "JapanTaxi_Report_" + TargetDateStart.ToString("yyyyMMdd") + "-" + TargetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
     }
 }

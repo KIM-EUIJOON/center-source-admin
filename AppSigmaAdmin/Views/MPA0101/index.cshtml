@@ -8,30 +8,7 @@
 
 @section style{
     <style>
-
-        .GridTable {
-            display: table;
-            text-align: center;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 5px;
-            border-collapse: separate;
-            border-spacing: 20px 5px;
-        }
-
-        .GridTableRow {
-            display: table-row;
-        }
-
-        .GridTableCell {
-            display: table-cell;
-            text-align: left;
-        }
-
         .GridTableCol {
-            display: table;
-            border-collapse: separate;
-            margin-top: -5px;
             margin-left: -25px;
         }
     </style>
@@ -77,6 +54,7 @@
                         <div class="GridTableCol">
                             <div class="GridTableCell">
                                 @{
+                                    //券種プルダウンリスト
                                     List<SelectListItem> TicketTypeList = new List<SelectListItem>();
                                     TicketTypeList.Add(new SelectListItem
                                     {
@@ -100,6 +78,7 @@
                             </div>
                             <div class="GridTableCell">
                                 @{
+                                    //決済種別プルダウンリスト
                                     List<SelectListItem> PaymentTypeList = new List<SelectListItem>();
                                     PaymentTypeList.Add(new SelectListItem
                                     {
@@ -133,6 +112,7 @@
                             </div>
                             <div class="GridTableCell">
                                 @{
+                                    //大人/子供プルダウンリスト
                                     List<SelectListItem> TicketNumTypeList = new List<SelectListItem>();
                                     TicketNumTypeList.Add(new SelectListItem
                                     {
