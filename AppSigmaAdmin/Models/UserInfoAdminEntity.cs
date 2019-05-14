@@ -22,4 +22,33 @@ namespace AppSigmaAdmin.Models
         /// <summary>権限</summary>
         public string Role { get; set; }
     }
+
+    ///<summary>
+    ///画面機能
+    ///</summary>
+    public class RoleFunction
+    {
+        /// <summary>権限</summary>
+        public string RoleId { get; set; }
+
+        /// <summary>機能ID</summary>
+        public string FuncId { get; set; }
+
+        /// <summary>メニュー名</summary>
+        public string FuncName { get; set; }
+        
+    }
+
+    /// <summary>
+    /// 運用管理機能
+    /// </summary>
+    public class RoleList: RoleFunction
+    {
+        /// <summary>
+        /// 表示権限リスト
+        /// </summary>
+        public List<RoleFunction> RoleFunctionList { get; set; }
+    }
+
+
 }

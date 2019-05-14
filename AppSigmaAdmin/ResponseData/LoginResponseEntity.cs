@@ -46,7 +46,7 @@ namespace AppSigmaAdmin.ResponseData
         /// <summary>
         /// 権限
         /// </summary>
-        [DataMember(Name = "role")]
-        public string Role { get; set; }
+        [DataMember(Name = "roleid")]
+        public string RoleId { get; set; }
     }
 }

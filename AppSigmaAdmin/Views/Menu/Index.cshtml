@@ -1,61 +1,15 @@
-﻿@using AppSigmaAdmin.Utility
+﻿@model AppSigmaAdmin.Models.RoleList
+
+@using AppSigmaAdmin.Utility
 
 @section style {
-<style>
-
-        .menuBox {
-            margin-top: 45px;
-            @*margin-left: 20%;*@
-            padding: 40px;
-            padding-top: 50px;
-            font-size: 15pt;
-            text-align:center;
-        }
-
-        table.menuTable {
-            width: 800px;
-        }
-
-            table.menuTable tr {
-                height: 50px;
-            }
-
-            table.menuTable th {
-                width: 150px;
-            }
-        input[type="submit"].accent-color-button_l,
-        input[type="button"].accent-color-button_l,
-        button.accent-color-button_l {
+    <style>
+        input[type="submit"].accent-color-button,
+        input[type="button"].accent-color-button,
+        accent-color-button {
             width: 300px;
-            font-size: 12pt;
-            text-align: center;
-            border: none;
-            background-color: #f42f66;
-            color: white;
-            border-radius: 25px;
-            font-weight: bold !important;
-            height: 35px;
-            line-height: 35px;
-            cursor: pointer;
-            box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
         }
-        input[type="submit"].accent-color-button_b,
-        input[type="button"].accent-color-button_b,
-        button.accent-color-button_b {
-            width: 300px;
-            font-size: 12pt;
-            text-align: center;
-            border: none;
-            background-color: #1da4b8;
-            color: white;
-            border-radius: 25px;
-            font-weight: bold !important;
-            height: 35px;
-            line-height: 35px;
-            cursor: pointer;
-            box-shadow: 2px 2px 2px rgba(0,0,0,0.4);
-        }
-</style>
+    </style>
 }
 
 @section funcTitle {
@@ -66,29 +20,25 @@
 
 <div class="ContentsBase">
     <div class="menuBox">
-        <div>
-            <input type="submit" value="ユーザ情報参照: ユーザ情報の閲覧" class="accent-color-button_b" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/MSA0101", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済管理：西鉄" class="accent-color-button_b" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/MPA0101/Index", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済エラー管理：西鉄" class="accent-color-button_l" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/MSA0101", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済管理：JapanTaxi" class="accent-color-button_b" style="margin-bottom:10px" onclick="window.location.href='@Common.CreateUrl("/MPA0201/Index", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済エラー管理：JapanTaxi" class="accent-color-button_l" style="margin-bottom:10px" onclick="window.location.href='@Common.CreateUrl("/MSA0101", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済管理：ナッセ" class="accent-color-button_b" style="margin-bottom:10px" onclick="window.location.href='@Common.CreateUrl("/MPA0301/Index", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="決済エラー管理：ナッセ" class="accent-color-button_l" style="margin-bottom:10px" onclick="window.location.href='@Common.CreateUrl("/MSA0101", false)'" />
-        </div>
-        <div>
-            <input type="submit" value="ログ管理" class="accent-color-button_b" style="margin-bottom:10px" onclick="window.location.href='@Common.CreateUrl("/MSA0101", false)'" />
-        </div>
+        @{
+
+            if (Model != null)
+            {
+                if (Model.RoleFunctionList != null)
+                {
+                    foreach (var MenuList in Model.RoleFunctionList)
+                    {
+                        //閲覧権限のあるページのみ表示する
+                        string valuename = MenuList.FuncName.ToString();
+                        string MenuName = valuename.Trim();
+                        string urlvalue = MenuList.FuncId.ToString();
+                        string Url = urlvalue.Trim();
+                        <div>
+                            <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/"+@Url, false)'" />
+                        </div>
+                    }
+                }
+            }
+        }
     </div>
 </div>

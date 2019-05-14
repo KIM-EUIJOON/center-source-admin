@@ -27,6 +27,10 @@ namespace AppSigmaAdmin.Library
         public const string SESSION_USER_INFO_ADMIN = "UserInfoAdmin";
 
         /// <summary>
+        /// セッション名（管理者権限情報）
+        /// </summary>
+        public const string SESSION_ROLE_INFO_ADMIN = "RoleInfoAdmin";
+        /// <summary>
         /// HTTP通信(POST)
         /// </summary>
         public const string HTTP_METHOD_POST = "POST";
