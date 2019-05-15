@@ -67,8 +67,8 @@ namespace AppSigmaAdmin.Attribute
                             }
                             if (UrlCheck.Contains(path) != true)
                             {
-                                //入力されたURLを閲覧する権限がない場合はログイン画面にリダイレクトする
-                                filterContext.Result = new RedirectResult(Common.CreateUrl("/Error"));
+                                //入力されたURLを閲覧する権限がない場合は403エラーを返す
+                                filterContext.Result = new HttpStatusCodeResult(403);
                                 return;
                             }
                             Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);
