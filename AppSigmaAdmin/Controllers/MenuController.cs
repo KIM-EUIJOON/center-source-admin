@@ -23,7 +23,7 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index()
         {
             List<RoleFunction> roleInfo = null;
-            AppSigmaAdmin.Models.RoleList RoleInfoAdminEntity = null;
+            RoleList RoleInfoAdminEntity = null;
             RoleList response = new RoleList();
             if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
             {

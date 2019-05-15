@@ -1,5 +1,6 @@
 ﻿using AppSigmaAdmin.Attribute;
 using AppSigmaAdmin.ResponseData;
+using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -146,6 +147,17 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
                 return View();
             }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //操作なし
+            }
+            else {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。再入力してください。");
+                    return View();
+                }
+            }
 
             List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount = null;
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
@@ -228,6 +240,40 @@ namespace AppSigmaAdmin.Controllers
 
             ViewData["message"] = "";
 
+            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
+                return View("~/Views/MPA0101/Index.cshtml");
+            }
+            else if (string.IsNullOrEmpty(model.TargetDateEnd))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
+                return View("~/Views/MPA0101/Index.cshtml");
+            }
+
+            if (!IsDate(model.TargetDateBegin.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0101/Index.cshtml");
+            }
+            else if (!IsDate(model.TargetDateEnd.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0101/Index.cshtml");
+            }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //操作なし
+            }
+            else
+            {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。再入力してください。");
+                    return View("~/Views/MPA0101/Index.cshtml");
+                }
+            }
+
             List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount = null;
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
@@ -280,6 +326,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                return View("~/Views/MPA0101/Index.cshtml");
             }
 
 

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static AppSigmaAdmin.Controllers.JTXPaymentModel;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -39,6 +40,7 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <returns>Japantaxi決済データ画面</returns>
         /// [SessionCheck(WindowName = "Japantaxi決済データ画面")]
+        [SessionCheck(WindowName = "Japantaxi決済データ画面")]
         public ActionResult Index(string page)
         {
             //初回Null判定
@@ -190,6 +192,28 @@ namespace AppSigmaAdmin.Controllers
 
             ViewData["message"] = "";
 
+            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
+                return View("~/Views/MPA0201/Index.cshtml");
+            }
+            else if (string.IsNullOrEmpty(model.TargetDateEnd))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
+                return View("~/Views/MPA0201/Index.cshtml");
+            }
+
+            if (!IsDate(model.TargetDateBegin.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0201/Index.cshtml");
+            }
+            else if (!IsDate(model.TargetDateEnd.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0201/Index.cshtml");
+            }
+
             List<JtxPaymentInfo> PaymentDateListMaxCount = null;
             List<JtxPaymentInfo> SelectPaymentDateList = null;
 
@@ -231,6 +255,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                return View("~/Views/MPA0201/Index.cshtml");
             }
 
 

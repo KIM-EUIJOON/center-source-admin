@@ -21,14 +21,13 @@
 <div class="ContentsBase">
     <div class="menuBox">
         @{
-
             if (Model != null)
             {
                 if (Model.RoleFunctionList != null)
                 {
                     foreach (var MenuList in Model.RoleFunctionList)
                     {
-                        //閲覧権限のあるページのみ表示する
+                        /*閲覧権限のあるページのみ表示する*/
                         string valuename = MenuList.FuncName.ToString();
                         string MenuName = valuename.Trim();
                         string urlvalue = MenuList.FuncId.ToString();

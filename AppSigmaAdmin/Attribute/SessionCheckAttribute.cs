@@ -45,13 +45,15 @@ namespace AppSigmaAdmin.Attribute
                 if (filterContext.HttpContext.Session[SystemConst.SESSION_USER_INFO_ADMIN] != null)
                 {
                     //URLの末尾を取得
-                    string path = filterContext.HttpContext.Request.Url.LocalPath;
-                    if (path != "/Menu")
+                    var routeDate = filterContext.RouteData;
+                    string path = routeDate.Values["controller"].ToString();
+
+                    if (path != "Menu")
                     {
                         //Menu以外にアクセスしようとした場合に権限の有無を確認する
                         List<RoleFunction> roleInfo = null;
-                        AppSigmaAdmin.Models.RoleList RoleInfoAdminEntity = null;
-                        if (filterContext.HttpContext.Session[AppSigmaAdmin.Library.SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
+                        RoleList RoleInfoAdminEntity = null;
+                        if (filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
                         {
                             RoleInfoAdminEntity = (RoleList)filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN];
                             roleInfo = RoleInfoAdminEntity.RoleFunctionList;
@@ -61,12 +63,12 @@ namespace AppSigmaAdmin.Attribute
                             {
                                 string urlvalue = urlcheck.FuncId.ToString();
                                 string Url = urlvalue.Trim();
-                                UrlCheck.Add("/" + Url);
+                                UrlCheck.Add(Url);
                             }
                             if (UrlCheck.Contains(path) != true)
                             {
                                 //入力されたURLを閲覧する権限がない場合はログイン画面にリダイレクトする
-                                filterContext.Result = new RedirectResult(Common.CreateUrl("/"));
+                                filterContext.Result = new RedirectResult(Common.CreateUrl("/Error"));
                                 return;
                             }
                             Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);

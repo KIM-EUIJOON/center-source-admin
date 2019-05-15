@@ -207,6 +207,28 @@ namespace AppSigmaAdmin.Controllers
 
             ViewData["message"] = "";
 
+            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
+                return View("~/Views/MPA0301/Index.cshtml");
+            }
+            else if (string.IsNullOrEmpty(model.TargetDateEnd))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
+                return View("~/Views/MPA0301/Index.cshtml");
+            }
+
+            if (!IsDate(model.TargetDateBegin.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0301/Index.cshtml");
+            }
+            else if (!IsDate(model.TargetDateEnd.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                return View("~/Views/MPA0301/Index.cshtml");
+            }
+
             List<NassePaymentInfo> NassePaymentDateListMaxCount = null;
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
 
@@ -258,6 +280,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                return View("~/Views/MPA0301/Index.cshtml");
             }
 
 
