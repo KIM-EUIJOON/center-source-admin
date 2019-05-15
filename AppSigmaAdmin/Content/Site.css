@@ -397,6 +397,14 @@ section#body {
         border-collapse: collapse;
     }
 
+    section#body .menuBox {
+        margin-top: 45px;
+        padding: 40px;
+        padding-top: 50px;
+        font-size: 15pt;
+        text-align: center;
+    }
+
     /*ドロップダウンリスト*/
     section#body .DropList {
         border: 1px solid #bbbbbb;

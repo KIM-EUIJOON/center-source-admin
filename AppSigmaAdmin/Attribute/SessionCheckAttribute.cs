@@ -41,7 +41,41 @@ namespace AppSigmaAdmin.Attribute
             else
             {
                 UserInfoAdminEntity userInfoAdmin = (UserInfoAdminEntity)filterContext.HttpContext.Session[SystemConst.SESSION_USER_INFO_ADMIN];
-                Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);
+
+                if (filterContext.HttpContext.Session[SystemConst.SESSION_USER_INFO_ADMIN] != null)
+                {
+                    //URLの末尾を取得
+                    var routeDate = filterContext.RouteData;
+                    string path = routeDate.Values["controller"].ToString();
+
+                    if (path != "Menu")
+                    {
+                        //Menu以外にアクセスしようとした場合に権限の有無を確認する
+                        List<RoleFunction> roleInfo = null;
+                        RoleList RoleInfoAdminEntity = null;
+                        if (filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
+                        {
+                            RoleInfoAdminEntity = (RoleList)filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN];
+                            roleInfo = RoleInfoAdminEntity.RoleFunctionList;
+                            //閲覧権限のある画面リストを取得する
+                            List<string> UrlCheck = new List<string>();
+                            foreach (var urlcheck in roleInfo)
+                            {
+                                string urlvalue = urlcheck.FuncId.ToString();
+                                string Url = urlvalue.Trim();
+                                UrlCheck.Add(Url);
+                            }
+                            if (UrlCheck.Contains(path) != true)
+                            {
+                                //入力されたURLを閲覧する権限がない場合は403エラーを返す
+                                filterContext.Result = new HttpStatusCodeResult(403);
+                                return;
+                            }
+                            Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);
+                        }
+                    }
+                    Logger.TraceInfo(Common.GetNowTimestamp(), userInfoAdmin.AdminId, WindowName, null);
+                }
             }
         }
     }

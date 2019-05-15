@@ -22,7 +22,18 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName ="メニュー画面")]
         public ActionResult Index()
         {
-            return View();
+            List<RoleFunction> roleInfo = null;
+            RoleList RoleInfoAdminEntity = null;
+            RoleList response = new RoleList();
+            if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
+            {
+                //セッションに保存してある権限情報を取得する
+                RoleInfoAdminEntity = (AppSigmaAdmin.Models.RoleList)Session[AppSigmaAdmin.Library.SystemConst.SESSION_ROLE_INFO_ADMIN];
+                roleInfo = RoleInfoAdminEntity.RoleFunctionList;
+                response.RoleFunctionList = roleInfo;
+            }
+            //セッションに保存してある情報をViewに渡す
+            return View(response);
         }
     }
 }

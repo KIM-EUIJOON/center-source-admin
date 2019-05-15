@@ -76,13 +76,24 @@ namespace AppSigmaAdmin.Controllers
                     AdminId = response.UserId,
                     EMailAddress = model.MailAddress,
                     Name = response.Name,
-                    Role = response.Role
+                    Role = response.RoleId
                 };
+
+                List<RoleFunction> RoleFuncList = null;
+                //入力されたアドレスに関連する権限情報を取得する
+                RoleFuncList = new LoginModel().GetRoleFunctions(response.RoleId);
+                RoleList roleFunction = new RoleList();
+                //取得リストが0件でない場合
+                if (RoleFuncList.Count > 0) {
+                    roleFunction.RoleFunctionList = RoleFuncList;
+                }
 
                 Logger.TraceInfo(Common.GetNowTimestamp(), response.UserId, "管理者画面ログイン成功", null);
                 ViewBag.ErrorMessage = "";
                 HttpContext.Session.Add(SystemConst.SESSION_SIGMA_TOKEN, response.Token);
                 HttpContext.Session.Add(SystemConst.SESSION_USER_INFO_ADMIN, userInfo);
+                //セッションに情報を追加する
+                HttpContext.Session.Add(SystemConst.SESSION_ROLE_INFO_ADMIN, roleFunction);
 
                 return Redirect(Common.CreateUrl("/Menu"));
             }

@@ -24,7 +24,6 @@
     <link href="@Common.CreateUrl("/Content/bootstrap.css", false)" rel="stylesheet">
     -->
     @*datepicker使用のためのscript*@
-    @*<link href="@Common.CreateUrl("/Content/jquery-ui.theme.css", false)" rel="stylesheet" />*@
     @Scripts.Render("~/sigma/bundles/jquery")
     @Scripts.Render("~/sigma/bundles/jquery-ui")
     @Styles.Render("~/sigma/Content/css")
@@ -48,6 +47,7 @@
         } else {
             top.location = self.location;
         }
+        //日付入力補助カレンダー(抽出開始日)
         function SetcalenderFrom() {
             $('#datetimepickerFrom').datepicker(
                 {
@@ -61,6 +61,7 @@
             );
             $('#datetimepickerFrom').datepicker("show");
         };
+        //日付入力補助カレンダー(抽出終了日)
         function SetcalenderTo() {
             $('#datetimepickerTo').datepicker({
                 maxDate: '0y',
@@ -72,6 +73,10 @@
             });
             $('#datetimepickerTo').datepicker("show");
         };
+        //Today押下で今日の日付を入力する
+        $.datepicker._gotoToday = function (id) {
+            $(id).datepicker('setDate', new Date()).datepicker('hide').blur().change();
+        }
     </script>
 
 

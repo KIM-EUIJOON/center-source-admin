@@ -3,7 +3,7 @@
 @using System.Data
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "決済データ検索及びダウンロード（西鉄バスチケット）";
 }
 
 @section style{
@@ -17,24 +17,24 @@
     <div class="funcTitleBer">
         決済データ検索及びダウンロード（西鉄バスチケット）
     </div>}
-<form action="@Common.CreateUrl("/MPA0101/Index", false)" method="post">
+<form action="@Common.CreateUrl("/MPA0101", false)" method="post">
     <div class="ContentsBase">
         <div class="userInfoBox">
             <div class="GridTable">
                 <div class="GridTableRow">
                     <div class="GridTableCell">
                         期間:
-                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", required = "required", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.TargetDateBegin)
                         から
-                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", required = "required", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.TargetDateEnd)
                         まで
                     </div>
                     <div class="GridTableCell">
                     </div>
                     <div class="GridTableCell">
-                        <input type="submit" formaction="Index" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0101/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
                     </div>
                 </div>
                 <div class="GridTableRow">
@@ -46,7 +46,7 @@
                     <div class="GridTableCell">
                     </div>
                     <div class="GridTableCell">
-                        <input type="submit" formaction="NishitetsuOutPutDate" formmethod="post" id="NishitetsuOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0101/NishitetsuOutPutDate", false)" formmethod="post" id="NishitetsuOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
                     </div>
                 </div>
                 <div class="GridTableRow">
@@ -139,7 +139,7 @@
                     <div class="GridTableCell">
                     </div>
                     <div class="GridTableCell">
-                        <input type="submit" formaction="Index" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0101/Index", false)" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
                     </div>
                 </div>
             </div>
