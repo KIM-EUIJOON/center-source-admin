@@ -54,6 +54,11 @@ namespace AppSigmaAdmin.Library
         /// </summary>
         private const string APPLICATION_ID = "ApplicationID";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private const string AUTH_IP_ADDRESS = "hoge";
+
 
         #region パブリックメソッド
 
