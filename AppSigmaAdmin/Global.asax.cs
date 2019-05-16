@@ -1,16 +1,23 @@
-﻿using AppSigmaAdmin.Utility;
+﻿using AppSigmaAdmin.Library;
+using AppSigmaAdmin.Models;
+using AppSigmaAdmin.Utility;
+using IpMatcher;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using static AppSigmaAdmin.Models.AuthIpAddressModel;
 
 namespace AppSigmaAdmin
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private const string SESSION_AUTH_ADDRESS_LIST = "Session_AuthAddressList"; 
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -73,6 +80,51 @@ namespace AppSigmaAdmin
                         Response.Cookies[s].Secure = true;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            List<AuthIpAddressEntity> authIpAddressEntities;
+
+            string connectedIpAddress = Request.Headers["x-forwarded-for"];
+            string requestUri = ((HttpApplication)sender).Request.AppRelativeCurrentExecutionFilePath;
+            string httpMethod = ((HttpApplication)sender).Request.HttpMethod;
+
+            // HTTPヘッダのヘッダ接続元アドレスが未設定の場合、Request.UserHostAddressを取得
+            if (connectedIpAddress == null)
+            {
+                connectedIpAddress = ((HttpApplication)sender).Request.UserHostAddress;
+                if (connectedIpAddress == "::1") connectedIpAddress = "127.0.0.1";
+            }
+            
+            // トップページでの初回呼出し時
+            if (requestUri == "~/" && httpMethod == "GET")
+            {
+                authIpAddressEntities = new AuthIpAddressModel().GetAuthIpAddress();
+                Application[name: SESSION_AUTH_ADDRESS_LIST] = authIpAddressEntities;
+            }
+            else
+            {
+                authIpAddressEntities = (List<AuthIpAddressEntity>)Application[name: SESSION_AUTH_ADDRESS_LIST];
+            }
+
+            Matcher matcher = new Matcher();
+            foreach(AuthIpAddressEntity netInfo in authIpAddressEntities)
+            {
+                matcher.Add(netInfo.IPAddress, netInfo.SubnetAddress);
+            }
+
+            if (!matcher.MatchExists(connectedIpAddress))
+            {
+                Response.StatusCode = 403;
+                Response.Flush();
+                Response.End();
             }
         }
     }
