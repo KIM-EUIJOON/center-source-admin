@@ -19,15 +19,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex">
     <title>プロジェクトΣ</title>
+
+    <link href="@Common.CreateUrl("/Content/jquery-ui.css", false)" rel="stylesheet" />
     <link href="@Common.CreateUrl("/Content/Site.css", false)" rel="stylesheet" />
-    <!--
-    <link href="@Common.CreateUrl("/Content/bootstrap.css", false)" rel="stylesheet">
-    -->
-    @*datepicker使用のためのscript*@
-    @Scripts.Render("~/sigma/bundles/jquery")
-    @Scripts.Render("~/sigma/bundles/jquery-ui")
-    @Styles.Render("~/sigma/Content/css")
-    @*datepicker使用のためのscript*@
+    <script src="@Common.CreateUrl("/Scripts/jquery-1.12.4.min.js", false)"></script>
+    <script src="@Common.CreateUrl("/Scripts/jquery-ui.js", false)"></script>
+
 
     @*<script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>*@
 
