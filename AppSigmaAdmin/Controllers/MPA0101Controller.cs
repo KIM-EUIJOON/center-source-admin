@@ -139,12 +139,12 @@ namespace AppSigmaAdmin.Controllers
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
                 return View();
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View();
             }
             if (string.IsNullOrEmpty(model.UserId))
@@ -154,7 +154,7 @@ namespace AppSigmaAdmin.Controllers
             else {
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
-                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。再入力してください。");
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
                     return View();
                 }
             }
@@ -253,12 +253,12 @@ namespace AppSigmaAdmin.Controllers
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0101/Index.cshtml");
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0101/Index.cshtml");
             }
             if (string.IsNullOrEmpty(model.UserId))
@@ -269,7 +269,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
-                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。再入力してください。");
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
                     return View("~/Views/MPA0101/Index.cshtml");
                 }
             }
