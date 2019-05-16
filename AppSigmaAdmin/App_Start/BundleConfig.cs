@@ -26,16 +26,18 @@ namespace AppSigmaAdmin
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+
+#if DEBUG
             bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/jquery-ui.css",
                       "~/Content/site.css"));
-            /*ローカル確認中のため無効化中。上記と入れ替えてコミットする
-             * bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
+#else
+            bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
                       "~/sigma/Content/bootstrap.css",
                       "~/sigma/Content/jquery-ui.css",
                       "~/sigma/Content/site.css"));
-                      */
+#endif
         }
     }
 }
