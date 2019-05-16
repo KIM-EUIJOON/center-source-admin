@@ -123,12 +123,12 @@ namespace AppSigmaAdmin.Controllers
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
                 return View();
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
-                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。再入力してください。");
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View();
             }
 
