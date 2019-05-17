@@ -37,7 +37,7 @@ namespace AppSigmaAdmin
             Exception exception = Server.GetLastError();
 
             // ログにエラー内容を出力
-            LogEventSource.Log.Error(Logger.GetExceptionMessage(exception));
+            System.Diagnostics.Trace.TraceError(Logger.GetExceptionMessage(exception));
 
             // サーバエラー情報のクリア
             Server.ClearError();
