@@ -93,6 +93,7 @@ namespace AppSigmaAdmin
             List<AuthIpAddressEntity> authIpAddressEntities;
 
             string connectedIpAddress = Request.Headers["x-forwarded-for"];
+
             string requestUri = ((HttpApplication)sender).Request.AppRelativeCurrentExecutionFilePath;
             string httpMethod = ((HttpApplication)sender).Request.HttpMethod;
 
@@ -102,16 +103,27 @@ namespace AppSigmaAdmin
                 connectedIpAddress = ((HttpApplication)sender).Request.UserHostAddress;
                 if (connectedIpAddress == "::1") connectedIpAddress = "127.0.0.1";
             }
-            
-            // トップページでの初回呼出し時
-            if (requestUri == "~/" && httpMethod == "GET")
+            else
             {
+                connectedIpAddress = connectedIpAddress.Split(',')[0];
+                if (connectedIpAddress.IndexOf(":") > 0)
+                {
+                    connectedIpAddress = connectedIpAddress.Substring(0, connectedIpAddress.IndexOf(":"));
+                }
+            }
+
+            // 認証用IPアドレスリストを取得
+            object applicationData = Application[name: SESSION_AUTH_ADDRESS_LIST];
+            if (applicationData == null)
+            {
+                // Applicationセッションにアドレスリストが未設定の場合のみ、
+                // データベースより取得した値を格納
                 authIpAddressEntities = new AuthIpAddressModel().GetAuthIpAddress();
                 Application[name: SESSION_AUTH_ADDRESS_LIST] = authIpAddressEntities;
             }
             else
             {
-                authIpAddressEntities = (List<AuthIpAddressEntity>)Application[name: SESSION_AUTH_ADDRESS_LIST];
+                authIpAddressEntities = (List<AuthIpAddressEntity>)applicationData;
             }
 
             Matcher matcher = new Matcher();
@@ -119,6 +131,7 @@ namespace AppSigmaAdmin
             {
                 matcher.Add(netInfo.IPAddress, netInfo.SubnetAddress);
             }
+            Logger.TraceInfo(Common.GetNowTimestamp(), "000", connectedIpAddress, null);
 
             if (!matcher.MatchExists(connectedIpAddress))
             {
