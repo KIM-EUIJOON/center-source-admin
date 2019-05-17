@@ -13,10 +13,34 @@
         }
     </style>
 }
+
+@section scripts{
+    <script>
+    /*ローカルの場合は下記を無効化すること*/
+        $(document).ready(function () {
+            alert($('#DebugFlag').val());
+            if ($('#DebugFlag').val() != 1) { 
+                $('table tr a, tfoot a, td a').on('click', function() {
+                    //sigma付与
+                    alert("/sigma" + $(this).attr('href'));
+                    location.href = "/sigma" + $(this).attr('href');
+
+                    return false;
+                });
+            }
+
+        });
+    </script>
+}
+
 @section funcTitle {
     <div class="funcTitleBer">
         決済データ検索及びダウンロード（西鉄バスチケット）
-    </div>}
+    </div>
+}
+
+<input type="hidden" id="DebugFlag" value="@ViewBag.Debug" />
+
 <form action="@Common.CreateUrl("/MPA0101", false)" method="post">
     <div class="ContentsBase">
         <div class="userInfoBox">
@@ -155,8 +179,8 @@
                         if (Model.NishitetsuPaymentInfoList != null)
                         {
                             @*表示件数：10件*@
-                                  var grid = new WebGrid(null, rowsPerPage: 10, canSort:false);
-                                  grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                            var grid = new WebGrid(null, rowsPerPage: 10, canSort: false);
+                            grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
                             <div class="grid-table">
                                 @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
