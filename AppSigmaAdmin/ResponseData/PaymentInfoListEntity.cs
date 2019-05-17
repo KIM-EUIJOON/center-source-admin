@@ -27,7 +27,7 @@ namespace AppSigmaAdmin.ResponseData
         /// <summary>
         /// 決済日
         /// </summary>
-        public DateTime TranDatetime { get; set; }
+        public string TranDatetime { get; set; }
 
         /// <summary>
         /// 決済ID

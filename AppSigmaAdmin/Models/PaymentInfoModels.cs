@@ -49,7 +49,7 @@ namespace AppSigmaAdmin.Controllers
                      JtxPaymentInfo info = new JtxPaymentInfo
                      {
                          UserId = row["UserId"].ToString(),
-                         TranDatetime = (DateTime)row["TranDate"],
+                         TranDatetime = row["TranDate"].ToString(),
                          PaymentId = row["PaymentId"].ToString(),
                          CompanyName = row["CompanyName"].ToString(),
                          OrderId = row["OrderId"].ToString(),
@@ -199,7 +199,7 @@ namespace AppSigmaAdmin.Controllers
                         NassePaymentInfo infoN = new NassePaymentInfo
                         {
                             UserId = row["UserId"].ToString(),
-                            TranDatetime = (DateTime)row["TranDate"],
+                            TranDatetime =row["TranDate"].ToString(),
                             PaymentId = row["PaymentId"].ToString(),
                             PassportID = row["PassportId"].ToString(),
                             PassportName = row["PassportName"].ToString(),
@@ -475,7 +475,7 @@ namespace AppSigmaAdmin.Controllers
                         NishitetsuPaymentInfo infoN = new NishitetsuPaymentInfo
                         {
                             UserId = row["UserId"].ToString(),
-                            TranDatetime = (DateTime)row["TranDate"],
+                            TranDatetime = row["TranDate"].ToString(),
                             PaymentId = row["PaymentId"].ToString(),
                             TicketType = row["TicketType"].ToString(),
                             AdultNum = row["AdultNum"].ToString(),

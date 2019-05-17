@@ -77,15 +77,14 @@
                 @Html.ValidationSummary(false, "")
             </div>
             <div>
-                @using (Html.BeginForm())
-                {
+                @{
                     if (Model != null)
                     {
                         if (Model.NassePaymentInfoList != null)
                         {
                             @*表示件数：10件*@
-                            var grid = new WebGrid(null, rowsPerPage: 10);
-                            grid.Bind(source: Model.NassePaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                               var grid = new WebGrid(null, rowsPerPage: 10, canSort: false);
+                               grid.Bind(source: Model.NassePaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
 
                             <div class="grid-table">

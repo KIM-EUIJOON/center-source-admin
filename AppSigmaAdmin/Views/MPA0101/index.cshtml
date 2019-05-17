@@ -149,15 +149,14 @@
             <div>
             </div>
             <div>
-                @using (Html.BeginForm())
-                {
+                @{
                     if (Model != null)
                     {
                         if (Model.NishitetsuPaymentInfoList != null)
                         {
                             @*表示件数：10件*@
-                            var grid = new WebGrid(null, rowsPerPage: 10);
-                            grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                                  var grid = new WebGrid(null, rowsPerPage: 10, canSort:false);
+                                  grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
                             <div class="grid-table">
                                 @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
