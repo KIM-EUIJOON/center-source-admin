@@ -5,6 +5,7 @@ using IpMatcher;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -37,7 +38,7 @@ namespace AppSigmaAdmin
             Exception exception = Server.GetLastError();
 
             // ログにエラー内容を出力
-            System.Diagnostics.Trace.TraceError(Logger.GetExceptionMessage(exception));
+            Trace.TraceError(Logger.GetExceptionMessage(exception));
 
             // サーバエラー情報のクリア
             Server.ClearError();
@@ -105,10 +106,17 @@ namespace AppSigmaAdmin
             }
             else
             {
-                connectedIpAddress = connectedIpAddress.Split(',')[0];
-                if (connectedIpAddress.IndexOf(":") > 0)
+                if (connectedIpAddress.Substring(0, 5) == "[::1]") 
                 {
-                    connectedIpAddress = connectedIpAddress.Substring(0, connectedIpAddress.IndexOf(":"));
+                    connectedIpAddress = "127.0.0.1";
+                }
+                else
+                {
+                    connectedIpAddress = connectedIpAddress.Split(',')[0];
+                    if (connectedIpAddress.IndexOf(":") > 0)
+                    {
+                        connectedIpAddress = connectedIpAddress.Substring(0, connectedIpAddress.IndexOf(":"));
+                    }
                 }
             }
 
@@ -131,7 +139,9 @@ namespace AppSigmaAdmin
             {
                 matcher.Add(netInfo.IPAddress, netInfo.SubnetAddress);
             }
-            Logger.TraceInfo(Common.GetNowTimestamp(), "000", connectedIpAddress, null);
+
+            Logger.TraceInfo(Common.GetNowTimestamp(), "-10", "[x-forwarded] " + Request.Headers["x-forwarded-for"], null);
+            Logger.TraceInfo(Common.GetNowTimestamp(), "-11", "[requestUri] " + requestUri, null);
 
             if (!matcher.MatchExists(connectedIpAddress))
             {

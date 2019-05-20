@@ -133,14 +133,10 @@
 
         </div>
         <div class="headerBoxSub">
-            @RenderSection("funcTitle")
+            @RenderSection("funcTitle", false)
         </div>
     </section>
-
-    <section id="funcTitle">
-        @* RenderSection("funcTitle") *@
-    </section>
-
+    
     <section id="body">
         @RenderBody()
     </section>
