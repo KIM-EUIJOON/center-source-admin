@@ -94,20 +94,24 @@ namespace AppSigmaAdmin.Utility
         /// <param name="inputParams">入力値</param>
         public static void TraceInfo(DateTime timestamp, string userId, string message, string inputParams)
         {
-            // 日付が変わった場合
-            if (timestamp.Date != infoLogLastTimestamp.Date)
-            {
-                // カウンタ初期化
-                Interlocked.Exchange(ref infoLogCounter, 0);
-            }
-            infoLogLastTimestamp = timestamp;
+            //// 2019/05/20 Y.Furuyama コンフリクトエラー回避のため、一旦コメント化
+            //// 日付が変わった場合
+            //if (timestamp.Date != infoLogLastTimestamp.Date)
+            //{
+            //    // カウンタ初期化
+            //    Interlocked.Exchange(ref infoLogCounter, 0);
+            //}
+            //infoLogLastTimestamp = timestamp;
 
-            long _infoLogCounter = Interlocked.Increment(ref infoLogCounter);
-            // レコード追加用エンティティ生成
-            LogEntity logEntity = new LogEntity(LogLevel.Information, timestamp, _infoLogCounter, message, userId, null, inputParams);
-            TableOperation insertOperation = TableOperation.Insert(logEntity);
+            //long _infoLogCounter = Interlocked.Increment(ref infoLogCounter);
+            //// レコード追加用エンティティ生成
+            //LogEntity logEntity = new LogEntity(LogLevel.Information, timestamp, _infoLogCounter, message, userId, null, inputParams);
+            //TableOperation insertOperation = TableOperation.Insert(logEntity);
 
-            infoTable.Execute(insertOperation);
+            //infoTable.Execute(insertOperation);
+
+            string infoString = "UserID:" + userId + "  Message:" + message;
+            System.Diagnostics.Trace.TraceInformation(infoString);
         }
 
         /// <summary>
