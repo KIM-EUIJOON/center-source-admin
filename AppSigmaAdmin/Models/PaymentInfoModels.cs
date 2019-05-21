@@ -202,7 +202,7 @@ namespace AppSigmaAdmin.Controllers
                             TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
                             PaymentId = row["PaymentId"].ToString(),
                             PassportID = row["PassportId"].ToString(),
-                            PassportName = row["PassportName"].ToString(),
+                            PassportName = row["Title"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                         };
@@ -229,7 +229,7 @@ namespace AppSigmaAdmin.Controllers
                     sb.Append("     , gp.UserId");
                     sb.Append("     , pm.TranDate");
                     sb.Append("     ,gp.PassportId");
-                    sb.Append("     ,gps.PassportName");
+                    sb.Append("     ,esfm.Title");
                     sb.Append("     ,pm.PaymentId");
                     sb.Append("     ,case when pm.PaymentType = '3' then N'即時決済'");
                     sb.Append("           else N'決済種別不明'end as PaymentType");
@@ -242,7 +242,10 @@ namespace AppSigmaAdmin.Controllers
                     sb.Append("   on gp.UserId = pm.UserId");
                     sb.Append("   and gp.PaymentId = pm.PaymentId");
                     sb.Append("   and gp.OrderNo = pm.OrderNo");
-                    sb.Append("   and not exists(");
+                    sb.Append("   left join EventSpotFeatureMaster esfm");
+                    sb.Append("   on gps.FeatureId = esfm.FeatureId");
+                    sb.Append("   and esfm.Language='ja'");
+                    sb.Append("   where not exists(");
                     sb.Append("       select 1");
                     sb.Append("         from PaymentError pe");
                     sb.Append("        where pe.UserId = gp.UserId");
@@ -279,13 +282,26 @@ namespace AppSigmaAdmin.Controllers
                     StringBuilder NasseSb = new StringBuilder();
 
                     string Nasseinfo = GetALLGetNassePaymentDateQuery(stDate, edDate);
+
+                   
+                    if (PassID == "-")
+                    {
+                        //検索条件にパスポートIDが設定されていない場合は条件を追加しない
+                    }
+                    else
+                    {
+                        //検索条件にパスポートIDが設定されている場合は条件を追加する
+                        NasseSb.Append( Nasseinfo.ToString() + "   and gp.PassportId = @PassportId ");
+                        cmd.Parameters.Add("@PassportId", SqlDbType.NVarChar).Value = PassID;
+                    }
+                    
                     NasseSb.Append(Nasseinfo.ToString());
 
                     cmd.CommandText = NasseSb.ToString();
 
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
                     cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
-                    cmd.Parameters.Add("@PassportId", SqlDbType.NVarChar).Value = PassID;
+
 
                     DataTable dt = dbInterface.ExecuteReader(cmd);
 
