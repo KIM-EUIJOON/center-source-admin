@@ -305,7 +305,7 @@ namespace AppSigmaAdmin.Controllers
             Nassesw.Write(',');
             Nassesw.Write("\"パスポートID\"");
             Nassesw.Write(',');
-            Nassesw.Write("\"パスポート名\"");
+            Nassesw.Write("\"イベント名\"");
             Nassesw.Write(',');
             Nassesw.Write("\"決済種別\"");
             Nassesw.Write(',');
@@ -322,7 +322,7 @@ namespace AppSigmaAdmin.Controllers
                 Nassesw.Write(',');
                 Nassesw.Write("\"" + item.PassportID.ToString() + "\"");    //パスポートID
                 Nassesw.Write(',');
-                Nassesw.Write("\"" + item.PassportName.ToString() + "\"");  //パスポート名
+                Nassesw.Write("\"" + item.PassportName.ToString() + "\"");  //イベント名
                 Nassesw.Write(',');
                 Nassesw.Write("\"" + item.PaymentType.ToString() + "\"");   //決済種別
                 Nassesw.Write(',');
