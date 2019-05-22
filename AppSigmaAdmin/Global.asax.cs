@@ -122,7 +122,7 @@ namespace AppSigmaAdmin
 
             // 認証用IPアドレスリストを取得
             object applicationData = Application[name: SESSION_AUTH_ADDRESS_LIST];
-            if (applicationData == null)
+            if (applicationData == null || requestUri == "~/")
             {
                 // Applicationセッションにアドレスリストが未設定の場合のみ、
                 // データベースより取得した値を格納
