@@ -63,24 +63,37 @@
                         @{
                             //パスポート種別プルダウンリスト
                             List<SelectListItem> PassPortID = new List<SelectListItem>();
-                            PassPortID.Add(new SelectListItem
+                            List<string> SelectCheck = new List<string>();
+                            PassPortID.Add(new SelectListItem                               //プルダウンリストの初期値
                             {
-                                Text = "パスポート種別未選択",
+                                Text = "イベント名未選択",
                                 Value = "-",
                                 Selected = true
                             });
-                            PassPortID.Add(new SelectListItem
+                            //初期値以外はDBから取得する
+                            if (Model != null)
                             {
-                                Text = "薬院駅からはしご飲み",
-                                Value = "1",
-                            });
-                            PassPortID.Add(new SelectListItem
-                            {
-                                Text = "はるよし橋からはしご飲み",
-                                Value = "2",
-                            });
-                        }
-                        パスポートID：
+                                if (Model.NassePulldownList != null)
+                                {
+                                    foreach (var PassportList in Model.NassePulldownList)
+                                    {
+                                        string PassPortName = PassportList.PassportName.ToString(); //イベント名称
+                                        string PassPortIdnum = PassportList.PassportID.ToString();  //パスポートID
+
+                                        if (SelectCheck.Contains(PassPortIdnum) ==false)            //同じ選択肢を表示させないためパスポートIDの重複チェック
+                                        {
+                                            SelectCheck.Add(PassPortIdnum);                         //重複チェック用リストに追加した選択肢を入力
+                                            PassPortID.Add(new SelectListItem                       //選択肢追加
+                                            {
+                                                Text = PassPortName,
+                                                Value = PassPortIdnum,
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                            }
+                            イベント名：
                         @Html.DropDownListFor(m => m.PassportID, PassPortID, new { Class = "DropList" })
                     </div>
                     <div class="GridTableCol">
@@ -104,10 +117,10 @@
                 @{
                     if (Model != null)
                     {
-                        if (Model.NassePaymentInfoList != null)
+                        if (Model.NassePaymentInfoList!= null)
                         {
                             @*表示件数：10件*@
-                            var grid = new WebGrid(null, rowsPerPage: 10, canSort: false);
+                            var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
                             grid.Bind(source: Model.NassePaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
 
@@ -115,11 +128,10 @@
                                 @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
                                     columns:grid.Columns(grid.Column("UserId",header:"myroute会員ID",style: "gridbody12"),grid.Column("TranDatetime", header:"決済日", style: "gridbody18"),
                                     grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("PassportId", header: "パスポートID", style: "gridbody12"),
-                                    grid.Column("PassportName", header: "パスポート名", style: "gridbody18"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                    grid.Column("PassportName", header: "イベント名", style: "gridbody18"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
                                       grid.Column("Amount", header: "金額", style: "gridbody9")
                                     ))
                             </div>
-
                         }
                     }
                 }

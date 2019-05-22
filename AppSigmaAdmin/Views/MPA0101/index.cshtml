@@ -176,7 +176,7 @@
                         if (Model.NishitetsuPaymentInfoList != null)
                         {
                             @*表示件数：10件*@
-                            var grid = new WebGrid(null, rowsPerPage: 10, canSort: false);
+                            var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
                             grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
 
                             <div class="grid-table">

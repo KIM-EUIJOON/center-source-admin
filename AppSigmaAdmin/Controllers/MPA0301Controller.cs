@@ -46,10 +46,17 @@ namespace AppSigmaAdmin.Controllers
 #else
             ViewBag.Debug = 0;
 #endif
+            //プルダウンリスト項目取得
+            List<NassePaymentInfo> NassePassPortIdList = null;
+            NassePassPortIdList = new NassePaymentModel().NassePassportList();
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-                return View();
+                //パスポート種別プルダウン内容を返す
+                NassePaymentInfoListEntity PulldownList = new NassePaymentInfoListEntity();
+                PulldownList.NassePulldownList = NassePassPortIdList;
+                return View(PulldownList);
             }
 
             //セッション情報の取得
@@ -63,15 +70,17 @@ namespace AppSigmaAdmin.Controllers
             string maxListCount = searchKey["maxListCount"];
             //パスポートID
             string PassID = searchKey["PassportID"];
+            //リスト件数
+            int ListNum = int.Parse(searchKey["ListNum"]);
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 10;
+            int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
-            int ListNoBegin = EndListNo - 9;
+            int ListNoBegin = EndListNo - (ListNum - 1);
 
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
 
@@ -92,6 +101,10 @@ namespace AppSigmaAdmin.Controllers
             info.ListPageNo = pageNo;
             //指定パスポートID
             info.PassportID = PassID;
+            //プルダウンリスト
+            info.NassePulldownList = NassePassPortIdList;
+            //表示リスト件数
+            info.ListNum = ListNum;
 
             //取得したリスト件数が0以上
             if (SelectNassePaymentDateList.Count > 0)
@@ -149,10 +162,10 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateLast = DateTime.Parse(model.TargetDateEnd);
             //検索ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
-
+            int ListNum = 10;
             //10件ずつ表示する
-            int EndListNo = PageNo * 10;
-            int ListNoBegin = EndListNo - 9;
+            int EndListNo = PageNo * ListNum;
+            int ListNoBegin = EndListNo - (ListNum -1);
             string PassID;
 
             if (string.IsNullOrEmpty(model.PassportID))
@@ -189,6 +202,14 @@ namespace AppSigmaAdmin.Controllers
 
             info.PassportID = model.PassportID;
 
+            //表示リスト件数
+            info.ListNum = ListNum;
+
+            //プルダウンリスト項目取得
+            List<NassePaymentInfo> NassePassPortIdList = null;
+            NassePassPortIdList = new NassePaymentModel().NassePassportList();
+            info.NassePulldownList = NassePassPortIdList;
+
             //取得したリスト件数が0以上
             if (SelectNassePaymentDateList.Count > 0)
             {
@@ -205,6 +226,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("PassportID", model.PassportID);
+            searchKey.Add("ListNum", ListNum.ToString());
             Session.Add(SESSION_SEARCH_Nasse, searchKey);
 
             return View(info);
@@ -305,7 +327,7 @@ namespace AppSigmaAdmin.Controllers
             Nassesw.Write(',');
             Nassesw.Write("\"パスポートID\"");
             Nassesw.Write(',');
-            Nassesw.Write("\"パスポート名\"");
+            Nassesw.Write("\"イベント名\"");
             Nassesw.Write(',');
             Nassesw.Write("\"決済種別\"");
             Nassesw.Write(',');
@@ -322,7 +344,7 @@ namespace AppSigmaAdmin.Controllers
                 Nassesw.Write(',');
                 Nassesw.Write("\"" + item.PassportID.ToString() + "\"");    //パスポートID
                 Nassesw.Write(',');
-                Nassesw.Write("\"" + item.PassportName.ToString() + "\"");  //パスポート名
+                Nassesw.Write("\"" + item.PassportName.ToString() + "\"");  //イベント名
                 Nassesw.Write(',');
                 Nassesw.Write("\"" + item.PaymentType.ToString() + "\"");   //決済種別
                 Nassesw.Write(',');

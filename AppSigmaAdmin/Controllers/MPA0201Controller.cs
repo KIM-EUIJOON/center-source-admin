@@ -63,15 +63,17 @@ namespace AppSigmaAdmin.Controllers
             string TargetDateEnd = searchKey["TargetDateEnd"];
             //リスト全件数
             string maxListCount = searchKey["maxListCount"];
+            //リスト表示件数
+            int ListNum = int.Parse(searchKey["ListNum"]);
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 10;
+            int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
-            int ListNoBegin = EndListNo - 9;
+            int ListNoBegin = EndListNo - (ListNum -1);
 
             List<JtxPaymentInfo> SelectPaymentDateList = null;
 
@@ -90,6 +92,8 @@ namespace AppSigmaAdmin.Controllers
             info.ListMaxCount = ListCount;
             //現在のページ位置
             info.ListPageNo = pageNo;
+            //表示リスト件数
+            info.ListNum = ListNum;
 
             //取得したリスト件数が0以上
             if (SelectPaymentDateList.Count > 0)
@@ -151,13 +155,15 @@ namespace AppSigmaAdmin.Controllers
             int PageNo = model.ListPageNo + 1;
 
             //10件ずつ表示する
-            int EndListNo = PageNo * 10;
+            int ListNum = 10;
+            int EndListNo = PageNo * ListNum;
+            int BeginListNo = PageNo - (ListNum -1);
 
             //検索条件に一致する全リスト件数取得
             PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, PageNo, EndListNo);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, BeginListNo, EndListNo);
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
 
             //表示リストの総数
@@ -175,6 +181,9 @@ namespace AppSigmaAdmin.Controllers
             //現在のページ位置
             info.ListPageNo = model.ListPageNo;
 
+            //表示リスト件数
+            info.ListNum = ListNum;
+
             //取得したリスト件数が0以上
             if (SelectPaymentDateList.Count > 0)
             {
@@ -190,6 +199,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateBegin", model.TargetDateBegin);
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
+            searchKey.Add("ListNum", ListNum.ToString());   //リスト表示件数
             Session.Add(SESSION_SEARCH_JapanTaxi, searchKey);
 
             return View(info);

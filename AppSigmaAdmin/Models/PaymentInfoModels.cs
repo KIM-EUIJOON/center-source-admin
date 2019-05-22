@@ -156,7 +156,42 @@ namespace AppSigmaAdmin.Controllers
             
         }
         public class NassePaymentModel
-        {
+        {  
+            ///<summary>
+           ///ナッセパスポート名プルダウンリスト内容取得
+           ///</summary>
+            public List<NassePaymentInfo> NassePassportList()
+            {
+                List<NassePaymentInfo> result = new List<NassePaymentInfo>();
+                StringBuilder NasseSb = new StringBuilder();
+                using (SqlDbInterface NassedbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("select gps.PassportId");
+                    sb.Append("     ,esfm.Title,gps.Language");
+                    sb.Append("     from GourmetPassportSales gps");
+                    sb.Append("     left join EventSpotFeatureMaster esfm");
+                    sb.Append("     on gps.FeatureId = esfm.FeatureId");
+                    sb.Append("     where gps.Language='ja'");
+                    sb.Append("     and esfm.Language='ja'");
+
+                    NasseSb.Append(sb.ToString());
+                    cmd.CommandText = NasseSb.ToString();
+                    DataTable dt = NassedbInterface.ExecuteReader(cmd);
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        NassePaymentInfo info = new NassePaymentInfo
+                        {
+                            PassportID = row["PassportId"].ToString(),
+                            PassportName = row["Title"].ToString(),
+                        };
+
+                        result.Add(info);
+                    }
+                }
+                return result;
+            }
             /// <summary>
             /// Nasseの決済情報リスト取得
             /// </summary>

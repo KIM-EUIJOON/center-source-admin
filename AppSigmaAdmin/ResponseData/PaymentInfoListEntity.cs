@@ -44,6 +44,11 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public int Amount { get; set; }
 
+        /// <summary>
+        /// リスト表示件数
+        /// </summary>
+        public int ListNum { get; set; }
+
     }
 
     /// <summary>
@@ -64,7 +69,7 @@ namespace AppSigmaAdmin.ResponseData
     /// <summary>
     /// Jtx決済情報作成用リスト
     /// </summary>
-    public class JtxPaymentInfoListEntity
+    public class JtxPaymentInfoListEntity : PaymentInfo
     {
 
         ///<summary>
@@ -143,6 +148,11 @@ namespace AppSigmaAdmin.ResponseData
         ///ナッセ決済情報リスト
         ///</summary>
         public List<NassePaymentInfo> NassePaymentInfoList { get; set; }
+
+        ///<summary>
+        ///ナッセプルダウンリスト
+        ///</summary>
+        public List<NassePaymentInfo> NassePulldownList { get; set; }
     }
 
     /// <summary>

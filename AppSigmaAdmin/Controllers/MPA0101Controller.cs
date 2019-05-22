@@ -71,16 +71,17 @@ namespace AppSigmaAdmin.Controllers
             string PaymentType = searchKey["PaymentType"];
             //検索条件：枚数種別
             string TicketNumType = searchKey["TicketNumType"];
-
+            //リスト件数
+            int ListNum = int.Parse(searchKey["ListNum"]);
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
 
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             int pageNo = int.Parse(page);
-            int EndListNo = pageNo * 10;
+            int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
-            int ListNoBegin = EndListNo - 9;
+            int ListNoBegin = EndListNo - (ListNum -1);
 
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
@@ -107,7 +108,8 @@ namespace AppSigmaAdmin.Controllers
             info.PaymentType = PaymentType;
             //指定枚数種別
             info.TicketNumType = TicketNumType;
-
+            //表示リスト件数
+            info.ListNum = ListNum;
 
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
@@ -178,8 +180,9 @@ namespace AppSigmaAdmin.Controllers
             int PageNo = model.ListPageNo + 1;
 
             //10件ずつ表示する
-            int EndListNo = PageNo * 10;
-            int ListNoBegin = EndListNo - 9;
+            int ListNum = 10;
+            int EndListNo = PageNo * ListNum;
+            int ListNoBegin = EndListNo -(ListNum -1);
             string UserId;
 
             if (string.IsNullOrEmpty(model.UserId))
@@ -215,6 +218,9 @@ namespace AppSigmaAdmin.Controllers
             //現在のページ位置
             info.ListPageNo = model.ListPageNo;
 
+            //表示リスト件数
+            info.ListNum = ListNum;
+
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
             {
@@ -234,6 +240,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TicketType", model.TicketType);
             searchKey.Add("PaymentType", model.PaymentType);
             searchKey.Add("TicketNumType", model.TicketNumType);
+            searchKey.Add("ListNum", ListNum.ToString());
             Session.Add(SESSION_SEARCH_Nishitetsu, searchKey);
 
             return View(info);
