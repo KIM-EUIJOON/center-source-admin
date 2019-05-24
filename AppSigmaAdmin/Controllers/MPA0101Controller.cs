@@ -17,7 +17,10 @@ namespace AppSigmaAdmin.Controllers
         private string FILE_CONTENTTYPE = "text/comma-separated-values";
         private string FILE_EXTENSION = ".csv";
 
-        //入力日付チェック関数
+
+        /// <summary>
+        ///入力日付チェック関数
+        /// </summary>
         public static bool IsDate(string s)
         {
             //入力された日時が年/月/日以外はエラーで返す

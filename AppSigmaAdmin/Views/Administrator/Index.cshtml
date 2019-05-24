@@ -1,0 +1,57 @@
+﻿
+@using AppSigmaAdmin.Utility
+
+@section style {
+    <style>
+        input[type="submit"].accent-color-button,
+        input[type="button"].accent-color-button,
+        accent-color-button {
+            width: 300px;
+        }
+    </style>
+}
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            //IPアドレスリスト更新判定
+            if ($('#UpdateFlag').val() == 1) {
+                window.alert('リストの更新に成功しました。');
+            }
+            else if ($('#UpdateFlag').val() == 2) {
+                window.alert('リストの更新に失敗しました。');
+            };
+
+            //IPアドレスリスト更新ボタン押下処理
+            $('#IpUpdate').on('click', function () {
+                if (confirm('認証用IPアドレスリストの更新を行います。よろしいですか?')) {
+                    //メッセージボックス「はい」選択時の処理
+                    $('form').attr('action', '@Common.CreateUrl("/Administrator/IpRefresh", false)');
+                    $('form').submit();
+                }
+                else {
+                    //メッセージボックス「いいえ」選択時の処理
+                    window.alert('更新をキャンセルしました。');
+                }
+            });
+        });
+    </script>
+}
+
+@section funcTitle {
+    <div class="funcTitleBer">
+        システム管理者機能
+    </div>
+}
+
+<input type="hidden" id="UpdateFlag" value="@ViewBag.IpUpdate" />
+
+<form action="@Common.CreateUrl("/Administrator", false)" method="post">
+    <div class="ContentsBase">
+        <div class="menuBox">
+            <div>
+                <input type="button" value="IPアドレスリスト更新" class="accent-color-button" style="margin-bottom:10px" id="IpUpdate" />
+            </div>
+        </div>
+    </div>
+</form>

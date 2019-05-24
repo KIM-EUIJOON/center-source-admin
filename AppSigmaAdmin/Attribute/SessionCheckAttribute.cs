@@ -48,7 +48,7 @@ namespace AppSigmaAdmin.Attribute
                     var routeDate = filterContext.RouteData;
                     string path = routeDate.Values["controller"].ToString();
 
-                    if (path != "Menu")
+                    if (path != "Menu"&& path!="Administrator")
                     {
                         //Menu以外にアクセスしようとした場合に権限の有無を確認する
                         List<RoleFunction> roleInfo = null;

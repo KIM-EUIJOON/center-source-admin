@@ -1,5 +1,4 @@
 ﻿@model AppSigmaAdmin.Models.RoleList
-
 @using AppSigmaAdmin.Utility
 
 @section style {
@@ -25,6 +24,7 @@
             {
                 if (Model.RoleFunctionList != null)
                 {
+                    HashSet<string> hs = new HashSet<string>();
                     foreach (var MenuList in Model.RoleFunctionList)
                     {
                         /*閲覧権限のあるページのみ表示する*/
@@ -32,11 +32,21 @@
                         string MenuName = valuename.Trim();
                         string urlvalue = MenuList.FuncId.ToString();
                         string Url = urlvalue.Trim();
+                        string RolIdnum = MenuList.RoleId.ToString();
+                        string RolId = RolIdnum.Trim();
+                        hs.Add(RolId);
                         <div>
                             <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/"+@Url, false)'" />
                         </div>
                     }
+                    if (hs.Contains("99"))
+                    {
+                        <div>
+                            <input type="submit" value="システム管理者機能" class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/Administrator", false)'" />
+                        </div>
+                    }
                 }
+
             }
         }
     </div>
