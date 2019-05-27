@@ -26,7 +26,7 @@
             $('#IpUpdate').on('click', function () {
                 if (confirm('認証用IPアドレスリストの更新を行います。よろしいですか?')) {
                     //メッセージボックス「はい」選択時の処理
-                    $('form').attr('action', '@Common.CreateUrl("/Administrator/IpRefresh", false)');
+                    $('form').attr('action', '@Common.CreateUrl("/MSA0301/IpRefresh", false)');
                     $('form').submit();
                 }
                 else {
@@ -46,7 +46,7 @@
 
 <input type="hidden" id="UpdateFlag" value="@ViewBag.IpUpdate" />
 
-<form action="@Common.CreateUrl("/Administrator", false)" method="post">
+<form action="@Common.CreateUrl("/MSA0301", false)" method="post">
     <div class="ContentsBase">
         <div class="menuBox">
             <div>

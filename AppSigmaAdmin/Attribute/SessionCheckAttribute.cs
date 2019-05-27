@@ -48,18 +48,28 @@ namespace AppSigmaAdmin.Attribute
                     var routeDate = filterContext.RouteData;
                     string path = routeDate.Values["controller"].ToString();
 
-                    if (path != "Menu"&& path!="Administrator")
+                    if (path != "Menu")
                     {
                         //Menu以外にアクセスしようとした場合に権限の有無を確認する
-                        List<RoleFunction> roleInfo = null;
+                        List<RoleFunction> upperRoleInfo = null;
+                        List<RoleFunction> lowerRoleInfo = null;
                         RoleList RoleInfoAdminEntity = null;
                         if (filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN] != null)
                         {
                             RoleInfoAdminEntity = (RoleList)filterContext.HttpContext.Session[SystemConst.SESSION_ROLE_INFO_ADMIN];
-                            roleInfo = RoleInfoAdminEntity.RoleFunctionList;
+                            upperRoleInfo = RoleInfoAdminEntity.UpperRoleFunctionList;
+                            lowerRoleInfo = RoleInfoAdminEntity.LowerRoleFunctionList;
+
                             //閲覧権限のある画面リストを取得する
                             List<string> UrlCheck = new List<string>();
-                            foreach (var urlcheck in roleInfo)
+                            //リストは2つ存在する
+                            foreach (var urlcheck in upperRoleInfo)
+                            {
+                                string urlvalue = urlcheck.FuncId.ToString();
+                                string Url = urlvalue.Trim();
+                                UrlCheck.Add(Url);
+                            }
+                            foreach (var urlcheck in lowerRoleInfo)
                             {
                                 string urlvalue = urlcheck.FuncId.ToString();
                                 string Url = urlvalue.Trim();
