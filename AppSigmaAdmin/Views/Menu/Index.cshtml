@@ -8,7 +8,31 @@
         accent-color-button {
             width: 300px;
         }
+
+        input[type="submit"].action-enter,
+        input[type="button"].action-enter,
+        button.action-enter {
+            width: 300px;
+        }
+        .Main {
+           display:inline-block;
+            text-align:center;
+        }
+
+        .Sub {
+            display: inline-block;
+            text-align: center;
+            margin-left:2%;
+            vertical-align:top;
+        }
     </style>
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+        });
+
+    </script>
 }
 
 @section funcTitle {
@@ -19,35 +43,51 @@
 
 <div class="ContentsBase">
     <div class="menuBox">
-        @{
-            if (Model != null)
-            {
-                if (Model.RoleFunctionList != null)
+            @{
+                if (Model != null)
                 {
-                    HashSet<string> hs = new HashSet<string>();
-                    foreach (var MenuList in Model.RoleFunctionList)
+                    if (Model.LowerRoleFunctionList != null)
                     {
-                        /*閲覧権限のあるページのみ表示する*/
-                        string valuename = MenuList.FuncName.ToString();
-                        string MenuName = valuename.Trim();
-                        string urlvalue = MenuList.FuncId.ToString();
-                        string Url = urlvalue.Trim();
-                        string RolIdnum = MenuList.RoleId.ToString();
-                        string RolId = RolIdnum.Trim();
-                        hs.Add(RolId);
-                        <div>
-                            <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/"+@Url, false)'" />
+                        <div class="Main">
+                            @{ foreach (var MenuList in Model.LowerRoleFunctionList)
+                                {
+                                    /*閲覧権限のあるページのみ表示する*/
+                                    string valuename = MenuList.FuncName.ToString();
+                                    string MenuName = valuename.Trim();
+                                    string urlvalue = MenuList.FuncId.ToString();
+                                    string Url = urlvalue.Trim();
+                                    string RolIdnum = MenuList.RoleId.ToString();
+                                    string RolId = RolIdnum.Trim();
+
+                                    <div>
+                                        <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/" + @Url, false)'" />
+                                    </div>
+                                }
+                            }
                         </div>
+
                     }
-                    if (hs.Contains("99"))
+                    if (Model.UpperRoleFunctionList != null)
                     {
-                        <div>
-                            <input type="submit" value="システム管理者機能" class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/Administrator", false)'" />
+                        <div class="Sub">
+                            @{ foreach (var UpperMenuList in Model.UpperRoleFunctionList)
+                                {
+                                    /*閲覧権限のあるページのみ表示する*/
+                                    string valuename = UpperMenuList.FuncName.ToString();
+                                    string MenuName = valuename.Trim();
+                                    string urlvalue = UpperMenuList.FuncId.ToString();
+                                    string Url = urlvalue.Trim();
+                                    string RolIdnum = UpperMenuList.RoleId.ToString();
+                                    string RolId = RolIdnum.Trim();
+
+                                    <div>
+                                        <input type="submit" value=@MenuName class="action-enter" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/" + @Url, false)'" />
+                                    </div>
+                                }
+                            }
                         </div>
                     }
                 }
-
             }
-        }
     </div>
 </div>

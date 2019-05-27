@@ -35,14 +35,16 @@ namespace AppSigmaAdmin.Controllers
                  string Jtxinfo = GetALLJtxPaymentDateQuery(stDate, edDate);
                  jtxsb.Append("select * from");
                  jtxsb.Append(" (" + Jtxinfo.ToString() + ") as MA");
-                 jtxsb.Append("    where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString()+"'");      //表示する件数分の情報のみ取得する
+                 jtxsb.Append("    where MA.RecNo between @PageNum and @PageNumEnd");      //表示する件数分の情報のみ取得する
 
                 cmd.CommandText = jtxsb.ToString();
 
-                 cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");   
-                 cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");    
+                cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");   
+                cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
+                cmd.Parameters.Add("@PageNum", SqlDbType.NVarChar).Value = pageNo;
+                cmd.Parameters.Add("@PageNumEnd", SqlDbType.NVarChar).Value = ListNoEnd;
 
-                 DataTable dt = dbInterface.ExecuteReader(cmd);
+                DataTable dt = dbInterface.ExecuteReader(cmd);
 
                  foreach (DataRow row in dt.Rows)
                  {
@@ -219,13 +221,15 @@ namespace AppSigmaAdmin.Controllers
                         Nsb.Append(" (" + NasseInfo.ToString() + "   and gp.PassportId = @PassportId ) as MA");
                     }
                     //表示する件数分の情報のみ取得する
-                    Nsb.Append("    where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString() + "'");
+                    Nsb.Append("    where MA.RecNo between @PageNum and @ListEnd");
                     
                     cmd.CommandText = Nsb.ToString();
 
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
                     cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
                     cmd.Parameters.Add("@PassportId", SqlDbType.NVarChar).Value = PassID;
+                    cmd.Parameters.Add("@PageNum", SqlDbType.NVarChar).Value = pageNo;
+                    cmd.Parameters.Add("ListEnd", SqlDbType.NVarChar).Value = ListNoEnd;
 
                     DataTable dt = NassedbInterface.ExecuteReader(cmd);
 
@@ -512,12 +516,14 @@ namespace AppSigmaAdmin.Controllers
                         //検索条件に枚数種別：子供
                         Nsb.Append("   and tbl.AdultNum = '0' ");
                     }
-                    Nsb.Append("  ) as MA  where MA.RecNo between '" + pageNo + "' and '" + ListNoEnd.ToString() + "'");
+                    Nsb.Append("  ) as MA  where MA.RecNo between @PageNum and @ListEnd");
 
                     cmd.CommandText = Nsb.ToString();
                     
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
                     cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
+                    cmd.Parameters.Add("@PageNum", SqlDbType.NVarChar).Value = pageNo;
+                    cmd.Parameters.Add("@ListEnd", SqlDbType.NVarChar).Value = ListNoEnd;
 
                     DataTable dt = NishidbInterface.ExecuteReader(cmd);
 

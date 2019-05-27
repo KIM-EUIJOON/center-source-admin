@@ -16,7 +16,7 @@ namespace AppSigmaAdmin.Controllers
     /// <summary>
     /// システム管理者機能コントローラクラス
     /// </summary>
-    public class AdministratorController : Controller
+    public class MSA0301Controller : Controller
     {
        private const string SESSION_AUTH_ADDRESS_LIST = "Session_AuthAddressList";
 
@@ -60,14 +60,14 @@ namespace AppSigmaAdmin.Controllers
                 HttpContext.Application[name: SESSION_AUTH_ADDRESS_LIST] = authIpAddressEntities;
                 //正常に更新が完了した場合は1を設定する
                 ViewBag.IpUpdate = 1;
-                return View("~/Views/Administrator/Index.cshtml");
+                return View("~/Views/MSA0301/Index.cshtml");
             }
             catch(Exception error)
             {
                 //エラーが発生した場合は2を設定する
                 ViewBag.IpUpdate = 2;
                 Trace.TraceError(Logger.GetExceptionMessage(error));
-                return View("~/Views/Administrator/Index.cshtml");
+                return View("~/Views/MSA0301/Index.cshtml");
             }
              
             

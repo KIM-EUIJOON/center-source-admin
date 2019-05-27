@@ -25,7 +25,9 @@
                     return false;
                 });
             }
-
+            $('#AllClear').on('click', function () {
+                window.location.href = '@Common.CreateUrl("/MPA0101", false)';
+            });
         });
     </script>
 }
@@ -160,7 +162,7 @@
                     <div class="GridTableCell">
                     </div>
                     <div class="GridTableCell">
-                        <input type="submit" formaction="@Common.CreateUrl("/MPA0101/Index", false)" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
                     </div>
                 </div>
             </div>

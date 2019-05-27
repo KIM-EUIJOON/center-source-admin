@@ -165,7 +165,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AdministratorController.cs" />
+    <Compile Include="Controllers\MSA0301Controller.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\MPA0101Controller.cs" />
     <Compile Include="Controllers\MPA0201Controller.cs" />
@@ -266,7 +266,7 @@
     <Content Include="Views\MPA0101\Index.cshtml" />
     <Content Include="Views\MPA0201\Index.cshtml" />
     <Content Include="Views\MPA0301\Index.cshtml" />
-    <Content Include="Views\Administrator\Index.cshtml" />
+    <Content Include="Views\MSA0301\Index.cshtml" />
     <None Include="Web.Prod.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
