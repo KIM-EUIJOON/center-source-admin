@@ -14,7 +14,23 @@
 </head>
 <body>
     <h2>プロジェクトΣ</h2>
-    <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+    @{
+        if (ViewBag.ExFunc != null)
+        {
+            if (ViewBag.ExFunc == "ValidationEx")
+            {
+                <h2 style="color:red;">危険な可能性がある入力を検出しました。</h2>
+            }
+            else
+            {
+                <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+            }
+        }
+        else
+        {
+            <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+        }
+    }
 
     <a href="@Common.CreateUrl("/Menu", false)">メニューへ</a>
     <br />

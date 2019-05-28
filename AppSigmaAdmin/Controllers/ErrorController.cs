@@ -17,6 +17,8 @@ namespace AppSigmaAdmin.Controllers
         /// <returns>エラー画面</returns>
         public ActionResult Index()
         {
+            ViewBag.ExFunc = HttpContext.Application["ExFunc"];
+            HttpContext.Application["ExFunc"] = "";
 #if DEBUG
             ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
             HttpContext.Application["ErrorStack"] = "";

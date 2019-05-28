@@ -47,6 +47,13 @@ namespace AppSigmaAdmin
             Application["ErrorStack"] = "";
             Application["ErrorStack"] = Logger.GetExceptionMessage(exception);
 
+            
+            if (exception.GetBaseException().GetType().FullName == "System.Web.HttpRequestValidationException")
+            {
+                Application["ExFunc"] = "";
+                Application["ExFunc"]= "ValidationEx";
+            }
+
             // エラー表示画面へリダイレクト
             Response.Redirect(Common.CreateUrl("/Error"));
         }
