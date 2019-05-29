@@ -17,8 +17,11 @@ namespace AppSigmaAdmin.Controllers
         /// <returns>エラー画面</returns>
         public ActionResult Index()
         {
+            //ValidationExceptionエラー通知
+            if (HttpContext.Application["ExFunc"] != null) { 
             ViewBag.ExFunc = HttpContext.Application["ExFunc"];
             HttpContext.Application["ExFunc"] = "";
+            }
 #if DEBUG
             ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
             HttpContext.Application["ErrorStack"] = "";
