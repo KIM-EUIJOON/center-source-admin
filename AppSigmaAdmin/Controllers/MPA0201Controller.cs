@@ -45,11 +45,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Japantaxi決済データ画面")]
         public ActionResult Index(string page)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
@@ -128,11 +123,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Japantaxi決済データ画面")]
         public ActionResult Index(JtxPaymentInfoListEntity model)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
 
             ViewData["message"] = "";
 

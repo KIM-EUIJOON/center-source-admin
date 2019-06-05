@@ -417,6 +417,17 @@ section#body {
         height: 30px;
         border-radius: 3px;
     }
+    /*横並メニュー*/
+    section#body .MainMenu {
+        display: inline-block;
+        text-align: center;
+    }
+    section#body .SubMenu {
+        display: inline-block;
+        text-align: center;
+        margin-left: 2%;
+        vertical-align: top;
+    }
 
     /*カレンダーカラー設定*/
     .ui-widget-header {

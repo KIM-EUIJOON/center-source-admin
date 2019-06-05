@@ -1,6 +1,7 @@
 ﻿@model AppSigmaAdmin.ResponseData.NishitetsuPaymentInfoListEntity
 @using AppSigmaAdmin.Utility
 @using System.Data
+@using AppSigmaAdmin.Library
 
 @{
     ViewBag.Title = "決済データ検索及びダウンロード（西鉄バスチケット）";
@@ -17,7 +18,7 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            if ($('#DebugFlag').val() != 1) { 
+            if ($('#DebugFlag').val() != @ApplicationConfig.ENV_DEBUG) {
                 $('table tr a, tfoot a, td a').on('click', function() {
                     //sigma付与
                     location.href = "/sigma" + $(this).attr('href');
@@ -38,7 +39,7 @@
     </div>
 }
 
-<input type="hidden" id="DebugFlag" value="@ViewBag.Debug" />
+    <input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
 
 <form action="@Common.CreateUrl("/MPA0101", false)" method="post">
     <div class="ContentsBase">

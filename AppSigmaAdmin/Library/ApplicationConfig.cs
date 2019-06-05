@@ -59,6 +59,23 @@ namespace AppSigmaAdmin.Library
         /// </summary>
         private const string AUTH_IP_ADDRESS = "hoge";
 
+        /// <summary>
+        /// デプロイ環境
+        /// </summary>
+        private const string ENVIRONMENT = "DeployEnvironment";
+
+        /// <summary>
+        /// 開発環境
+        /// </summary>
+        public const string ENV_DEBUG = "debug";
+        /// <summary>
+        /// 号口環境
+        /// </summary>
+        public const string ENV_PROD = "production";
+        /// <summary>
+        /// 検証環境
+        /// </summary>
+        public const string ENV_PREPROD = "preprod";
 
         #region パブリックメソッド
 
@@ -147,6 +164,17 @@ namespace AppSigmaAdmin.Library
             get
             {
                 return GetString(APPLICATION_ID);
+            }
+        }
+
+        /// <summary>
+        /// デプロイ環境取得
+        /// </summary>
+        public static string DeployEnv
+        {
+            get
+            {
+                return GetString(ENVIRONMENT);
             }
         }
 

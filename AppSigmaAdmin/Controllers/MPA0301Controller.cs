@@ -43,11 +43,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Nasse決済データ画面")]
         public ActionResult Index(string page)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             //プルダウンリスト項目取得
             List<NassePaymentInfo> NassePassPortIdList = null;
             NassePassPortIdList = new NassePaymentModel().NassePassportList();
@@ -137,11 +132,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Nasse決済データ画面")]
         public ActionResult Index(NassePaymentInfoListEntity model)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             ViewData["message"] = "";
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))

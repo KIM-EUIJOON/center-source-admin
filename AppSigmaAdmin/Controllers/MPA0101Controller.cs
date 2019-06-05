@@ -47,11 +47,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済画面")]
         public ActionResult Index(string page)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
@@ -144,11 +139,7 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済データ画面")]
         public ActionResult Index(NishitetsuPaymentInfoListEntity model)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
+
             ViewData["message"] = "";
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))

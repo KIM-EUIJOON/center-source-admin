@@ -1,4 +1,4 @@
-﻿
+﻿@model AppSigmaAdmin.Models.AuthIpAddressEntityList
 @using AppSigmaAdmin.Utility
 
 @section style {
@@ -14,27 +14,83 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            //IPアドレスリスト更新判定
+           $("#dialog").dialog({
+                autoOpen: false,
+                width:400,
+                model: true,
+                buttons: {
+                    "更新": function () {
+                        $("#Edit").submit();
+                    },
+                    "追加": function () {
+                        $('form').attr('action','@Common.CreateUrl("/MSA0301/Add", false)');
+                        $('form').submit();
+                    },
+                    "キャンセル": function () {
+                        $(this).dialog("close");
+                    }
+                }
+
+            });
+
+        });
+
+        $(window).load(function () {
+            //IPアドレスリスト更新判定(画面表示後に通知)
             if ($('#UpdateFlag').val() == 1) {
                 window.alert('リストの更新に成功しました。');
             }
             else if ($('#UpdateFlag').val() == 2) {
                 window.alert('リストの更新に失敗しました。');
             };
-
-            //IPアドレスリスト更新ボタン押下処理
-            $('#IpUpdate').on('click', function () {
-                if (confirm('認証用IPアドレスリストの更新を行います。よろしいですか?')) {
-                    //メッセージボックス「はい」選択時の処理
-                    $('form').attr('action', '@Common.CreateUrl("/MSA0301/IpRefresh", false)');
-                    $('form').submit();
-                }
+        });
+        function IPListDelete(NetAddress) {
+            if (confirm('IPアドレス「'+NetAddress+'」を認証用IPアドレスリストから削除します。よろしいですか?')) {
+                //メッセージボックス「はい」選択時の処理
+                $.post('@Common.CreateUrl("/MSA0301/IpDelete", false)', { NetAddress },
+                    function (dt) {
+                        window.alert('リストの更新に成功しました。');
+                        window.location.href = '@Common.CreateUrl("/MSA0301", false)';
+                    });
+            }
                 else {
                     //メッセージボックス「いいえ」選択時の処理
-                    window.alert('更新をキャンセルしました。');
+                    window.alert('削除処理をキャンセルしました。');
                 }
-            });
-        });
+        };
+        function IPListEdit(NetAddress, IPAddressName, EnvDev, EnvPre, EnvProd) {
+            $("#dialog").dialog("open");
+            //更新処理のため追加ボタンを押下不可に設定する
+            $(".ui-dialog-buttonpane button:contains('追加')").button("disable");
+            $(".ui-dialog-buttonpane button:contains('更新')").button("enable");
+            $("#NetAdd").attr('readonly', true);
+            $("#NetAdd").val(NetAddress);
+            $("#IPAddName").val(IPAddressName);
+            var dev = EnvDev;
+            if (dev == "○") { $("#EnvDev").prop('checked', true); }
+            else { $("#EnvDev").prop('checked', false); }
+            var pre = EnvPre;
+            if (pre == "○") { $("#EnvPre").prop('checked', true); }
+            else { $("#EnvPre").prop('checked', false); }
+            var prod = EnvProd;
+            if (prod == "○") { $("#EnvProd").prop('checked', true); }
+            else { $("#EnvProd").prop('checked', false); }
+
+        };
+        function IPListSet() {
+            $("#dialog").dialog("open");
+            //新規追加処理のため更新ボタンを押下不可に設定する
+            $(".ui-dialog-buttonpane button:contains('更新')").button("disable");
+            $(".ui-dialog-buttonpane button:contains('追加')").button("enable");
+            //ダイアログ入力内容を初期化
+            $("#NetAdd").attr('readonly', false);
+            $("#NetAdd").val("");
+            $("#IPAddName").val("");
+            $("#EnvDev").prop('checked', false);
+            $("#EnvPre").prop('checked', false);
+            $("#EnvProd").prop('checked', false);
+        }
+
     </script>
 }
 
@@ -50,8 +106,57 @@
     <div class="ContentsBase">
         <div class="menuBox">
             <div>
-                <input type="button" value="IPアドレスリスト更新" class="accent-color-button" style="margin-bottom:10px" id="IpUpdate" />
+                <input type="button" value="IPアドレス新規追加" class="accent-color-button" style="margin-bottom:10px" onclick="IPListSet()" />
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
             </div>
         </div>
+        @{
+            if (Model != null)
+            {
+
+                @*表示件数：10件*@
+                var grid = new WebGrid(null, canSort: false);
+                grid.Bind(source: Model.IPAddressList);
+
+
+                <div class="grid-table">
+                    @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
+                        columns: grid.Columns(grid.Column("NetAddress", header: "ネットアドレス", style: "gridbody14"),
+                        grid.Column("IPAddressName", header: "IPアドレス名", style: "gridbody12"), grid.Column("EnvDev", header: "開発環境", style: "gridbody8"),
+                        grid.Column("EnvPre", header: "検証環境", style: "gridbody8"), grid.Column("EnvProd", header: "号口環境", style: "gridbody8"),
+                        grid.Column("CreateDate", header: "作成日時", style: "gridbody18"), grid.Column("UpdateDate", header: "更新日時", style: "gridbody18")
+                        ,grid.Column("編集", style: "gridbody8",format:(item)=> { return new HtmlString("<input type='button' value ='編集' id='ListEdit' onclick='IPListEdit(\"" + item.NetAddress + "\",\"" + item.IPAddressName + "\",\"" + item.EnvDev + "\",\"" + item.EnvPre + "\",\"" + item.EnvProd + "\");' /><input type='button' value ='削除' id='ListDelete' onclick='IPListDelete(\"" + item.NetAddress + "\");' />"); }))
+                        )
+
+                </div>
+
+            }
+        }
     </div>
 </form>
+
+<div id="dialog">
+    <form action="@Common.CreateUrl("/MSA0301/Edit", false)" method="post" id="Edit">
+        <div>
+            <label>ネットアドレス：</label>
+            @Html.TextBoxFor(m => m.NetAddress, new { id = "NetAdd", autocomplete = "off" })
+        </div>
+        <br />
+        <div>
+            <label>IPアドレス名　：</label>
+            @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off" })
+        </div>
+        <br />
+        <div>
+            有効にする環境：<br />
+            <input type="checkbox" id="EnvDev" value="Dev" name="EnvDev" />
+            <label for="EnvDev">開発環境</label>
+            <input type="checkbox" id="EnvPre" value="Pre" name="EnvPre" />
+            <label for="EnvPre">検証環境</label>
+            <input type="checkbox" id="EnvProd" value="Prod" name="EnvProd" />
+            <label for="EnvProd">号口環境</label>
+        </div>
+    </form>
+</div>

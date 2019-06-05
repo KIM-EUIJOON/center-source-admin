@@ -14,17 +14,7 @@
         button.action-enter {
             width: 300px;
         }
-        .Main {
-           display:inline-block;
-            text-align:center;
-        }
 
-        .Sub {
-            display: inline-block;
-            text-align: center;
-            margin-left:2%;
-            vertical-align:top;
-        }
     </style>
 }
 @section scripts{
@@ -48,7 +38,7 @@
                 {
                     if (Model.LowerRoleFunctionList != null)
                     {
-                        <div class="Main">
+                        <div class="MainMenu">
                             @{ foreach (var MenuList in Model.LowerRoleFunctionList)
                                 {
                                     /*閲覧権限のあるページのみ表示する*/
@@ -69,7 +59,7 @@
                     }
                     if (Model.UpperRoleFunctionList != null)
                     {
-                        <div class="Sub">
+                        <div class="SubMenu">
                             @{ foreach (var UpperMenuList in Model.UpperRoleFunctionList)
                                 {
                                     /*閲覧権限のあるページのみ表示する*/
