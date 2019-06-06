@@ -1,22 +1,44 @@
 ﻿@using AppSigmaAdmin.Utility
 
-@{
-    Layout = null;
+@section style {
+    <style>
+        .funcTitleBer {
+            background-color: #F42F66;
+        }
+
+        .headerBoxSub {
+            background-color: #F42F66 !important;
+        }
+    </style>
 }
+@section funcTitle {
+    <div class="funcTitleBer">
+        エラー
+    </div>
+}
+<div class="ContentsBase">
+    <div class="userInfoBox">
+        @{
+            if (ViewBag.ExFunc != null)
+            {
+                if (ViewBag.ExFunc == "ValidationEx")
+                {
+                    @*ValidationExceptionだった場合*@
+                    <h2 style="color:red;">危険な可能性のある入力を検出しました。</h2>
+                }
+                else
+                {
+                    <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+                }
+            }
+            else
+            {
+                <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
+            }
+        }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>プロジェクトΣ</title>
-</head>
-<body>
-    <h2>プロジェクトΣ</h2>
-    <h2 style="color:red;">アプリケーションエラーが発生しました。</h2>
-
-    <a href="@Common.CreateUrl("/Menu", false)">メニューへ</a>
+        <a href="@Common.CreateUrl("/Menu", false)">メニューへ</a>
+    </div>
     <br />
     <br />
     @if (ViewBag.ErrorStack != null)
@@ -26,5 +48,4 @@
         </pre>
     }
     <br />
-</body>
-</html>
+</div>

@@ -1,7 +1,9 @@
 ﻿using AppSigmaAdmin.Attribute;
 using AppSigmaAdmin.ResponseData;
+using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -41,11 +43,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Nasse決済データ画面")]
         public ActionResult Index(string page)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             //プルダウンリスト項目取得
             List<NassePaymentInfo> NassePassPortIdList = null;
             NassePassPortIdList = new NassePaymentModel().NassePassportList();
@@ -75,9 +72,18 @@ namespace AppSigmaAdmin.Controllers
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
-
+            int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
-            int pageNo = int.Parse(page);
+            try
+            {
+                pageNo = int.Parse(page);
+            }
+            catch (FormatException error)
+            {
+                Trace.TraceError(Logger.GetExceptionMessage(error));
+                ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
+                return View();
+            }
             int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
             int ListNoBegin = EndListNo - (ListNum - 1);
@@ -126,11 +132,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Nasse決済データ画面")]
         public ActionResult Index(NassePaymentInfoListEntity model)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             ViewData["message"] = "";
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))

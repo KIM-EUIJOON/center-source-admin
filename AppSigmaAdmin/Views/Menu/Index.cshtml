@@ -1,5 +1,4 @@
 ﻿@model AppSigmaAdmin.Models.RoleList
-
 @using AppSigmaAdmin.Utility
 
 @section style {
@@ -9,7 +8,21 @@
         accent-color-button {
             width: 300px;
         }
+
+        input[type="submit"].action-enter,
+        input[type="button"].action-enter,
+        button.action-enter {
+            width: 300px;
+        }
+
     </style>
+}
+@section scripts{
+    <script>
+        $(document).ready(function () {
+        });
+
+    </script>
 }
 
 @section funcTitle {
@@ -20,24 +33,51 @@
 
 <div class="ContentsBase">
     <div class="menuBox">
-        @{
-            if (Model != null)
-            {
-                if (Model.RoleFunctionList != null)
+            @{
+                if (Model != null)
                 {
-                    foreach (var MenuList in Model.RoleFunctionList)
+                    if (Model.LowerRoleFunctionList != null)
                     {
-                        /*閲覧権限のあるページのみ表示する*/
-                        string valuename = MenuList.FuncName.ToString();
-                        string MenuName = valuename.Trim();
-                        string urlvalue = MenuList.FuncId.ToString();
-                        string Url = urlvalue.Trim();
-                        <div>
-                            <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/"+@Url, false)'" />
+                        <div class="MainMenu">
+                            @{ foreach (var MenuList in Model.LowerRoleFunctionList)
+                                {
+                                    /*閲覧権限のあるページのみ表示する*/
+                                    string valuename = MenuList.FuncName.ToString();
+                                    string MenuName = valuename.Trim();
+                                    string urlvalue = MenuList.FuncId.ToString();
+                                    string Url = urlvalue.Trim();
+                                    string RolIdnum = MenuList.RoleId.ToString();
+                                    string RolId = RolIdnum.Trim();
+
+                                    <div>
+                                        <input type="submit" value=@MenuName class="accent-color-button" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/" + @Url, false)'" />
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    }
+                    if (Model.UpperRoleFunctionList != null)
+                    {
+                        <div class="SubMenu">
+                            @{ foreach (var UpperMenuList in Model.UpperRoleFunctionList)
+                                {
+                                    /*閲覧権限のあるページのみ表示する*/
+                                    string valuename = UpperMenuList.FuncName.ToString();
+                                    string MenuName = valuename.Trim();
+                                    string urlvalue = UpperMenuList.FuncId.ToString();
+                                    string Url = urlvalue.Trim();
+                                    string RolIdnum = UpperMenuList.RoleId.ToString();
+                                    string RolId = RolIdnum.Trim();
+
+                                    <div>
+                                        <input type="submit" value=@MenuName class="action-enter" style="margin-bottom:20px" onclick="window.location.href='@Common.CreateUrl("/" + @Url, false)'" />
+                                    </div>
+                                }
+                            }
                         </div>
                     }
                 }
             }
-        }
     </div>
 </div>

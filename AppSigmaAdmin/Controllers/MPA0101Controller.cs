@@ -3,6 +3,7 @@ using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -17,7 +18,10 @@ namespace AppSigmaAdmin.Controllers
         private string FILE_CONTENTTYPE = "text/comma-separated-values";
         private string FILE_EXTENSION = ".csv";
 
-        //入力日付チェック関数
+
+        /// <summary>
+        ///入力日付チェック関数
+        /// </summary>
         public static bool IsDate(string s)
         {
             //入力された日時が年/月/日以外はエラーで返す
@@ -43,11 +47,6 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済画面")]
         public ActionResult Index(string page)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
@@ -76,9 +75,18 @@ namespace AppSigmaAdmin.Controllers
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
-
+            int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
-            int pageNo = int.Parse(page);
+            try
+            {
+                pageNo = int.Parse(page);
+            }
+            catch(FormatException error)
+            {
+                Trace.TraceError(Logger.GetExceptionMessage(error));
+                ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
+                return View();
+            }
             int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
             int ListNoBegin = EndListNo - (ListNum -1);
@@ -131,11 +139,7 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済データ画面")]
         public ActionResult Index(NishitetsuPaymentInfoListEntity model)
         {
-#if DEBUG
-            ViewBag.Debug = 1;
-#else
-            ViewBag.Debug = 0;
-#endif
+
             ViewData["message"] = "";
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))

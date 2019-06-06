@@ -50,8 +50,10 @@ namespace AppSigmaAdmin.Models
 
                 rolesb.Append("select sf.FunctionId");              //運用管理機能ID
                 rolesb.Append("     , sf.FunctionName");            //機能名
+                rolesb.Append("     , sf.RoleId");                  //RoleID
+                rolesb.Append("     , sf.DispOrder");               //表示順
                 rolesb.Append("     from SystemFunction sf");
-                rolesb.Append("     where sf.RoleId =@RoleID");     //RoleID
+                rolesb.Append("     where sf.RoleId =@RoleID");     //入力されたアドレスに紐づくRoleID
                 rolesb.Append("     ORDER BY sf.DispOrder");        //表示順
 
                 cmd.CommandText = rolesb.ToString();
@@ -63,6 +65,8 @@ namespace AppSigmaAdmin.Models
                     RoleFunction RowInfo = new RoleFunction {
                         FuncId = row["FunctionId"].ToString(),
                         FuncName = row["FunctionName"].ToString(),
+                        RoleId = row["RoleId"].ToString(),
+                        DispOrder = row["DispOrder"].ToString(),
                     };
                     result.Add(RowInfo);
                 }

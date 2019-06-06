@@ -47,6 +47,13 @@ namespace AppSigmaAdmin
             Application["ErrorStack"] = "";
             Application["ErrorStack"] = Logger.GetExceptionMessage(exception);
 
+            //ValidationExceptionだった場合の判定用情報をセッションへ格納
+            if (exception.GetBaseException().GetType().FullName == "System.Web.HttpRequestValidationException")
+            {
+                Application["ExFunc"] = "";
+                Application["ExFunc"]= "ValidationEx";
+            }
+
             // エラー表示画面へリダイレクト
             Response.Redirect(Common.CreateUrl("/Error"));
         }
@@ -122,7 +129,7 @@ namespace AppSigmaAdmin
 
             // 認証用IPアドレスリストを取得
             object applicationData = Application[name: SESSION_AUTH_ADDRESS_LIST];
-            if (applicationData == null || requestUri == "~/")
+            if (applicationData == null)
             {
                 // Applicationセッションにアドレスリストが未設定の場合のみ、
                 // データベースより取得した値を格納

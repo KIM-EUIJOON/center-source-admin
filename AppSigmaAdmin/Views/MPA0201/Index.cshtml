@@ -1,7 +1,7 @@
 ﻿@model AppSigmaAdmin.ResponseData.JtxPaymentInfoListEntity
 @using AppSigmaAdmin.Utility
 @using System.Data
-
+@using AppSigmaAdmin.Library
 
 @section style{
     <style></style>
@@ -9,7 +9,7 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            if ($('#DebugFlag').val() != 1) {
+            if ($('#DebugFlag').val() != @ApplicationConfig.ENV_DEBUG) {
                 $('table tr a, tfoot a, td a').on('click', function() {
                     //sigma付与
                     location.href = "/sigma" + $(this).attr('href');
@@ -17,6 +17,9 @@
                     return false;
                 });
             }
+            $('#AllClear').on('click', function () {
+                window.location.href = '@Common.CreateUrl("/MPA0201", false)';
+            });
 
         });
     </script>
@@ -28,9 +31,9 @@
     <div class="funcTitleBer">
         決済データ検索及びダウンロード（JapanTaxi）
     </div>
-    }
+}
 
-<input type="hidden" id="DebugFlag" value="@ViewBag.Debug" />
+    <input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
 
 <form action="@Common.CreateUrl("/MPA0201", false)" method="post">
     <div class="ContentsBase">
@@ -59,7 +62,7 @@
                         </div>
                         <div class="GridTableRow">
                             <div class="GridTableCell">
-                                <input type="submit" formaction="@Common.CreateUrl("/MPA0201/Index", false)" formmethod="get" value="条件クリア" class="action-enter" style="margin-bottom:10px" />
+                                <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
                             </div>
                         </div>
                     </div>

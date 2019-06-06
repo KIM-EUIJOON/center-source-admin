@@ -36,7 +36,9 @@ namespace AppSigmaAdmin.Models
 
         /// <summary>メニュー名</summary>
         public string FuncName { get; set; }
-        
+
+        /// <summary>表示順</summary>
+        public string DispOrder { get; set; }
     }
 
     /// <summary>
@@ -45,9 +47,14 @@ namespace AppSigmaAdmin.Models
     public class RoleList: RoleFunction
     {
         /// <summary>
-        /// 表示権限リスト
+        /// 表示権限リスト(DispOrder100未満)
         /// </summary>
-        public List<RoleFunction> RoleFunctionList { get; set; }
+        public List<RoleFunction> LowerRoleFunctionList { get; set; }
+
+        /// <summary>
+        /// 表示権限リスト(DispOrder100以上)
+        /// </summary>
+        public List<RoleFunction> UpperRoleFunctionList { get; set; }
     }
 
 
