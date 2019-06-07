@@ -8,6 +8,11 @@
         accent-color-button {
             width: 300px;
         }
+        input[type="text"].std-textbox,
+        input[type="password"].std-textbox {
+            width:250px;
+        }
+
     </style>
 }
 
@@ -15,8 +20,9 @@
     <script>
         $(document).ready(function () {
            $("#dialog").dialog({
-                autoOpen: false,
-                width:400,
+               autoOpen: false,
+               modal: true,
+                width:450,
                 model: true,
                 buttons: {
                     "更新": function () {
@@ -141,12 +147,12 @@
     <form action="@Common.CreateUrl("/MSA0301/Edit", false)" method="post" id="Edit">
         <div>
             <label>ネットアドレス：</label>
-            @Html.TextBoxFor(m => m.NetAddress, new { id = "NetAdd", autocomplete = "off" })
+            @Html.TextBoxFor(m => m.NetAddress, new { id = "NetAdd", autocomplete = "off" , Class = "std-textbox" })
         </div>
         <br />
         <div>
             <label>IPアドレス名　：</label>
-            @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off" })
+            @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off" , Class = "std-textbox" })
         </div>
         <br />
         <div>

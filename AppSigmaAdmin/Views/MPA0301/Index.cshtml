@@ -18,7 +18,7 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            if ($('#DebugFlag').val() != @ApplicationConfig.ENV_DEBUG) {
+            if ($('#DebugFlag').val() != '@ApplicationConfig.ENV_DEBUG') {
                 $('table tr a, tfoot a, td a').on('click', function() {
                     //sigma付与
                     location.href = "/sigma" + $(this).attr('href');
