@@ -471,7 +471,7 @@ namespace AppSigmaAdmin.Controllers
             /// <param name="stDate">抽出範囲開始日</param>
             /// <param name="edDate">抽出範囲終了日</param>
             /// <returns>西鉄決済情報</returns>
-            public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType , string TicketNumType)
+            public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType , string TicketNumType,string TransportType)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
 
@@ -552,7 +552,7 @@ namespace AppSigmaAdmin.Controllers
             /// <param name="stDate"></param>
             /// <param name="edDate"></param>
             /// <returns></returns>
-            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType)
+            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType,string TransportType)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
                 //現在表示されているリストの通し番号
@@ -571,6 +571,12 @@ namespace AppSigmaAdmin.Controllers
                         NishiSb.Append("   and tbl.UserId = @UserId");
                         cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = MyrouteNo;
                     }
+                    /*if (TransportType != "-")
+                    {
+                        //検索条件に券種指定
+                        NishiSb.Append("   and tbl.TicketType = @TransportType ");
+                        cmd.Parameters.Add("@TransportType", SqlDbType.NVarChar).Value = TransportType;
+                    }*/
                     if (TicketType != "-")
                     {
                         //検索条件に券種指定
@@ -619,6 +625,42 @@ namespace AppSigmaAdmin.Controllers
                     }
                     return result;
                 }
+            }
+
+            /// <summary>
+            /// 西鉄券種ドロップダウンリスト項目取得
+            /// </summary>
+            /// <returns></returns>
+            public List<NishitetsuPaymentInfo> NishitetsuSelectList()
+            {
+                List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
+                using (SqlDbInterface NTdbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.Append("select nfts.TicketType");
+                    sb.Append("   ,nfts.TicketName");
+                    sb.Append("   from NishitetsuFreeTicketSales nfts");
+
+                    cmd.CommandText = sb.ToString();
+
+                    DataTable dt = NTdbInterface.ExecuteReader(cmd);
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        NishitetsuPaymentInfo info = new NishitetsuPaymentInfo
+                        {
+                            TicketType = row["TicketType"].ToString(),
+                            TicketName = row["TicketName"].ToString(),
+                        };
+
+                        result.Add(info);
+                    }
+                    return result;
+
+                }
+
             }
         }
     }

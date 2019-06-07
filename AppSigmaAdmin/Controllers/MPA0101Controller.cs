@@ -47,10 +47,14 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済画面")]
         public ActionResult Index(string page)
         {
+            List<NishitetsuPaymentInfo> NishitetsuTicket = null;
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-                return View();
+                NishitetsuPaymentInfoListEntity PullDownList = new NishitetsuPaymentInfoListEntity();
+                PullDownList.NishitetsuPullDownList = NishitetsuTicket;
+                return View(PullDownList);
             }
 
             //セッション情報の取得
@@ -64,6 +68,8 @@ namespace AppSigmaAdmin.Controllers
             string maxListCount = searchKey["maxListCount"];
             //検索条件：Myroute番号
             string MyrouteNo = searchKey["MyrouteNo"];
+            //検索条件：チケット種別
+            string TransportType = searchKey["TransportType"];
             //検索条件：券種
             string TicketType = searchKey["TicketType"];
             //検索条件：決済種別
@@ -94,7 +100,7 @@ namespace AppSigmaAdmin.Controllers
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
             //表示情報を取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, TicketType, PaymentType, TicketNumType);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, TicketType, PaymentType, TicketNumType, TransportType);
 
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
             int ListCount = int.Parse(maxListCount);
@@ -112,12 +118,16 @@ namespace AppSigmaAdmin.Controllers
             info.UserId = MyrouteNo;
             //指定券種
             info.TicketType = TicketType;
+            //チケット種別
+            info.TransportType = TransportType;
             //指定決済種別
             info.PaymentType = PaymentType;
             //指定枚数種別
             info.TicketNumType = TicketNumType;
             //表示リスト件数
             info.ListNum = ListNum;
+            //プルダウンリスト
+            info.NishitetsuPullDownList = NishitetsuTicket;
 
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
@@ -141,6 +151,14 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
+
+
+            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            //券種プルダウンリスト項目取得
+            List<NishitetsuPaymentInfo> NishitetsuTicket = null;
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            info.NishitetsuPullDownList = NishitetsuTicket;
+            model.NishitetsuPullDownList = NishitetsuTicket;
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
@@ -201,11 +219,11 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType,model.TransportType);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.TicketType, model.PaymentType, model.TicketNumType);
-            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.TicketType, model.PaymentType, model.TicketNumType, model.TransportType);
+
 
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
@@ -225,6 +243,8 @@ namespace AppSigmaAdmin.Controllers
             //表示リスト件数
             info.ListNum = ListNum;
 
+
+
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
             {
@@ -241,6 +261,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("MyrouteNo", UserId);
+            searchKey.Add("TransportType", model.TransportType);
             searchKey.Add("TicketType", model.TicketType);
             searchKey.Add("PaymentType", model.PaymentType);
             searchKey.Add("TicketNumType", model.TicketNumType);
@@ -318,13 +339,13 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType,model.TransportType);
 
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.TicketType, model.PaymentType, model.TicketNumType);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.TicketType, model.PaymentType, model.TicketNumType, model.TransportType);
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
 
             //開始日時
@@ -360,6 +381,8 @@ namespace AppSigmaAdmin.Controllers
             Nishisw.Write(',');
             Nishisw.Write("\"決済ID\"");
             Nishisw.Write(',');
+            /* Nishisw.Write("\"チケット種別\"");
+             Nishisw.Write(',');*///DB実装＆取得未実装
             Nishisw.Write("\"券種\"");
             Nishisw.Write(',');
             Nishisw.Write("\"大人枚数\"");
@@ -372,7 +395,6 @@ namespace AppSigmaAdmin.Controllers
             Nishisw.Write(',');
             Nishisw.WriteLine("\"領収書番号\"");
 
-
             foreach (var item in info.NishitetsuPaymentInfoList)
             {
                 //文字列に"を追加して出力
@@ -382,6 +404,8 @@ namespace AppSigmaAdmin.Controllers
                 Nishisw.Write(',');
                 Nishisw.Write("\"" + item.PaymentId.ToString() + "\"");     //決済ID
                 Nishisw.Write(',');
+                /*Nishisw.Write("\"" + item.TransportType.ToString() + "\"");    //チケット種別
+                Nishisw.Write(',');*///DB実装＆取得未実装
                 Nishisw.Write("\"" + item.TicketType.ToString() + "\"");    //券種
                 Nishisw.Write(',');
                 Nishisw.Write("\"" + item.AdultNum.ToString() + "\"");      //大人枚数

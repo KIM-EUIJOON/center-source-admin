@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppSigmaAdmin.Library;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,10 +23,11 @@ namespace AppSigmaAdmin.Controllers
             ViewBag.ExFunc = HttpContext.Application["ExFunc"];
             HttpContext.Application["ExFunc"] = "";
             }
-#if DEBUG
-            ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
-            HttpContext.Application["ErrorStack"] = "";
-#endif
+            if (ApplicationConfig.DeployEnv == ApplicationConfig.ENV_DEBUG)
+            {
+                ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
+                HttpContext.Application["ErrorStack"] = "";
+            }
             return View();
         }
     }

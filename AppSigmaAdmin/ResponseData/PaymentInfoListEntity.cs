@@ -160,10 +160,21 @@ namespace AppSigmaAdmin.ResponseData
     /// </summary>
     public class NishitetsuPaymentInfo : PaymentInfo
     {
+
+        /// <summary>
+        /// チケット種別
+        /// </summary>
+        public string TransportType { get; set; }
+
         /// <summary>
         /// 券種
         /// </summary>
         public string TicketType { get; set; }
+
+        /// <summary>
+        /// 券種名
+        /// </summary>
+        public string TicketName { get; set; }
 
         /// <summary>
         /// 大人枚数
@@ -217,5 +228,10 @@ namespace AppSigmaAdmin.ResponseData
         /// 西鉄決済情報リスト
         /// </summary>
         public List<NishitetsuPaymentInfo> NishitetsuPaymentInfoList { get; set; }
+
+        /// <summary>
+        /// 西鉄券種プルダウン用リスト
+        /// </summary>
+        public List<NishitetsuPaymentInfo> NishitetsuPullDownList { get; set; }
     }
 }

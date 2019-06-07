@@ -18,7 +18,7 @@
 @section scripts{
     <script>
         $(document).ready(function () {
-            if ($('#DebugFlag').val() != @ApplicationConfig.ENV_DEBUG) {
+            if ($('#DebugFlag').val() != '@ApplicationConfig.ENV_DEBUG') {
                 $('table tr a, tfoot a, td a').on('click', function() {
                     //sigma付与
                     location.href = "/sigma" + $(this).attr('href');
@@ -35,11 +35,11 @@
 
 @section funcTitle {
     <div class="funcTitleBer">
-        決済データ検索及びダウンロード（西鉄バスチケット）
+        決済データ検索及びダウンロード（西鉄フリー乗車券）
     </div>
 }
 
-    <input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
 
 <form action="@Common.CreateUrl("/MPA0101", false)" method="post">
     <div class="ContentsBase">
@@ -62,10 +62,36 @@
                     </div>
                 </div>
                 <div class="GridTableRow">
-                    <div class="GridTableCell">
-                        myroute会員ID：
-                        @Html.TextBoxFor(m => m.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
-                        @Html.ValidationMessageFor(m => m.UserId)
+                    <div class="GridTableCol">
+                        <div class="GridTableCell">
+                            myroute会員ID：
+                            @Html.TextBoxFor(m => m.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                            @Html.ValidationMessageFor(m => m.UserId)
+                        </div>
+                        <div class="GridTableCell">
+                            @{
+                                //チケット種別プルダウンリスト
+                                List<SelectListItem> TransportTypeList = new List<SelectListItem>();
+                                TransportTypeList.Add(new SelectListItem
+                                {
+                                    Text = "種別未選択",
+                                    Value = "-",
+                                    Selected = true
+                                });
+                                TransportTypeList.Add(new SelectListItem
+                                {
+                                    Text = "バス",
+                                    Value = "0"
+                                });
+                                TransportTypeList.Add(new SelectListItem
+                                {
+                                    Text = "鉄道",
+                                    Value = "1"
+                                });
+                            }
+                            チケット種別：
+                            @Html.DropDownListFor(m => m.TransportType, TransportTypeList, new { Class = "DropList" })
+                        </div>
                     </div>
                     <div class="GridTableCell">
                     </div>
@@ -80,22 +106,31 @@
                                 @{
                                     //券種プルダウンリスト
                                     List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+                                    List<string> SelectCheck = new List<string>();
                                     TicketTypeList.Add(new SelectListItem
                                     {
                                         Text = "種別未選択",
                                         Value = "-",
                                         Selected = true
                                     });
-                                    TicketTypeList.Add(new SelectListItem
+                                    //券種選択肢はDBから取得
+                                    if (Model != null)
                                     {
-                                        Text = "1日フリー乗車券",
-                                        Value = "0"
-                                    });
-                                    TicketTypeList.Add(new SelectListItem
-                                    {
-                                        Text = "6時間フリー乗車券",
-                                        Value = "1"
-                                    });
+                                        if (Model.NishitetsuPullDownList != null)
+                                        {
+                                            foreach (var TicketList in Model.NishitetsuPullDownList)
+                                            {
+                                                string TicketName = TicketList.TicketName.ToString(); //券種名称
+                                                string TicketType = TicketList.TicketType.ToString(); //券種
+
+                                                TicketTypeList.Add(new SelectListItem
+                                                {
+                                                    Text = TicketName,
+                                                    Value = TicketType,
+                                                });
+                                            }
+                                        }
+                                    }
                                 }
                                 券種：
                                 @Html.DropDownListFor(m => m.TicketType, TicketTypeList, new { Class = "DropList" })
@@ -185,9 +220,10 @@
                             <div class="grid-table">
                                 @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
                                     columns:grid.Columns(grid.Column("UserId",header:"myroute会員ID",style: "gridbody12"),grid.Column("TranDatetime", header:"決済日時", style: "gridbody18"),
-                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TicketType", header: "券種", style: "gridbody6"),
-                                    grid.Column("AdultNum", header: "大人枚数", style: "gridbody9"), grid.Column("ChildNum", header: "子供枚数", style: "gridbody9"),
-                                    grid.Column("PaymentType", header: "決済種別", style: "gridbody8"), grid.Column("Amount", header: "金額", style: "gridbody9"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody14")
+                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TransportType", header: "チケット種別", style: "gridbody12"),
+                                    grid.Column("TicketType", header: "券種", style: "gridbody6"), grid.Column("AdultNum", header: "大人枚数", style: "gridbody8")
+                                    , grid.Column("ChildNum", header: "子供枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                    grid.Column("Amount", header: "金額", style: "gridbody6"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")
                                     ))
                             </div>
 

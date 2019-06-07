@@ -230,8 +230,6 @@ namespace AppSigmaAdmin.Controllers
                 int SubNetAddLength = NetAddress.Length - (num + 1);
                 SubNetAdd = NetAddress.Substring(num + 1, SubNetAddLength);
 
-                System.Net.IPAddress ipaddr;
-
                 string addtemp = @"^(([01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}([01]?\d{1,2}|2[0-4]\d|25[0-5])$";
                 bool IpAddcheck = Regex.IsMatch(IPAdd, addtemp);
 
