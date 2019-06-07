@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppSigmaAdmin.Library;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -49,11 +50,14 @@ namespace AppSigmaAdmin.Utility
         public static string CreateUrl(string url, bool isTilde = true)
         {
             string tilde = isTilde ? "~" : "";
-#if DEBUG
-            return tilde + url;
-#else
-            return tilde + "/sigma" + url;
-#endif
+            if (ApplicationConfig.DeployEnv == ApplicationConfig.ENV_DEBUG)
+            {
+                return tilde + url;
+            }
+            else
+            {
+                return tilde + "/sigma" + url;
+            }
         }
     }
 }

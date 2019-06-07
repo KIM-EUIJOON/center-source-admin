@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using AppSigmaAdmin.Library;
+using System.Web;
 using System.Web.Optimization;
 
 namespace AppSigmaAdmin
@@ -27,17 +28,22 @@ namespace AppSigmaAdmin
                       "~/Scripts/respond.js"));
 
 
-#if DEBUG
-            bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
-                      "~/Content/bootstrap.css",
-                      "~/Content/jquery-ui.css",
-                      "~/Content/site.css"));
-#else
-            bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
-                      "~/sigma/Content/bootstrap.css",
-                      "~/sigma/Content/jquery-ui.css",
-                      "~/sigma/Content/site.css"));
-#endif
+
+            if (ApplicationConfig.DeployEnv == ApplicationConfig.ENV_DEBUG)
+            {
+                bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
+                          "~/Content/bootstrap.css",
+                          "~/Content/jquery-ui.css",
+                          "~/Content/site.css"));
+            }
+            else
+            {
+                bundles.Add(new StyleBundle("~/sigma/Content/css").Include(
+                          "~/sigma/Content/bootstrap.css",
+                          "~/sigma/Content/jquery-ui.css",
+                          "~/sigma/Content/site.css"));
+            }
+
         }
     }
 }
