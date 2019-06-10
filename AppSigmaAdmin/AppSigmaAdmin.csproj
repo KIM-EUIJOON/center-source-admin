@@ -171,7 +171,7 @@
     <Compile Include="Controllers\MPA0101Controller.cs" />
     <Compile Include="Controllers\MPA0201Controller.cs" />
     <Compile Include="Controllers\MPA0301Controller.cs" />
-    <Compile Include="Library\BundleHtmlTag.cs" />
+    <Compile Include="Utility\BundleHtmlTag.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
     <Compile Include="Models\PaymentInfoModels.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
@@ -219,6 +219,12 @@
     <Content Include="Content\jquery-ui.css" />
     <Content Include="Content\jquery-ui.structure.css" />
     <Content Include="Content\jquery-ui.theme.css" />
+    <Content Include="Content\jquery-ui\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\jquery-ui\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\jquery-ui\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\jquery-ui\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\jquery-ui\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\jquery-ui\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Images\hdr_logo2.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -230,6 +236,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\PublishProfiles\sigma-develop-web - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\sigma-preprod-web - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
@@ -243,6 +250,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\Pages\common.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Web.config">
@@ -269,6 +277,9 @@
     <Content Include="Views\MPA0201\Index.cshtml" />
     <Content Include="Views\MPA0301\Index.cshtml" />
     <Content Include="Views\MSA0301\Index.cshtml" />
+    <None Include="Web.Develop.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
     <None Include="Web.Prod.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
@@ -276,7 +287,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\Pages\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -305,6 +315,16 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Prod|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Develop|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>

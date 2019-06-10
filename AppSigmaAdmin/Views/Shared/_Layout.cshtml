@@ -1,12 +1,14 @@
 ﻿@using AppSigmaAdmin.Utility
+@using AppSigmaAdmin.Library
+@using AppSigmaAdmin.Models
 
 @{
     string controllerName = ViewContext.RouteData.Values["controller"].ToString();
     string userName = "";
-    AppSigmaAdmin.Models.UserInfoAdminEntity userInfoAdminEntity = null;
-    if (Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO_ADMIN] != null)
+    UserInfoAdminEntity userInfoAdminEntity = null;
+    if (Session[SystemConst.SESSION_USER_INFO_ADMIN] != null)
     {
-        userInfoAdminEntity = (AppSigmaAdmin.Models.UserInfoAdminEntity)Session[AppSigmaAdmin.Library.SystemConst.SESSION_USER_INFO_ADMIN];
+        userInfoAdminEntity = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
         userName = userInfoAdminEntity.Name;
     }
 
@@ -20,61 +22,22 @@
     <meta name="robots" content="noindex">
     <title>プロジェクトΣ</title>
 
-    <link href="@Common.CreateUrl("/Content/jquery-ui.css", false)" rel="stylesheet" />
-    <link href="@Common.CreateUrl("/Content/Site.css", false)" rel="stylesheet" />
-    <script src="@Common.CreateUrl("/Scripts/jquery-1.12.4.min.js", false)"></script>
-    <script src="@Common.CreateUrl("/Scripts/jquery-ui.js", false)"></script>
+    @Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery")
+    @Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery-ui")
 
-    @*<script src="@Common.CreateUrl("/Scripts/jquery-1.10.2.min.js", false)"></script>*@
+    @Styles.RenderFormat(BundleHtmlTag.StyleTag, "~/Content/jquery-ui/css")
+    @Styles.RenderFormat(BundleHtmlTag.StyleTag, "~/Content/app-site/css")
 
-    @*@Styles.Render("~/sigma/Content/css")*@
     @RenderSection("Style", false)
-    @*@Scripts.Render("~/sigma/bundles/jquery")*@
     @RenderSection("scripts", required: false)
+
     <style id="antiClickjack">
         body {
             display: none !important;
         }
     </style>
-    <script type="text/javascript">
-        if (self === top) {
-            var antiClickjack = document.getElementById("antiClickjack");
-            antiClickjack.parentNode.removeChild(antiClickjack);
-        } else {
-            top.location = self.location;
-        }
-        //日付入力補助カレンダー(抽出開始日)
-        function SetcalenderFrom() {
-            $('#datetimepickerFrom').datepicker(
-                {
-                    maxDate: '0y',
-                    dateFormat: 'yy/mm/dd',
-                    changeYear: true,
-                    changeMonth: true,
-                    showMonthAfterYear: true,
-                    showButtonPanel: true,
-                }
-            );
-            $('#datetimepickerFrom').datepicker("show");
-        };
-        //日付入力補助カレンダー(抽出終了日)
-        function SetcalenderTo() {
-            $('#datetimepickerTo').datepicker({
-                maxDate: '0y',
-                dateFormat: 'yy/mm/dd',
-                changeYear: true,
-                changeMonth: true,
-                showMonthAfterYear: true,
-                showButtonPanel: true,
-            });
-            $('#datetimepickerTo').datepicker("show");
-        };
-        //Today押下で今日の日付を入力する
-        $.datepicker._gotoToday = function (id) {
-            $(id).datepicker('setDate', new Date()).datepicker('hide').blur().change();
-        }
-    </script>
 
+    @Scripts.Render("~/bundles/jquery/common")
 
     <link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
 </head>
@@ -96,47 +59,16 @@
                 <div class="loginCaption">
                     <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
                 </div>
-
-                if (controllerName != "Menu")
-                {
-                    <!--
-                    <div class="toMenuCaption">
-                        <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>
-                    </div>
-                    -->
-                }
             }
 
 
-
             <div class="title">Management Console</div>
-
-            <!--
-    <span style="color:white;font-size:30pt;padding-left:10px;">プロジェクトΣ</span>
-    @if (!string.IsNullOrEmpty(controllerName) && controllerName != "Login")
-    {
-        <div class="logoutCaption">
-            <a href="@Common.CreateUrl("/Logout", false)">ログアウト</a>
-        </div>
-        <div class="loginCaption">
-            <span style="color: #ffffff; padding-right: 30px;">ログイン： @userName</span>
-        </div>
-
-        if (controllerName != "Menu")
-        {
-            <div class="toMenuCaption">
-                <button class="action-menu" onclick="location.href = '@Common.CreateUrl("/Menu", false)';">メニューに戻る</button>
-            </div>
-        }
-    }
-    -->
-
         </div>
         <div class="headerBoxSub">
-            @RenderSection("funcTitle",false)
+            @RenderSection("funcTitle", false)
         </div>
     </section>
-    
+
 
     <section id="body">
         @RenderBody()
