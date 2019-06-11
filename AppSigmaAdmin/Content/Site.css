@@ -123,7 +123,7 @@ section#body {
 
     section#body .userInfoBox {
         width: 90%;
-        min-width: 900px;
+        min-width: 1000px;
         max-width: 1500px;
         margin-top: 45px;
         padding-top: 50px;

@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Controllers.JTXPaymentModel;
+using static AppSigmaAdmin.Models.JTXPaymentModel;
 
 namespace AppSigmaAdmin.Controllers
 {

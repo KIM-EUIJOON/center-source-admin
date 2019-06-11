@@ -175,6 +175,11 @@ namespace AppSigmaAdmin.ResponseData
         /// 券種名
         /// </summary>
         public string TicketName { get; set; }
+        
+        /// <summary>
+        /// プルダウン用チケット種別
+        /// </summary>
+        public string TicketInfo { get; set; }
 
         /// <summary>
         /// 大人枚数

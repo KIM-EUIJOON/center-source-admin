@@ -1,4 +1,5 @@
 ﻿using AppSigmaAdmin.Attribute;
+using AppSigmaAdmin.Models;
 using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Utility;
 using System;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Controllers.JTXPaymentModel;
+using static AppSigmaAdmin.Models.JTXPaymentModel;
 
 namespace AppSigmaAdmin.Controllers
 {

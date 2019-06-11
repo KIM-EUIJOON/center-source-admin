@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Controllers.JTXPaymentModel;
+using static AppSigmaAdmin.Models.JTXPaymentModel;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -49,12 +49,36 @@ namespace AppSigmaAdmin.Controllers
         {
             List<NishitetsuPaymentInfo> NishitetsuTicket = null;
             NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            //プルダウンリスト
+            
+            //券種プルダウン
+            List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+            int selectflg = 0;
+            
+            //チケット種別プルダウン
+            List<SelectListItem> TranseTypeList = new List<SelectListItem>();
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-                NishitetsuPaymentInfoListEntity PullDownList = new NishitetsuPaymentInfoListEntity();
-                PullDownList.NishitetsuPullDownList = NishitetsuTicket;
-                return View(PullDownList);
+                foreach (var TicketList in NishitetsuTicket)
+                {
+                    string TicketName = TicketList.TicketName.ToString(); //券種名称
+                    string ListTicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //券種/交通手段
+
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
+                }
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+                ViewBag.TicketList = TicketTypeList;
+
+                //チケット種別プルダウン作成
+                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
+                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+                TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+                ViewBag.TranseList = TranseTypeList;
+
+                return View(info);
             }
 
             //セッション情報の取得
@@ -78,6 +102,40 @@ namespace AppSigmaAdmin.Controllers
             string TicketNumType = searchKey["TicketNumType"];
             //リスト件数
             int ListNum = int.Parse(searchKey["ListNum"]);
+            string TicketInfo = searchKey["TicketInfo"];
+
+            foreach (var TicketList in NishitetsuTicket)
+            {
+                string TicketName = TicketList.TicketName.ToString(); //券種名称
+                string ListTicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //券種/交通手段
+
+                if (TicketInfo != ListTicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
+                }
+                else if (TicketInfo == ListTicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType, Selected = true });
+                    selectflg = 1;
+                }
+            }
+            if (selectflg == 1)
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+            else
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            }
+
+            ViewBag.TicketList = TicketTypeList;
+
+            //チケット種別プルダウン作成
+                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
+                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+                TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+
+            ViewBag.TranseList = TranseTypeList;
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
@@ -90,8 +148,10 @@ namespace AppSigmaAdmin.Controllers
             catch(FormatException error)
             {
                 Trace.TraceError(Logger.GetExceptionMessage(error));
+                info.TransportType = "-";
+                info.TicketType = "-";
                 ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
-                return View();
+                return View(info);
             }
             int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
@@ -99,10 +159,11 @@ namespace AppSigmaAdmin.Controllers
 
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
+
             //表示情報を取得
             SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, TicketType, PaymentType, TicketNumType, TransportType);
 
-            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            
             int ListCount = int.Parse(maxListCount);
 
 
@@ -126,8 +187,9 @@ namespace AppSigmaAdmin.Controllers
             info.TicketNumType = TicketNumType;
             //表示リスト件数
             info.ListNum = ListNum;
-            //プルダウンリスト
-            info.NishitetsuPullDownList = NishitetsuTicket;
+            //ドロップダウンリスト用チケット種別
+            //info.TicketInfo = TicketType + "/" + TransportType;
+
 
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
@@ -152,13 +214,78 @@ namespace AppSigmaAdmin.Controllers
 
             ViewData["message"] = "";
 
+            //券種選択肢から交通種別を分離する
+            string SearchOb = "/"; //「/」判定用
+            int num;
+            //選択券種
+            string Tickettype = "-";
+            //選択チケット種別
+            string TransePortCheck = "-";       //チケット種別保存用
+            string TransportType = "-";         //交通種別保存用
 
-            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            if (model.TicketInfo != "-")//券種が選択済でチケット種別が未選択の場合
+            {
+                num = model.TicketInfo.IndexOf(SearchOb);
+                Tickettype = model.TicketInfo.Substring(0, num);       //券種分離
+                int Tpt = model.TicketInfo.Length - (num + 1);
+                TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
+
+                if (model.TransportType == "-")
+                {
+                    TransportType = TransePortCheck;
+                }
+                else
+                {
+                    TransportType = model.TransportType;
+                }
+            }
+            else
+            {
+                TransportType = model.TransportType;
+            }
+
             //券種プルダウンリスト項目取得
             List<NishitetsuPaymentInfo> NishitetsuTicket = null;
             NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
-            info.NishitetsuPullDownList = NishitetsuTicket;
-            model.NishitetsuPullDownList = NishitetsuTicket;
+            //券種プルダウンリスト
+            List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+
+            //券種プルダウンリスト作成(券種はチケット種別の影響を受けない)
+            foreach (var TicketList in NishitetsuTicket)
+            {
+                string TicketName = TicketList.TicketName.ToString(); //券種名称
+                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //券種/交通手段
+
+                if (model.TicketInfo != TicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
+                }
+                else if (model.TicketInfo == TicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
+                }
+            }
+            if (model.TicketInfo == "-")
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            }
+            else
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+            //券種プルダウンリストを保存
+            ViewBag.TicketList = TicketTypeList;
+
+
+            //チケット種別プルダウン
+            List<SelectListItem> TranseTypeList = new List<SelectListItem>();
+
+            TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+            TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+
+            //チケット種別ドロップダウンリストを保存
+            ViewBag.TranseList = TranseTypeList;
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
@@ -174,12 +301,12 @@ namespace AppSigmaAdmin.Controllers
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(model);
             }
             if (string.IsNullOrEmpty(model.UserId))
             {
@@ -189,7 +316,7 @@ namespace AppSigmaAdmin.Controllers
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
-                    return View();
+                    return View(model);
                 }
             }
 
@@ -204,7 +331,7 @@ namespace AppSigmaAdmin.Controllers
             //10件ずつ表示する
             int ListNum = 10;
             int EndListNo = PageNo * ListNum;
-            int ListNoBegin = EndListNo -(ListNum -1);
+            int ListNoBegin = EndListNo - (ListNum - 1);
             string UserId;
 
             if (string.IsNullOrEmpty(model.UserId))
@@ -218,11 +345,22 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
+
+            if (TransePortCheck != "-" && TransportType != "-")
+            {
+                if (TransePortCheck != TransportType)
+                {
+                    ModelState.AddModelError("", "券種とバス/鉄道の種別が一致しません。再選択してください。");
+                    return View(model);
+                }
+            }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType,model.TransportType);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.TicketType, model.PaymentType, model.TicketNumType, model.TransportType);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType);
+
+            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
 
 
             //表示リストの総数
@@ -242,8 +380,20 @@ namespace AppSigmaAdmin.Controllers
 
             //表示リスト件数
             info.ListNum = ListNum;
+            //指定券種
+            info.TicketType = Tickettype;
 
+            //チケット種別
+            info.TransportType = TransportType;
 
+            //ドロップダウンリスト用チケット種別
+            info.TicketInfo = model.TicketInfo;
+
+            //指定決済種別
+            info.PaymentType = model.PaymentType;
+
+            //指定枚数種別
+            info.TicketNumType = model.TicketNumType;
 
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
@@ -261,8 +411,9 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("MyrouteNo", UserId);
-            searchKey.Add("TransportType", model.TransportType);
-            searchKey.Add("TicketType", model.TicketType);
+            searchKey.Add("TransportType", TransportType);
+            searchKey.Add("TicketType", Tickettype);
+            searchKey.Add("TicketInfo", model.TicketInfo);
             searchKey.Add("PaymentType", model.PaymentType);
             searchKey.Add("TicketNumType", model.TicketNumType);
             searchKey.Add("ListNum", ListNum.ToString());
@@ -281,27 +432,101 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
+            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+
+            //券種選択肢から交通種別を分離する
+            string SearchOb = "/"; //「/」判定用
+            int num;
+            //選択券種
+            string Tickettype = "-";
+            //選択チケット種別
+            string TransePortCheck = "-";       //チケット種別保存用
+            string TransportType = "-";         //交通種別保存用
+
+            if (model.TicketInfo != "-")//券種が選択済でチケット種別が未選択の場合
+            {
+                num = model.TicketInfo.IndexOf(SearchOb);
+                Tickettype = model.TicketInfo.Substring(0, num);       //券種分離
+                int Tpt = model.TicketInfo.Length - (num + 1);
+                TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
+
+                if (model.TransportType == "-")
+                {
+                    TransportType = TransePortCheck;
+                }
+                else
+                {
+                    TransportType = model.TransportType;
+                }
+            }
+            else 
+            {
+                TransportType = model.TransportType;
+            }
+
+            //券種プルダウンリスト項目取得
+            List<NishitetsuPaymentInfo> NishitetsuTicket = null;
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            //券種プルダウンリスト
+            List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+
+            //券種プルダウンリスト作成(券種はチケット種別の影響を受けない)
+            foreach (var TicketList in NishitetsuTicket)
+            {
+                string TicketName = TicketList.TicketName.ToString(); //券種名称
+                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //券種/交通手段
+
+                if (model.TicketInfo != TicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
+                }
+                else if (model.TicketInfo == TicketType)
+                {
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
+                }
+            }
+            if (model.TicketInfo == "-")
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            }
+            else
+            {
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+            //券種プルダウンリストを保存
+            ViewBag.TicketList = TicketTypeList;
+
+
+            //チケット種別プルダウン
+            List<SelectListItem> TranseTypeList = new List<SelectListItem>();
+
+                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
+                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+                TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+
+            //チケット種別ドロップダウンリストを保存
+            ViewBag.TranseList = TranseTypeList;
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
-                return View("~/Views/MPA0101/Index.cshtml");
+                return View("~/Views/MPA0101/Index.cshtml", model);
             }
             else if (string.IsNullOrEmpty(model.TargetDateEnd))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
-                return View("~/Views/MPA0101/Index.cshtml");
+                return View("~/Views/MPA0101/Index.cshtml", model);
             }
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0101/Index.cshtml");
+                return View("~/Views/MPA0101/Index.cshtml", model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0101/Index.cshtml");
+                return View("~/Views/MPA0101/Index.cshtml", model);
             }
             if (string.IsNullOrEmpty(model.UserId))
             {
@@ -312,7 +537,7 @@ namespace AppSigmaAdmin.Controllers
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
-                    return View("~/Views/MPA0101/Index.cshtml");
+                    return View("~/Views/MPA0101/Index.cshtml", model);
                 }
             }
 
@@ -338,15 +563,23 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
+            if (TransePortCheck != "-" && TransportType != "-")
+            {
+                if (TransePortCheck != TransportType)
+                {
+                    ModelState.AddModelError("", "券種とバス/鉄道の種別が一致しません。再選択してください。");
+                    return View("~/Views/MPA0101/Index.cshtml", model);
+                }
+            }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.TicketType, model.PaymentType, model.TicketNumType,model.TransportType);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType);
 
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.TicketType, model.PaymentType, model.TicketNumType, model.TransportType);
-            NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType);
+
 
             //開始日時
             info.TargetDateBegin = TargetDateStart.ToString();
@@ -368,7 +601,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
-                return View("~/Views/MPA0101/Index.cshtml");
+                return View("~/Views/MPA0101/Index.cshtml", info);
             }
 
 
@@ -381,8 +614,8 @@ namespace AppSigmaAdmin.Controllers
             Nishisw.Write(',');
             Nishisw.Write("\"決済ID\"");
             Nishisw.Write(',');
-            /* Nishisw.Write("\"チケット種別\"");
-             Nishisw.Write(',');*///DB実装＆取得未実装
+            Nishisw.Write("\"バス/鉄道\"");
+            Nishisw.Write(',');
             Nishisw.Write("\"券種\"");
             Nishisw.Write(',');
             Nishisw.Write("\"大人枚数\"");
@@ -404,9 +637,9 @@ namespace AppSigmaAdmin.Controllers
                 Nishisw.Write(',');
                 Nishisw.Write("\"" + item.PaymentId.ToString() + "\"");     //決済ID
                 Nishisw.Write(',');
-                /*Nishisw.Write("\"" + item.TransportType.ToString() + "\"");    //チケット種別
-                Nishisw.Write(',');*///DB実装＆取得未実装
-                Nishisw.Write("\"" + item.TicketType.ToString() + "\"");    //券種
+                Nishisw.Write("\"" + item.TransportType.ToString() + "\"");    //チケット種別
+                Nishisw.Write(',');
+                Nishisw.Write("\"" + item.TicketName.ToString() + "\"");    //券種
                 Nishisw.Write(',');
                 Nishisw.Write("\"" + item.AdultNum.ToString() + "\"");      //大人枚数
                 Nishisw.Write(',');
