@@ -4,7 +4,19 @@
 } else {
     top.location = self.location;
 }
+$(document).ready(function () {
+    if ($('#DebugFlag').val() != $('#Debug').val()) {
+        $('table tr a, tfoot a, td a').on('click', function () {
+            //sigma付与
+            location.href = "/sigma" + $(this).attr('href');
 
+            return false;
+        });
+    }
+    $('#AllClear').on('click', function () {
+        window.location.href = $('#CreateUrl').val();
+    });
+});
 //日付入力補助カレンダー(抽出開始日)
 function SetcalenderFrom() {
     $('#datetimepickerFrom').datepicker(

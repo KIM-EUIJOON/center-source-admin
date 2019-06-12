@@ -15,23 +15,6 @@
         }
     </style>
 }
-@section scripts{
-    <script>
-        $(document).ready(function () {
-            if ($('#DebugFlag').val() != '@ApplicationConfig.ENV_DEBUG') {
-                $('table tr a, tfoot a, td a').on('click', function() {
-                    //sigma付与
-                    location.href = "/sigma" + $(this).attr('href');
-
-                    return false;
-                });
-            }
-            $('#AllClear').on('click', function () {
-                window.location.href = '@Common.CreateUrl("/MPA0301", false)';
-            });
-        });
-    </script>
-}
 
 @{
     ViewBag.Title = "決済データ検索及びダウンロード（ナッセグルメパスポート）";
@@ -43,6 +26,8 @@
 }
 
 <input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA0301", false)" />
 
 <form action="@Common.CreateUrl("/MPA0301", false)" method="post">
     <div class="ContentsBase">

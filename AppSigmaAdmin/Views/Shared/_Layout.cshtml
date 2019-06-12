@@ -37,7 +37,7 @@
         }
     </style>
 
-    @Scripts.Render("~/bundles/jquery/common")
+    @Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery/common")
 
     <link rel="shortcut icon" href="@Common.CreateUrl("/favicon.ico", false)" type="image/vnd.microsoft.ico" />
 </head>

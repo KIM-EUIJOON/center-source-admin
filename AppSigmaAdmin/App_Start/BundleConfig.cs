@@ -25,6 +25,10 @@ namespace AppSigmaAdmin
             bundles.Add(new ScriptBundle("~/bundles/jquery/common").Include(
                         "~/Scripts/Pages/common.js"));
 
+            //JavaScript: システム管理者機能画面(MSA0301)
+            bundles.Add(new ScriptBundle("~/bundles/jquery/MSA0301").Include(
+                        "~/Scripts/Pages/MSA0301.js"));
+
             // StyleSheet: JQueryUI関連
             bundles.Add(new StyleBundle("~/Content/jquery-ui/css").Include(
                         "~/Content/jquery-ui.css"));
