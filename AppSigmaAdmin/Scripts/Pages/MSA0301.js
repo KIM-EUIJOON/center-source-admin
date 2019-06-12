@@ -33,11 +33,16 @@ $(window).load(function () {
 function IPListDelete(NetAddress) {
     if (confirm('IPアドレス「' + NetAddress + '」を認証用IPアドレスリストから削除します。よろしいですか?')) {
         //メッセージボックス「はい」選択時の処理
-        $.post($('#IpDelete').val(), { NetAddress },
-            function (dt) {
+        $.ajax({
+            type: 'POST',
+            url: $('#IpDelete').val(),
+            data: NetAddress,
+            dataType: 'text',
+            success: function (data) {
                 window.alert('リストの更新に成功しました。');
                 window.location.href = $('#CreateUrl').val();
-            });
+            }
+        });
     }
     else {
         //メッセージボックス「いいえ」選択時の処理
