@@ -77,6 +77,13 @@ namespace AppSigmaAdmin.Controllers
             try
             {
                 pageNo = int.Parse(page);
+                int pageCheck = pageNo * ListNum;
+                //直接入力されたページ数が存在しない場合
+                if (pageCheck > int.Parse(maxListCount))
+                {
+                    ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
+                    return View();
+                }
             }
             catch (FormatException error)
             {

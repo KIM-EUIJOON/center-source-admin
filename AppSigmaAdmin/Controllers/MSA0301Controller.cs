@@ -335,13 +335,14 @@ namespace AppSigmaAdmin.Controllers
         /// <returns>システム管理者機能画面</returns>
         [HttpPost]
         [SessionCheck(WindowName = "管理者機能画面")]
-        public ActionResult IpDelete(AuthIpAddressEntityList model)
+        public ActionResult IpDelete()
         {
             ViewData["message"] = "";
 
             //アドレス削除処理
-            string NetAddress = model.NetAddress;
-            new AuthIpAddressEntityList().DeleteIPAdd(NetAddress);
+            string NetAddress = Request.Form.ToString();
+            string DeleteAddress = NetAddress.Replace("%2f","/");
+            new AuthIpAddressEntityList().DeleteIPAdd(DeleteAddress);
 
             //IPアドレスリストをDBから取得
             AuthIpAddressEntityList result = GetIPListTable();

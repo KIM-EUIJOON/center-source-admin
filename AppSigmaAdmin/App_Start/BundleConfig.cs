@@ -41,6 +41,10 @@ namespace AppSigmaAdmin
                           "~/sigma/Content/jquery-ui.css",
                           "~/sigma/Content/site.css"));
             }
+            //JavaScript: システム管理者機能画面(MSA0301)
+            bundles.Add(new ScriptBundle("~/bundles/jquery/MSA0301").Include(
+                        "~/Scripts/Pages/MSA0301.js"));
+
         }
     }
 }
