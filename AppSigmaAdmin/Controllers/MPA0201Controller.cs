@@ -72,9 +72,10 @@ namespace AppSigmaAdmin.Controllers
             try
             {
                 pageNo = int.Parse(page);
-                int pageCheck = pageNo * ListNum;
+                float ListMaxPage = (float)(float.Parse(maxListCount) / (float)ListNum);
+                int ListMaxPageNum = (int)Math.Ceiling(ListMaxPage);
                 //直接入力されたページ数が存在しない場合
-                if (pageCheck > int.Parse(maxListCount))
+                if (pageNo > ListMaxPageNum)
                 {
                     ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
                     return View();

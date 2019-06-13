@@ -443,7 +443,7 @@ namespace AppSigmaAdmin.Models
                     sb.Append("          and pm.GmoProcType = '2'");                // 決済実行
                     sb.Append("          left join FreeTicketSalesMaster fsm");
                     sb.Append("          on nft.TicketType = fsm.TicketType");
-                    sb.Append("          and fsm.BizCompanyCd='NNR001'");           //西鉄
+                    sb.Append("          and fsm.BizCompanyCd='NNR002'");           //西鉄
                     sb.Append("          and fsm.TrsType ='14'");                   //バス情報のみ取得
                     sb.Append("        union all  ");
                     // 払戻し返金データ取得
@@ -469,7 +469,7 @@ namespace AppSigmaAdmin.Models
                     sb.Append("           and pm.GmoProcType = '3'");               // 決済変更
                     sb.Append("          left join FreeTicketSalesMaster fsm");
                     sb.Append("          on nft.TicketType = fsm.TicketType");
-                    sb.Append("          and fsm.BizCompanyCd='NNR001'");           //西鉄
+                    sb.Append("          and fsm.BizCompanyCd='NNR002'");           //西鉄
                     sb.Append("          and fsm.TrsType ='14'");                   //バス情報のみ取得
                     sb.Append("        union all");
                     // 払戻し手数料取得
@@ -496,7 +496,7 @@ namespace AppSigmaAdmin.Models
                     sb.Append("           and pm.GmoProcType = '2'");               // 決済実行
                     sb.Append("          left join FreeTicketSalesMaster fsm");
                     sb.Append("          on nft.TicketType = fsm.TicketType");
-                    sb.Append("          and fsm.BizCompanyCd='NNR001'");           //西鉄
+                    sb.Append("          and fsm.BizCompanyCd='NNR002'");           //西鉄
                     sb.Append("          and fsm.TrsType ='14'");                   //バス情報のみ取得
 
                     return sb.ToString();
@@ -600,8 +600,8 @@ namespace AppSigmaAdmin.Models
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder Nsb = new StringBuilder();
-                    string NasseInfo = GetALLGetNishitetsuPaymentDateQuery(stDate, edDate);
-                    Nsb.Append("select * from (" + NasseInfo.ToString() +"");
+                    string NishitetsuInfo = GetALLGetNishitetsuPaymentDateQuery(stDate, edDate);
+                    Nsb.Append("select * from (" + NishitetsuInfo.ToString() +"");
                     
                     if (MyrouteNo != "")
                     {　
