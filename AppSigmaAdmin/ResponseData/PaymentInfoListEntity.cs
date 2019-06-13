@@ -172,7 +172,7 @@ namespace AppSigmaAdmin.ResponseData
         public string TicketType { get; set; }
 
         /// <summary>
-        /// 券種名
+        /// 商品種別名
         /// </summary>
         public string TicketName { get; set; }
         

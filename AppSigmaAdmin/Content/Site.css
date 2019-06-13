@@ -292,7 +292,7 @@ section#body {
         border-spacing: 0px;
         margin-right: auto;
         margin-left: auto;
-        width: 90%;
+        width: 95%;
     }
 
     section#body .gridhead th {
@@ -387,6 +387,15 @@ section#body {
         border-right: solid 1px #dddddd;
         border-collapse: collapse;
         width: 6%;
+    }
+
+    section#body .gridbody5 {
+        font-size: 16px;
+        border-bottom: solid 1px #dddddd;
+        border-left: solid 1px #dddddd;
+        border-right: solid 1px #dddddd;
+        border-collapse: collapse;
+        width: 5%;
     }
 
     section#body .gridbody {
