@@ -22,49 +22,49 @@ namespace AppSigmaAdmin.Models
         /// /// <param name="pageNo">表示リスト開始位置</param>
         /// /// <param name="edDate">表示リスト終了位置</param>
         /// <returns>JTX決済情報</returns>
-        public List<JtxPaymentInfo> GetJtxPaymentDate(DateTime stDate, DateTime edDate, int pageNo,int ListNoEnd)
-         {
-             List<JtxPaymentInfo> result = new List<JtxPaymentInfo>();
-             //現在表示されているリストの通し番号
+        public List<JtxPaymentInfo> GetJtxPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd)
+        {
+            List<JtxPaymentInfo> result = new List<JtxPaymentInfo>();
+            //現在表示されているリストの通し番号
 
-             using (SqlDbInterface dbInterface = new SqlDbInterface())
-             using (SqlCommand cmd = new SqlCommand())
-             {
-                 StringBuilder jtxsb = new StringBuilder();
-                 
-                 string Jtxinfo = GetALLJtxPaymentDateQuery(stDate, edDate);
-                 jtxsb.Append("select * from");
-                 jtxsb.Append(" (" + Jtxinfo.ToString() + ") as MA");
-                 jtxsb.Append("    where MA.RecNo between @PageNum and @PageNumEnd");      //表示する件数分の情報のみ取得する
+            using (SqlDbInterface dbInterface = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                StringBuilder jtxsb = new StringBuilder();
+
+                string Jtxinfo = GetALLJtxPaymentDateQuery(stDate, edDate);
+                jtxsb.Append("select * from");
+                jtxsb.Append(" (" + Jtxinfo.ToString() + ") as MA");
+                jtxsb.Append("    where MA.RecNo between @PageNum and @PageNumEnd");      //表示する件数分の情報のみ取得する
 
                 cmd.CommandText = jtxsb.ToString();
 
-                cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");   
+                cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
                 cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
                 cmd.Parameters.Add("@PageNum", SqlDbType.NVarChar).Value = pageNo;
                 cmd.Parameters.Add("@PageNumEnd", SqlDbType.NVarChar).Value = ListNoEnd;
 
                 DataTable dt = dbInterface.ExecuteReader(cmd);
 
-                 foreach (DataRow row in dt.Rows)
-                 {
-                     JtxPaymentInfo info = new JtxPaymentInfo
-                     {
-                         UserId = row["UserId"].ToString(),
-                         TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
-                         PaymentId = row["PaymentId"].ToString(),
-                         CompanyName = row["CompanyName"].ToString(),
-                         OrderId = row["OrderId"].ToString(),
-                         PaymentType = row["PaymentType"].ToString(),
-                         Amount = (int)row["Amount"],
-                     };
+                foreach (DataRow row in dt.Rows)
+                {
+                    JtxPaymentInfo info = new JtxPaymentInfo
+                    {
+                        UserId = row["UserId"].ToString(),
+                        TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
+                        PaymentId = row["PaymentId"].ToString(),
+                        CompanyName = row["CompanyName"].ToString(),
+                        OrderId = row["OrderId"].ToString(),
+                        PaymentType = row["PaymentType"].ToString(),
+                        Amount = (int)row["Amount"],
+                    };
 
-                     result.Add(info);
-                 }
-                 return result;
-             }
+                    result.Add(info);
+                }
+                return result;
+            }
 
-         }
+        }
         /// <summary>
         /// Japantaxiの表示用決済情報リスト総数取得
         /// </summary>
@@ -113,7 +113,7 @@ namespace AppSigmaAdmin.Models
         /// <param name="edDate">抽出範囲終了日</param>
         /// <returns>JTX決済情報</returns>
         private string GetALLJtxPaymentDateQuery(DateTime stDate, DateTime edDate)
-    {
+        {
 
             using (SqlDbInterface dbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -155,13 +155,13 @@ namespace AppSigmaAdmin.Models
 
                 return sb.ToString();
             }
-            
+
         }
         public class NassePaymentModel
-        {  
+        {
             ///<summary>
-           ///ナッセパスポート名プルダウンリスト内容取得
-           ///</summary>
+            ///ナッセパスポート名プルダウンリスト内容取得
+            ///</summary>
             public List<NassePaymentInfo> NassePassportList()
             {
                 List<NassePaymentInfo> result = new List<NassePaymentInfo>();
@@ -222,7 +222,7 @@ namespace AppSigmaAdmin.Models
                     }
                     //表示する件数分の情報のみ取得する
                     Nsb.Append("    where MA.RecNo between @PageNum and @ListEnd");
-                    
+
                     cmd.CommandText = Nsb.ToString();
 
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
@@ -322,7 +322,7 @@ namespace AppSigmaAdmin.Models
 
                     string Nasseinfo = GetALLGetNassePaymentDateQuery(stDate, edDate);
 
-                   
+
                     if (PassID == "-")
                     {
                         //検索条件にパスポートIDが設定されていない場合は条件を追加しない
@@ -330,10 +330,10 @@ namespace AppSigmaAdmin.Models
                     else
                     {
                         //検索条件にパスポートIDが設定されている場合は条件を追加する
-                        NasseSb.Append( Nasseinfo.ToString() + "   and gp.PassportId = @PassportId ");
+                        NasseSb.Append(Nasseinfo.ToString() + "   and gp.PassportId = @PassportId ");
                         cmd.Parameters.Add("@PassportId", SqlDbType.NVarChar).Value = PassID;
                     }
-                    
+
                     NasseSb.Append(Nasseinfo.ToString());
 
                     cmd.CommandText = NasseSb.ToString();
@@ -368,7 +368,7 @@ namespace AppSigmaAdmin.Models
             /// <returns></returns>
             private string GetALLGetNishitetsuPaymentDateQuery(DateTime stDate, DateTime edDate)
             {
-                using (SqlDbInterface NassedbInterface = new SqlDbInterface())
+                using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
@@ -417,7 +417,7 @@ namespace AppSigmaAdmin.Models
             }
             private string NishitetsuBusPayment()
             {
-                using (SqlDbInterface NassedbInterface = new SqlDbInterface())
+                using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
@@ -504,7 +504,7 @@ namespace AppSigmaAdmin.Models
             }
             private string GetNishitetsuPaymentList()
             {
-                using (SqlDbInterface NassedbInterface = new SqlDbInterface())
+                using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
@@ -586,13 +586,13 @@ namespace AppSigmaAdmin.Models
                 }
             }
 
-                    /// <summary>
-                    /// 西鉄の決済情報リスト取得
-                    /// </summary>
-                    /// <param name="stDate">抽出範囲開始日</param>
-                    /// <param name="edDate">抽出範囲終了日</param>
-                    /// <returns>西鉄決済情報</returns>
-                    public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType , string TicketNumType,string TransportType)
+            /// <summary>
+            /// 西鉄の決済情報リスト取得
+            /// </summary>
+            /// <param name="stDate">抽出範囲開始日</param>
+            /// <param name="edDate">抽出範囲終了日</param>
+            /// <returns>西鉄決済情報</returns>
+            public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
 
@@ -601,10 +601,10 @@ namespace AppSigmaAdmin.Models
                 {
                     StringBuilder Nsb = new StringBuilder();
                     string NishitetsuInfo = GetALLGetNishitetsuPaymentDateQuery(stDate, edDate);
-                    Nsb.Append("select * from (" + NishitetsuInfo.ToString() +"");
-                    
+                    Nsb.Append("select * from (" + NishitetsuInfo.ToString() + "");
+
                     if (MyrouteNo != "")
-                    {　
+                    {
                         //検索条件にMyrouteID指定
                         Nsb.Append("   and tbl.UserId = @UserId");
                         cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = MyrouteNo;
@@ -646,7 +646,7 @@ namespace AppSigmaAdmin.Models
                     Nsb.Append("  ) as MA  where MA.RecNo between @PageNum and @ListEnd");
 
                     cmd.CommandText = Nsb.ToString();
-                    
+
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = stDate.ToString("yyyy-MM-dd");
                     cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = edDate.ToString("yyyy-MM-dd 23:59:59");
                     cmd.Parameters.Add("@PageNum", SqlDbType.NVarChar).Value = pageNo;
@@ -668,7 +668,7 @@ namespace AppSigmaAdmin.Models
                             ChildNum = row["ChildNum"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
-                            ReceiptNo= row["ReceiptNo"].ToString()
+                            ReceiptNo = row["ReceiptNo"].ToString()
                         };
                         result.Add(infoN);
                     }
@@ -681,7 +681,7 @@ namespace AppSigmaAdmin.Models
             /// <param name="stDate"></param>
             /// <param name="edDate"></param>
             /// <returns></returns>
-            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType,string TransportType)
+            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
                 //現在表示されているリストの通し番号

@@ -29,10 +29,12 @@ namespace AppSigmaAdmin.Controllers
 
             try
             {
+                //入力された日時がDateTime型に変換できるか確認することにより入力日付のチェックを行う
                 DateTime.ParseExact(s, baseDatePaturn, System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
             }
             catch
             {
+                //変換ができない場合はfalseを返す
                 return false;
             }
             return true;
@@ -265,28 +267,31 @@ namespace AppSigmaAdmin.Controllers
             foreach (var TicketList in NishitetsuTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別/交通手段
+                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別+/+交通手段
 
                 if (model.TicketInfo != TicketType)
                 {
+                    //選択されている商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
                 }
                 else if (model.TicketInfo == TicketType)
                 {
+                    //選択されていない商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                 }
             }
             if (model.TicketInfo == "-")
             {
+                //未選択の場合
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
             }
             else
             {
+                //商品種別が選択されている場合
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
             }
             //商品種別プルダウンリストを保存
             ViewBag.TicketList = TicketTypeList;
-
 
             //チケット種別プルダウン
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
@@ -300,38 +305,45 @@ namespace AppSigmaAdmin.Controllers
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
+                //検索期間(開始)が未入力の場合
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
                 return View(model);
             }
             else if (string.IsNullOrEmpty(model.TargetDateEnd))
             {
+                //検索期間(終了)が未入力の場合
                 ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
                 return View(model);
             }
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
+                //検索期間(開始)のテキストボックスに日付として正しくない値が入力された場合
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
                 return View(model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
+                //検索期間(終了)のテキストボックスに日付として正しくない値が入力された場合
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View(model);
             }
             if (string.IsNullOrEmpty(model.UserId))
             {
-                //操作なし
+                //myrouteIDが入力されていないため操作なし
             }
             else {
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
                     return View(model);
                 }
             }
 
+            //西鉄決済データ最大件数取得用リスト
             List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount = null;
+            //西鉄決済データ表示件数分取得用リスト
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
             DateTime TargetDateStart = DateTime.Parse(model.TargetDateBegin);
@@ -341,6 +353,7 @@ namespace AppSigmaAdmin.Controllers
 
             //10件ずつ表示する
             int ListNum = 10;
+            //表示開始位置を算出
             int EndListNo = PageNo * ListNum;
             int ListNoBegin = EndListNo - (ListNum - 1);
             string UserId;
@@ -356,7 +369,7 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
-
+            //商品種別とバス/鉄道選択肢が一致するか確認(どちらかが未選択の場合は確認対象外)
             if (TransePortCheck != "-" && TransportType != "-")
             {
                 if (TransePortCheck != TransportType)
@@ -454,15 +467,17 @@ namespace AppSigmaAdmin.Controllers
             string TransePortCheck = "-";       //チケット種別保存用
             string TransportType = "-";         //交通種別保存用
 
-            if (model.TicketInfo != "-")//商品種別が選択済でチケット種別が未選択の場合
+            if (model.TicketInfo != "-")//商品種別が選択済の場合
             {
                 num = model.TicketInfo.IndexOf(SearchOb);
                 Tickettype = model.TicketInfo.Substring(0, num);       //商品種別分離
                 int Tpt = model.TicketInfo.Length - (num + 1);
                 TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
 
+                //バス/鉄道種別が未選択の場合
                 if (model.TransportType == "-")
                 {
+                    //商品種別から取得した交通種別が選択されている状態に変更する
                     TransportType = TransePortCheck;
                 }
                 else
@@ -489,26 +504,29 @@ namespace AppSigmaAdmin.Controllers
 
                 if (model.TicketInfo != TicketType)
                 {
+                    //選択されていない商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
                 }
                 else if (model.TicketInfo == TicketType)
                 {
+                    //選択されている商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                 }
             }
             if (model.TicketInfo == "-")
             {
+                //商品種別が未選択の場合
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
             }
             else
             {
+                //商品種別が選択されている場合
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
             }
             //商品種別プルダウンリストを保存
             ViewBag.TicketList = TicketTypeList;
 
-
-            //チケット種別プルダウン
+            //チケット種別プルダウンリスト作成
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
 
                 TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
@@ -520,39 +538,46 @@ namespace AppSigmaAdmin.Controllers
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
+                //検索期間(開始)が未入力の場合
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
                 return View("~/Views/MPA0101/Index.cshtml", model);
             }
             else if (string.IsNullOrEmpty(model.TargetDateEnd))
             {
+                //検索期間(終了)が未入力の場合
                 ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
                 return View("~/Views/MPA0101/Index.cshtml", model);
             }
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
+                //検索期間(開始)のテキストボックスに日付として正しくない値が入力された場合
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0101/Index.cshtml", model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
+                //検索期間(終了)のテキストボックスに日付として正しくない値が入力された場合
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0101/Index.cshtml", model);
             }
             if (string.IsNullOrEmpty(model.UserId))
             {
-                //操作なし
+                //myrouteIDが入力されていないため操作なし
             }
             else
             {
                 if (!Int32.TryParse(model.UserId.ToString(), out int i))
                 {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
                     return View("~/Views/MPA0101/Index.cshtml", model);
                 }
             }
 
+            //西鉄決済データ最大件数取得用リスト
             List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount = null;
+            //西鉄決済データ表示件数分取得用リスト
             List<NishitetsuPaymentInfo> SelectNishitetsuPaymentDateList = null;
 
             DateTime TargetDateStart = DateTime.Parse(model.TargetDateBegin);
@@ -588,7 +613,7 @@ namespace AppSigmaAdmin.Controllers
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
 
-            //検索条件に一致したリストから表示件数分取得
+            //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
             SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType);
 
 
