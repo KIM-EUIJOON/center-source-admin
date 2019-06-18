@@ -341,7 +341,7 @@ namespace AppSigmaAdmin.Controllers
 
             //アドレス削除処理
             string NetAddress = Request.Form.ToString();
-            string DeleteAddress = NetAddress.Replace("%2f", "/");
+            string DeleteAddress = NetAddress.Replace("%2f","/");
             new AuthIpAddressEntityList().DeleteIPAdd(DeleteAddress);
 
             //IPアドレスリストをDBから取得

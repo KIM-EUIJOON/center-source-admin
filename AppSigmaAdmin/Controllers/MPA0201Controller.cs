@@ -1,4 +1,5 @@
 ﻿using AppSigmaAdmin.Attribute;
+using AppSigmaAdmin.Models;
 using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Utility;
 using System;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Controllers.JTXPaymentModel;
+using static AppSigmaAdmin.Models.JTXPaymentModel;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -71,6 +72,14 @@ namespace AppSigmaAdmin.Controllers
             try
             {
                 pageNo = int.Parse(page);
+                float ListMaxPage = (float)(float.Parse(maxListCount) / (float)ListNum);
+                int ListMaxPageNum = (int)Math.Ceiling(ListMaxPage);
+                //直接入力されたページ数が存在しない場合
+                if (pageNo > ListMaxPageNum)
+                {
+                    ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
+                    return View();
+                }
             }
             catch (FormatException error)
             {

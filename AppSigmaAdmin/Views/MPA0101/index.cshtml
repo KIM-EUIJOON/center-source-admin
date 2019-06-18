@@ -17,7 +17,7 @@
 
 @section funcTitle {
     <div class="funcTitleBer">
-        決済データ検索及びダウンロード（西鉄バスチケット）
+        決済データ検索及びダウンロード（西鉄フリー乗車券）
     </div>
 }
 
@@ -32,11 +32,11 @@
                 <div class="GridTableRow">
                     <div class="GridTableCell">
                         期間:
-                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
-                        @Html.ValidationMessageFor(m => m.TargetDateBegin)
+                        @Html.TextBoxFor(Model => Model.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateBegin)
                         から
-                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
-                        @Html.ValidationMessageFor(m => m.TargetDateEnd)
+                        @Html.TextBoxFor(Model => Model.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateEnd)
                         まで
                     </div>
                     <div class="GridTableCell">
@@ -46,10 +46,21 @@
                     </div>
                 </div>
                 <div class="GridTableRow">
-                    <div class="GridTableCell">
-                        myroute会員ID：
-                        @Html.TextBoxFor(m => m.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
-                        @Html.ValidationMessageFor(m => m.UserId)
+                    <div class="GridTableCol">
+                        <div class="GridTableCell">
+                            myroute会員ID：
+                            @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                            @Html.ValidationMessageFor(Model => Model.UserId)
+                        </div>
+                        <div class="GridTableCell">
+                            @{
+                                //バス/鉄道ドロップリスト項目作成
+                                List<SelectListItem> TranseTypeList = new List<SelectListItem>();
+                                TranseTypeList = @ViewBag.TranseList;
+                            }
+                            バス/鉄道：
+                            @Html.DropDownListFor(Model => Model.TransportType, TranseTypeList, new { Class = "DropList" })
+                        </div>
                     </div>
                     <div class="GridTableCell">
                     </div>
@@ -62,27 +73,12 @@
                         <div class="GridTableCol">
                             <div class="GridTableCell">
                                 @{
-                                    //券種プルダウンリスト
+                                    //商品種別ドロップリスト項目作成
                                     List<SelectListItem> TicketTypeList = new List<SelectListItem>();
-                                    TicketTypeList.Add(new SelectListItem
-                                    {
-                                        Text = "種別未選択",
-                                        Value = "-",
-                                        Selected = true
-                                    });
-                                    TicketTypeList.Add(new SelectListItem
-                                    {
-                                        Text = "1日フリー乗車券",
-                                        Value = "0"
-                                    });
-                                    TicketTypeList.Add(new SelectListItem
-                                    {
-                                        Text = "6時間フリー乗車券",
-                                        Value = "1"
-                                    });
+                                    TicketTypeList = @ViewBag.TicketList;
                                 }
-                                券種：
-                                @Html.DropDownListFor(m => m.TicketType, TicketTypeList, new { Class = "DropList" })
+                                商品種別：
+                                @Html.DropDownListFor(Model => Model.TicketInfo, TicketTypeList, new { Class = "DropList" })
                             </div>
                             <div class="GridTableCell">
                                 @{
@@ -116,7 +112,7 @@
                                     });
                                 }
                                 決済種別：
-                                @Html.DropDownListFor(m => m.PaymentType, PaymentTypeList, new { Class = "DropList" })
+                                @Html.DropDownListFor(Model => Model.PaymentType, PaymentTypeList, new { Class = "DropList" })
                             </div>
                             <div class="GridTableCell">
                                 @{
@@ -140,7 +136,7 @@
                                     });
                                 }
                                 大人/子供：
-                                @Html.DropDownListFor(m => m.TicketNumType, TicketNumTypeList, new { Class = "DropList" })
+                                @Html.DropDownListFor(Model => Model.TicketNumType, TicketNumTypeList, new { Class = "DropList" })
                             </div>
                         </div>
                     </div>
@@ -165,16 +161,17 @@
                             @*表示件数：10件*@
                             var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
                             grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
-
                             <div class="grid-table">
-                                @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
-                                    columns:grid.Columns(grid.Column("UserId",header:"myroute会員ID",style: "gridbody12"),grid.Column("TranDatetime", header:"決済日時", style: "gridbody18"),
-                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TicketType", header: "券種", style: "gridbody6"),
-                                    grid.Column("AdultNum", header: "大人枚数", style: "gridbody9"), grid.Column("ChildNum", header: "子供枚数", style: "gridbody9"),
-                                    grid.Column("PaymentType", header: "決済種別", style: "gridbody8"), grid.Column("Amount", header: "金額", style: "gridbody9"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody14")
-                                    ))
+                                @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
+                                                    columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                    grid.Column("TranDatetime", header: "決済日時", style: "gridbody18"),
+                                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TransportType", header: "バス/{0}鉄道", style: "gridbody5"),
+                                                    grid.Column("TicketName", header: "商品", style: "gridbody18"), grid.Column("AdultNum", header: "大人枚数", style: "gridbody8")
+                                                    , grid.Column("ChildNum", header: "子供枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                                    grid.Column("Amount", header: "金額", style: "gridbody6"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")
+                                                    )).ToHtmlString().Replace("{0}", "<br/>"))
+                                )
                             </div>
-
                         }
                     }
                 }

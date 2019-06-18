@@ -24,7 +24,7 @@ namespace AppSigmaAdmin.Controllers
             HttpContext.Application["ExFunc"] = "";
             }
             if (ApplicationConfig.DeployEnv == ApplicationConfig.ENV_DEBUG)
-            { 
+            {
                 ViewBag.ErrorStack = HttpContext.Application["ErrorStack"];
                 HttpContext.Application["ErrorStack"] = "";
             }

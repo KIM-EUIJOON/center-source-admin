@@ -171,7 +171,6 @@
     <Compile Include="Controllers\MPA0101Controller.cs" />
     <Compile Include="Controllers\MPA0201Controller.cs" />
     <Compile Include="Controllers\MPA0301Controller.cs" />
-    <Compile Include="Utility\BundleHtmlTag.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
     <Compile Include="Models\PaymentInfoModels.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
@@ -188,6 +187,7 @@
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
+    <Compile Include="Utility\BundleHtmlTag.cs" />
     <Compile Include="Utility\Crypto.cs" />
     <Compile Include="Models\UserInfoEntity.cs" />
     <Compile Include="ResponseData\LoginResponseEntity.cs" />
