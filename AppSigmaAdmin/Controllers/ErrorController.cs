@@ -20,8 +20,8 @@ namespace AppSigmaAdmin.Controllers
         {
             //ValidationExceptionエラー通知
             if (HttpContext.Application["ExFunc"] != null) { 
-            ViewBag.ExFunc = HttpContext.Application["ExFunc"];
-            HttpContext.Application["ExFunc"] = "";
+                ViewBag.ExFunc = HttpContext.Application["ExFunc"];
+                HttpContext.Application["ExFunc"] = "";
             }
             if (ApplicationConfig.DeployEnv == ApplicationConfig.ENV_DEBUG)
             {
