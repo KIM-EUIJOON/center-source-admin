@@ -46,13 +46,13 @@ namespace AppSigmaAdmin.Controllers
             //プルダウンリスト項目取得
             List<NassePaymentInfo> NassePassPortIdList = null;
             NassePassPortIdList = new NassePaymentModel().NassePassportList();
+            //パスポート種別プルダウン内容を返す
+            NassePaymentInfoListEntity PulldownList = new NassePaymentInfoListEntity();
+            PulldownList.NassePulldownList = NassePassPortIdList;
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-                //パスポート種別プルダウン内容を返す
-                NassePaymentInfoListEntity PulldownList = new NassePaymentInfoListEntity();
-                PulldownList.NassePulldownList = NassePassPortIdList;
                 return View(PulldownList);
             }
 
@@ -82,7 +82,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 Trace.TraceError(Logger.GetExceptionMessage(error));
                 ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
-                return View();
+                return View(PulldownList);
             }
             int EndListNo = pageNo * ListNum;
             //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
@@ -134,6 +134,13 @@ namespace AppSigmaAdmin.Controllers
         {
             ViewData["message"] = "";
 
+            NassePaymentInfoListEntity info = new NassePaymentInfoListEntity();
+            //プルダウンリスト項目取得
+            List<NassePaymentInfo> NassePassPortIdList = null;
+            NassePassPortIdList = new NassePaymentModel().NassePassportList();
+            info.NassePulldownList = NassePassPortIdList;
+            model.NassePulldownList= NassePassPortIdList;
+
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
@@ -148,12 +155,12 @@ namespace AppSigmaAdmin.Controllers
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(info);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(info);
             }
 
             List<NassePaymentInfo> NassePaymentDateListMaxCount = null;
@@ -184,7 +191,7 @@ namespace AppSigmaAdmin.Controllers
 
             //検索条件に一致したリストから表示件数分取得
             SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, PassID);
-            NassePaymentInfoListEntity info = new NassePaymentInfoListEntity();
+
 
             //表示リストの総数
             int maxListCount = NassePaymentDateListMaxCount.Count;
@@ -206,10 +213,6 @@ namespace AppSigmaAdmin.Controllers
             //表示リスト件数
             info.ListNum = ListNum;
 
-            //プルダウンリスト項目取得
-            List<NassePaymentInfo> NassePassPortIdList = null;
-            NassePassPortIdList = new NassePaymentModel().NassePassportList();
-            info.NassePulldownList = NassePassPortIdList;
 
             //取得したリスト件数が0以上
             if (SelectNassePaymentDateList.Count > 0)
@@ -239,27 +242,33 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
+            NassePaymentInfoListEntity info = new NassePaymentInfoListEntity();
+            //プルダウンリスト項目取得
+            List<NassePaymentInfo> NassePassPortIdList = null;
+            NassePassPortIdList = new NassePaymentModel().NassePassportList();
+            info.NassePulldownList = NassePassPortIdList;
+            model.NassePulldownList = NassePassPortIdList;
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
-                return View("~/Views/MPA0301/Index.cshtml");
+                return View("~/Views/MPA0301/Index.cshtml", model);
             }
             else if (string.IsNullOrEmpty(model.TargetDateEnd))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
-                return View("~/Views/MPA0301/Index.cshtml");
+                return View("~/Views/MPA0301/Index.cshtml", model);
             }
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0301/Index.cshtml");
+                return View("~/Views/MPA0301/Index.cshtml", model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0301/Index.cshtml");
+                return View("~/Views/MPA0301/Index.cshtml", model);
             }
 
             List<NassePaymentInfo> NassePaymentDateListMaxCount = null;
@@ -291,7 +300,6 @@ namespace AppSigmaAdmin.Controllers
 
             //検索条件に一致したリストを取得
             SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, PassID);
-            NassePaymentInfoListEntity info = new NassePaymentInfoListEntity();
 
             //開始日時
             info.TargetDateBegin = TargetDateStart.ToString();
@@ -313,7 +321,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
-                return View("~/Views/MPA0301/Index.cshtml");
+                return View("~/Views/MPA0301/Index.cshtml",info);
             }
 
 

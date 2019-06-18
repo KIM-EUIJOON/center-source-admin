@@ -1,5 +1,6 @@
 ﻿@model AppSigmaAdmin.Models.AuthIpAddressEntityList
 @using AppSigmaAdmin.Utility
+@using AppSigmaAdmin.Library
 
 @section style {
     <style>
@@ -8,91 +9,16 @@
         accent-color-button {
             width: 300px;
         }
+
+        input[type="text"].std-textbox,
+        input[type="password"].std-textbox {
+            width: 250px;
+        }
     </style>
 }
 
-@section scripts{
-    <script>
-        $(document).ready(function () {
-           $("#dialog").dialog({
-                autoOpen: false,
-                width:400,
-                model: true,
-                buttons: {
-                    "更新": function () {
-                        $("#Edit").submit();
-                    },
-                    "追加": function () {
-                        $('form').attr('action','@Common.CreateUrl("/MSA0301/Add", false)');
-                        $('form').submit();
-                    },
-                    "キャンセル": function () {
-                        $(this).dialog("close");
-                    }
-                }
+@Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery/MSA0301")
 
-            });
-
-        });
-
-        $(window).load(function () {
-            //IPアドレスリスト更新判定(画面表示後に通知)
-            if ($('#UpdateFlag').val() == 1) {
-                window.alert('リストの更新に成功しました。');
-            }
-            else if ($('#UpdateFlag').val() == 2) {
-                window.alert('リストの更新に失敗しました。');
-            };
-        });
-        function IPListDelete(NetAddress) {
-            if (confirm('IPアドレス「'+NetAddress+'」を認証用IPアドレスリストから削除します。よろしいですか?')) {
-                //メッセージボックス「はい」選択時の処理
-                $.post('@Common.CreateUrl("/MSA0301/IpDelete", false)', { NetAddress },
-                    function (dt) {
-                        window.alert('リストの更新に成功しました。');
-                        window.location.href = '@Common.CreateUrl("/MSA0301", false)';
-                    });
-            }
-                else {
-                    //メッセージボックス「いいえ」選択時の処理
-                    window.alert('削除処理をキャンセルしました。');
-                }
-        };
-        function IPListEdit(NetAddress, IPAddressName, EnvDev, EnvPre, EnvProd) {
-            $("#dialog").dialog("open");
-            //更新処理のため追加ボタンを押下不可に設定する
-            $(".ui-dialog-buttonpane button:contains('追加')").button("disable");
-            $(".ui-dialog-buttonpane button:contains('更新')").button("enable");
-            $("#NetAdd").attr('readonly', true);
-            $("#NetAdd").val(NetAddress);
-            $("#IPAddName").val(IPAddressName);
-            var dev = EnvDev;
-            if (dev == "○") { $("#EnvDev").prop('checked', true); }
-            else { $("#EnvDev").prop('checked', false); }
-            var pre = EnvPre;
-            if (pre == "○") { $("#EnvPre").prop('checked', true); }
-            else { $("#EnvPre").prop('checked', false); }
-            var prod = EnvProd;
-            if (prod == "○") { $("#EnvProd").prop('checked', true); }
-            else { $("#EnvProd").prop('checked', false); }
-
-        };
-        function IPListSet() {
-            $("#dialog").dialog("open");
-            //新規追加処理のため更新ボタンを押下不可に設定する
-            $(".ui-dialog-buttonpane button:contains('更新')").button("disable");
-            $(".ui-dialog-buttonpane button:contains('追加')").button("enable");
-            //ダイアログ入力内容を初期化
-            $("#NetAdd").attr('readonly', false);
-            $("#NetAdd").val("");
-            $("#IPAddName").val("");
-            $("#EnvDev").prop('checked', false);
-            $("#EnvPre").prop('checked', false);
-            $("#EnvProd").prop('checked', false);
-        }
-
-    </script>
-}
 
 @section funcTitle {
     <div class="funcTitleBer">
@@ -101,6 +27,9 @@
 }
 
 <input type="hidden" id="UpdateFlag" value="@ViewBag.IpUpdate" />
+<input type="hidden" id="IpDelete" value="@Common.CreateUrl("/MSA0301/IpDelete", false)" />
+<input type="hidden" id="IpAdd" value="@Common.CreateUrl("/MSA0301/Add", false)" />
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MSA0301", false)" />
 
 <form action="@Common.CreateUrl("/MSA0301", false)" method="post">
     <div class="ContentsBase">
@@ -141,12 +70,12 @@
     <form action="@Common.CreateUrl("/MSA0301/Edit", false)" method="post" id="Edit">
         <div>
             <label>ネットアドレス：</label>
-            @Html.TextBoxFor(m => m.NetAddress, new { id = "NetAdd", autocomplete = "off" })
+            @Html.TextBoxFor(m => m.NetAddress, new { id = "NetAdd", autocomplete = "off", Class = "std-textbox" })
         </div>
         <br />
         <div>
             <label>IPアドレス名　：</label>
-            @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off" })
+            @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off", Class = "std-textbox" })
         </div>
         <br />
         <div>

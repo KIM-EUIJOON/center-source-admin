@@ -36,7 +36,6 @@ namespace AppSigmaAdmin.Utility
         private static Object thisLock = new Object();
         private static long logCounter;
         private static long infoLogCounter;
-        private static DateTime infoLogLastTimestamp = new DateTime();
 
         #endregion
 
