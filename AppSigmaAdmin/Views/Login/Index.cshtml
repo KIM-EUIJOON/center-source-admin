@@ -37,12 +37,12 @@
         ログイン
     </div>
 }
-<form action="@Common.CreateUrl("/", false)" method="post">
+<form action="@Common.CreateUrl("/", false)" method="post" autocomplete="off">
     @Html.AntiForgeryToken()
         <div class="loginBox">
             <div class="clearfix">
                 アカウント：
-                @Html.TextBoxFor(m => m.MailAddress, new {Class = "std-textbox", placeholder = "アカウント", required = "required" })
+                @Html.TextBoxFor(m => m.MailAddress, new {Class = "std-textbox", placeholder = "アカウント", required = "required" , autocoplete = "off"})
                 @Html.ValidationMessageFor(m => m.MailAddress) 
             </div>
             <br />

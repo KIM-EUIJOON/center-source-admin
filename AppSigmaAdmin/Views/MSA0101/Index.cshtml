@@ -25,13 +25,13 @@
             ユーザ情報参照
         </div>
     }
-    <form action="@Common.CreateUrl("/MSA0101", false)" method="post">
+    <form action="@Common.CreateUrl("/MSA0101", false)" method="post" autocomplete="off">
         @Html.AntiForgeryToken()
         <div class="ContentsBase">
             <div class="userInfoBox">
                 <div class="clearfix">
                     メールアドレス（完全一致）：
-                    @Html.TextBoxFor(m => m.MailAddress, new { Class = "std-textbox", placeholder = "メールアドレス", required = "required" })
+                    @Html.TextBoxFor(m => m.MailAddress, new { Class = "std-textbox", placeholder = "メールアドレス", required = "required", autocoplete = "off" })
                     @Html.ValidationMessageFor(m => m.MailAddress)
                 </div>
                 <div class="clearfix">
