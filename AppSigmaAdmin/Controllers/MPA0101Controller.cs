@@ -75,8 +75,9 @@ namespace AppSigmaAdmin.Controllers
                 ViewBag.TicketList = TicketTypeList;
 
                 //チケット種別プルダウン作成
-                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
-                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+                TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
+                TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
                 TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
                 ViewBag.TranseList = TranseTypeList;
 
@@ -133,9 +134,10 @@ namespace AppSigmaAdmin.Controllers
             ViewBag.TicketList = TicketTypeList;
 
             //チケット種別プルダウン作成
-                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
-                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
-                TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+            TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             ViewBag.TranseList = TranseTypeList;
 
@@ -200,9 +202,6 @@ namespace AppSigmaAdmin.Controllers
             info.TicketNumType = TicketNumType;
             //表示リスト件数
             info.ListNum = ListNum;
-            //ドロップダウンリスト用チケット種別
-            //info.TicketInfo = TicketType + "/" + TransportType;
-
 
             //取得したリスト件数が0以上
             if (SelectNishitetsuPaymentDateList.Count > 0)
@@ -296,8 +295,9 @@ namespace AppSigmaAdmin.Controllers
             //チケット種別プルダウン
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
 
-            TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
-            TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             //チケット種別ドロップダウンリストを保存
@@ -528,10 +528,10 @@ namespace AppSigmaAdmin.Controllers
 
             //チケット種別プルダウンリスト作成
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
-
-                TranseTypeList.Add(new SelectListItem { Text = "バス", Value = "14" });
-                TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "10" });
-                TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+            TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             //チケット種別ドロップダウンリストを保存
             ViewBag.TranseList = TranseTypeList;

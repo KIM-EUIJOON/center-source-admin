@@ -86,12 +86,6 @@
                                     List<SelectListItem> PaymentTypeList = new List<SelectListItem>();
                                     PaymentTypeList.Add(new SelectListItem
                                     {
-                                        Text = "種別未選択",
-                                        Value = "-",
-                                        Selected = true
-                                    });
-                                    PaymentTypeList.Add(new SelectListItem
-                                    {
                                         Text = "即時決済",
                                         Value = "3"
                                     });
@@ -110,6 +104,12 @@
                                         Text = "決済種別不明",
                                         Value = "決済種別不明"
                                     });
+                                    PaymentTypeList.Add(new SelectListItem
+                                    {
+                                        Text = "種別未選択",
+                                        Value = "-",
+                                        Selected = true
+                                    });
                                 }
                                 決済種別：
                                 @Html.DropDownListFor(Model => Model.PaymentType, PaymentTypeList, new { Class = "DropList" })
@@ -118,12 +118,7 @@
                                 @{
                                     //大人/子供プルダウンリスト
                                     List<SelectListItem> TicketNumTypeList = new List<SelectListItem>();
-                                    TicketNumTypeList.Add(new SelectListItem
-                                    {
-                                        Text = "種別未選択",
-                                        Value = "-",
-                                        Selected = true
-                                    });
+
                                     TicketNumTypeList.Add(new SelectListItem
                                     {
                                         Text = "大人",
@@ -133,6 +128,12 @@
                                     {
                                         Text = "子供",
                                         Value = "子供"
+                                    });
+                                    TicketNumTypeList.Add(new SelectListItem
+                                    {
+                                        Text = "種別未選択",
+                                        Value = "-",
+                                        Selected = true
                                     });
                                 }
                                 大人/子供：

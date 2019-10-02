@@ -20,16 +20,6 @@
     });
 });
 
-$(window).on('load',function () {
-    //IPアドレスリスト更新判定(画面表示後に通知)
-    if ($('#UpdateFlag').val() == 1) {
-        window.alert('リストの更新に成功しました。');
-    }
-    else if ($('#UpdateFlag').val() == 2) {
-        window.alert('リストの更新に失敗しました。');
-    };
-});
-
 function IPListDelete(NetAddress) {
     if (confirm('IPアドレス「' + NetAddress + '」を認証用IPアドレスリストから削除します。よろしいですか?')) {
         //メッセージボックス「はい」選択時の処理

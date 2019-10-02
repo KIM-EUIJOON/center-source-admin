@@ -373,17 +373,17 @@ namespace AppSigmaAdmin.Models
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    string BusPayment = NishitetsuBusPayment();
                     string PaymentList = GetNishitetsuPaymentList();
 
                     sb.AppendLine("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");    //決済IDと決済種別でソートする
                     sb.AppendLine("     , tbl.UserId");
                     sb.AppendLine("     , tbl.TranDate");
-                    sb.AppendLine("     , case when tbl.TrsType =N'10' then N'鉄道'");
-                    sb.AppendLine("     when tbl.TrsType =N'14' then N'バス'");
-                    sb.AppendLine("     else N'チケット種別不明' end as TrsType");                                  /*チケット種別(交通手段)*/
+                    sb.AppendLine("     , case when tbl.BizCompanyCd =N'NNR' then N'鉄道'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
+                    sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");
-                    sb.AppendLine("     , tbl.TicketName");
+                    sb.AppendLine("     , tbl.Value");                                                                   /*チケット名称*/
                     sb.AppendLine("     , tbl.AdultNum");
                     sb.AppendLine("     , tbl.ChildNum");
                     sb.AppendLine("     , tbl.PaymentId");
@@ -395,10 +395,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.ReceiptNo");
                     sb.AppendLine("  from (");
                     // 即時決済データ取得
-                    //暫定処理
-                    sb.AppendLine(" " + BusPayment.ToString() + "");        //バスチケットのみ
-                    sb.AppendLine("        union all  ");
-                    sb.AppendLine(" " + PaymentList.ToString() + "");        //鉄道チケットのみ
+                    sb.AppendLine(" " + PaymentList.ToString() + "");
                     sb.AppendLine("      ) tbl");
                     // 決済エラー分は含めない
                     sb.AppendLine("  where not exists(");
@@ -407,7 +404,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("         where pe.UserId = tbl.UserId");
                     sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
                     sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
-                    sb.AppendLine("           and pe.ServiceId = '2'");     // サービスID(西鉄)
+                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
                     sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
                     sb.AppendLine("     )");
                     sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
@@ -415,172 +412,98 @@ namespace AppSigmaAdmin.Models
                     return sb.ToString();
                 }
             }
-            private string NishitetsuBusPayment()
-            {
-                using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
-                using (SqlCommand cmd = new SqlCommand())
-                {
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine("       select pm.TranDate");
-                    sb.AppendLine("            , nft.UserId");
-                    sb.AppendLine("            , fsm.TrsType");
-                    sb.AppendLine("            , N'売上' as Summary");
-                    sb.AppendLine("            , nft.TicketType");
-                    sb.AppendLine("            , fsm.TicketName");
-                    sb.AppendLine("            , nft.AdultNum");
-                    sb.AppendLine("            , nft.ChildNum ");
-                    sb.AppendLine("            , pm.PaymentId");
-                    sb.AppendLine("            , pm.PaymentType");
-                    sb.AppendLine("            , pm.Amount");
-                    sb.AppendLine("            , pm.ReceiptNo");
-                    sb.AppendLine("         from NishitetsuFreeTicket nft");
-                    sb.AppendLine("        inner join PaymentManage pm");
-                    sb.AppendLine("           on nft.UserId = pm.UserId");
-                    sb.AppendLine("          and nft.PaymentId = pm.PaymentId");
-                    sb.AppendLine("          and pm.ServiceId = '2'");                  // サービスID(西鉄)
-                    sb.AppendLine("          and pm.PaymentType = '3'");                // 即時決済(購入)
-                    sb.AppendLine("          and pm.GmoStatus = '1'");                  // 成功
-                    sb.AppendLine("          and pm.GmoProcType = '2'");                // 決済実行
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on nft.TicketType = fsm.TicketType");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR002'");           //西鉄
-                    sb.AppendLine("          and fsm.TrsType ='14'");                   //バス情報のみ取得
-                    sb.AppendLine("        union all  ");
-                    // 払戻し返金データ取得
-                    sb.AppendLine("        select pm.TranDate");
-                    sb.AppendLine("             , nft.UserId");
-                    sb.AppendLine("            , fsm.TrsType");
-                    sb.AppendLine("             , N'売上' as Summary");
-                    sb.AppendLine("            , nft.TicketType");
-                    sb.AppendLine("            , fsm.TicketName");
-                    sb.AppendLine("             , nft.AdultNum");
-                    sb.AppendLine("             , nft.ChildNum ");
-                    sb.AppendLine("             , pm.PaymentId");
-                    sb.AppendLine("             , pm.PaymentType");
-                    sb.AppendLine("             , pm.Amount * -1 as Amount");
-                    sb.AppendLine("             , pm.ReceiptNo");
-                    sb.AppendLine("          from NishitetsuFreeTicket nft");
-                    sb.AppendLine("         inner join PaymentManage pm");
-                    sb.AppendLine("            on nft.UserId = pm.UserId");
-                    sb.AppendLine("           and nft.PaymentId = pm.PaymentId");
-                    sb.AppendLine("           and pm.ServiceId = '2'");                 // サービスID(西鉄)
-                    sb.AppendLine("           and pm.PaymentType = '5'");               // 取消(返金)
-                    sb.AppendLine("           and pm.GmoStatus = '1'");                 // 成功
-                    sb.AppendLine("           and pm.GmoProcType = '3'");               // 決済変更
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on nft.TicketType = fsm.TicketType");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR002'");           //西鉄
-                    sb.AppendLine("          and fsm.TrsType ='14'");                   //バス情報のみ取得
-                    sb.AppendLine("        union all");
-                    // 払戻し手数料取得
-                    sb.AppendLine("        select pm.TranDate ");
-                    sb.AppendLine("             , nft.UserId");
-                    sb.AppendLine("            , fsm.TrsType");
-                    sb.AppendLine("             , N'払戻し' as Summary");
-                    sb.AppendLine("            , nft.TicketType");
-                    sb.AppendLine("            , fsm.TicketName");
-                    sb.AppendLine("             , nft.AdultNum");
-                    sb.AppendLine("             , nft.ChildNum ");
-                    sb.AppendLine("             , pm.PaymentId");
-                    sb.AppendLine("             , pm.PaymentType");
-                    sb.AppendLine("             , pm.Amount");
-                    sb.AppendLine("             , pm.ReceiptNo");
-                    sb.AppendLine("          from NishitetsuFreeTicket nft");
-                    sb.AppendLine("         inner join PaymentManage pm");
-                    sb.AppendLine("            on nft.UserId = pm.UserId");
-                    sb.AppendLine("           and nft.PaymentId = pm.PaymentId");
-                    sb.AppendLine("           and nft.RefundOrderNo = pm.OrderNo");
-                    sb.AppendLine("           and pm.ServiceId = '2'");                 // サービスID(西鉄)
-                    sb.AppendLine("           and pm.PaymentType = '4'");               // 払戻し(手数料徴収)
-                    sb.AppendLine("           and pm.GmoStatus = '1'");                 // 成功
-                    sb.AppendLine("           and pm.GmoProcType = '2'");               // 決済実行
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on nft.TicketType = fsm.TicketType");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR002'");           //西鉄
-                    sb.AppendLine("          and fsm.TrsType ='14'");                   //バス情報のみ取得
-
-                    return sb.ToString();
-                }
-            }
+           
             private string GetNishitetsuPaymentList()
             {
                 using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.AppendLine("        select pm.TranDate");
-                    sb.AppendLine("           ,ftm.UserId");
-                    sb.AppendLine("           ,fsm.TrsType");
-                    sb.AppendLine("           , N'売上' as Summary");
-                    sb.AppendLine("           ,fsm.TicketType");
-                    sb.AppendLine("            ,fsm.TicketName");   /*チケット名称*/
-                    sb.AppendLine("           , ftm.AdultNum"); /*大人枚数*/
-                    sb.AppendLine("           , ftm.ChildNum"); /*子供枚数*/
-                    sb.AppendLine("           , pm.PaymentId");
-                    sb.AppendLine("           , pm.PaymentType");
-                    sb.AppendLine("           , pm.Amount");
-                    sb.AppendLine("           , pm.ReceiptNo");
-                    sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR001'");
-                    sb.AppendLine("          inner join PaymentManage pm");
-                    sb.AppendLine("          on ftm.UserId = pm.UserId");
-                    sb.AppendLine("          and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("          and pm.ServiceId = '4'");
-                    sb.AppendLine("          and pm.PaymentType = '3'");
-                    sb.AppendLine("          and pm.GmoStatus = '1'");
-                    sb.AppendLine("          and pm.GmoProcType = '2'");
-                    sb.AppendLine("          union all");
-                    sb.AppendLine("          ");    /*払戻し返金データ取得*/
-                    sb.AppendLine("          select pm.TranDate");
-                    sb.AppendLine("           ,ftm.UserId");
-                    sb.AppendLine("           ,fsm.TrsType");
-                    sb.AppendLine("           , N'売上' as Summary");
-                    sb.AppendLine("           ,fsm.TicketType");
-                    sb.AppendLine("            ,fsm.TicketName");   /*チケット名称*/
-                    sb.AppendLine("           , ftm.AdultNum"); /*大人枚数*/
-                    sb.AppendLine("           , ftm.ChildNum"); /*子供枚数*/
-                    sb.AppendLine("           , pm.PaymentId");
-                    sb.AppendLine("           , pm.PaymentType");
-                    sb.AppendLine("           , pm.Amount* -1 as Amount");
-                    sb.AppendLine("           , pm.ReceiptNo");
-                    sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR001'");
-                    sb.AppendLine("          inner join PaymentManage pm");
-                    sb.AppendLine("          on ftm.UserId = pm.UserId");
-                    sb.AppendLine("          and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("          and pm.ServiceId = '4'");
-                    sb.AppendLine("          and pm.PaymentType = '5'");
-                    sb.AppendLine("          and pm.GmoStatus = '1'");
-                    sb.AppendLine("          and pm.GmoProcType = '3'");
-                    sb.AppendLine("          union all");
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'売上' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and pm.PaymentType = '3'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '2'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language ='ja'");
+                    sb.AppendLine("        	union all");
+                    /*払戻し返金データ取得*/
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'売上' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                                /*チケット名称(日本語)*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                          /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                          /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount* -1 as Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and pm.PaymentType = '5'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '3'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language ='ja'");
+                    sb.AppendLine("        	union all");
                     /*払戻し手数料取得*/
-                    sb.AppendLine("          select pm.TranDate");
-                    sb.AppendLine("           ,ftm.UserId");
-                    sb.AppendLine("           ,fsm.TrsType");
-                    sb.AppendLine("           , N'払戻し' as Summary");
-                    sb.AppendLine("           ,fsm.TicketType");
-                    sb.AppendLine("            ,fsm.TicketName");   /*チケット名称*/
-                    sb.AppendLine("           , ftm.AdultNum"); /*大人枚数*/
-                    sb.AppendLine("           , ftm.ChildNum"); /*子供枚数*/
-                    sb.AppendLine("           , pm.PaymentId");
-                    sb.AppendLine("           , pm.PaymentType");
-                    sb.AppendLine("           , pm.Amount");
-                    sb.AppendLine("           , pm.ReceiptNo");
-                    sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("          left join FreeTicketSalesMaster fsm");
-                    sb.AppendLine("          on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NNR001'");
-                    sb.AppendLine("          inner join PaymentManage pm");
-                    sb.AppendLine("          on ftm.UserId = pm.UserId");
-                    sb.AppendLine("          and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("          and pm.ServiceId = '4'");
-                    sb.AppendLine("          and pm.PaymentType = '4'");
-                    sb.AppendLine("          and pm.GmoStatus = '1'");
-                    sb.AppendLine("          and pm.GmoProcType = '2'");
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'払戻し' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                        /*チケット名称*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and pm.PaymentType = '4'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '2'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language ='ja'");
 
                     return sb.ToString();
                 }
@@ -612,7 +535,7 @@ namespace AppSigmaAdmin.Models
                     if (TransportType != "-")
                     {
                         //検索条件に券種指定
-                        Nsb.AppendLine("   and tbl.TrsType = @TransportType ");
+                        Nsb.AppendLine("   and tbl.BizCompanyCd = @TransportType ");
                         cmd.Parameters.Add("@TransportType", SqlDbType.NVarChar).Value = TransportType;
                     }
                     if (TicketType != "-")
@@ -661,9 +584,9 @@ namespace AppSigmaAdmin.Models
                             UserId = row["UserId"].ToString(),
                             TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
                             PaymentId = row["PaymentId"].ToString(),
-                            TicketName = row["TicketName"].ToString(),
+                            TicketName = row["Value"].ToString(),
                             TicketType = row["TicketType"].ToString(),
-                            TransportType = row["TrsType"].ToString(),
+                            TransportType = row["BizCompanyCd"].ToString(),
                             AdultNum = row["AdultNum"].ToString(),
                             ChildNum = row["ChildNum"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
@@ -703,7 +626,7 @@ namespace AppSigmaAdmin.Models
                     if (TransportType != "-")
                     {
                         //検索条件に券種指定
-                        NishiSb.AppendLine("   and tbl.TrsType = @TransportType ");
+                        NishiSb.AppendLine("   and tbl.BizCompanyCd = @TransportType ");
                         cmd.Parameters.Add("@TransportType", SqlDbType.NVarChar).Value = TransportType;
                     }
                     if (TicketType != "-")
@@ -769,9 +692,12 @@ namespace AppSigmaAdmin.Models
                     StringBuilder sb = new StringBuilder();
 
                     sb.AppendLine("select fsm.TicketType");
-                    sb.AppendLine("   ,fsm.TicketName");
-                    sb.AppendLine("   ,fsm.TrsType");
+                    sb.AppendLine("   ,cr.Value");
+                    sb.AppendLine("   ,fsm.BizCompanyCd");
                     sb.AppendLine("   from FreeTicketSalesMaster fsm");
+                    sb.AppendLine("   left join CharacterResource cr");
+                    sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("   and Language = 'ja'");
 
                     cmd.CommandText = sb.ToString();
 
@@ -782,8 +708,8 @@ namespace AppSigmaAdmin.Models
                         NishitetsuPaymentInfo info = new NishitetsuPaymentInfo
                         {
                             TicketType = row["TicketType"].ToString(),
-                            TransportType = row["TrsType"].ToString(),
-                            TicketName = row["TicketName"].ToString(),
+                            TransportType = row["BizCompanyCd"].ToString(),
+                            TicketName = row["Value"].ToString(),
                         };
 
                         result.Add(info);

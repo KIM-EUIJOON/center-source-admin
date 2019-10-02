@@ -40,6 +40,21 @@
             <div class="errorMessage">
                 @Html.ValidationSummary(false, "")
             </div>
+            @{
+                //window.loadがうまくいかない問題対応(仮)
+                if (ViewBag.IpUpdate == 1)
+                {
+                    <div class="errorMessage">
+                        @Html.Label("リストの更新に成功しました。")
+                    </div>
+                }
+                else if (ViewBag.IpUpdate == 2)
+                {
+                    <div class="errorMessage">
+                        @Html.Label("リストの更新に失敗しました。")
+                    </div>
+                }
+            }
         </div>
         @{
             if (Model != null)
