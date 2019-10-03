@@ -404,7 +404,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("         where pe.UserId = tbl.UserId");
                     sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
                     sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
-                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4' or pe.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
                     sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
                     sb.AppendLine("     )");
                     sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
@@ -439,7 +439,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
                     sb.AppendLine("        	and pm.PaymentType = '3'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -468,7 +468,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
                     sb.AppendLine("        	and pm.PaymentType = '5'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '3'");
@@ -497,7 +497,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4')");/*サービスID(西鉄バス:2,鉄道:4) このIDは北九州と福岡で異なる予定なので、DB更新があったら変更すること*/
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5)*/
                     sb.AppendLine("        	and pm.PaymentType = '4'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");
