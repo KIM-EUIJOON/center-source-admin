@@ -63,6 +63,8 @@ namespace AppSigmaAdmin.Controllers
             string maxListCount = searchKey["maxListCount"];
             //リスト表示件数
             int ListNum = int.Parse(searchKey["ListNum"]);
+            //検索条件：Myroute番号
+            string MyrouteNo = searchKey["MyrouteNo"];
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
@@ -94,7 +96,7 @@ namespace AppSigmaAdmin.Controllers
             List<JtxPaymentInfo> SelectPaymentDateList = null;
 
             //表示情報を取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo);
 
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
             int ListCount = int.Parse(maxListCount);
@@ -110,6 +112,8 @@ namespace AppSigmaAdmin.Controllers
             info.ListPageNo = pageNo;
             //表示リスト件数
             info.ListNum = ListNum;
+            //指定MyrouteID
+            info.UserId = MyrouteNo;
 
             //取得したリスト件数が0以上
             if (SelectPaymentDateList.Count > 0)
@@ -138,23 +142,36 @@ namespace AppSigmaAdmin.Controllers
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
-                return View();
+                return View(model);
             }
             else if (string.IsNullOrEmpty(model.TargetDateEnd))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
-                return View();
+                return View(model);
             }
 
             if (!IsDate(model.TargetDateBegin.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(model);
             }
             else if (!IsDate(model.TargetDateEnd.ToString()))
             {
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View();
+                return View(model);
+            }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteIDが入力されていないため操作なし
+            }
+            else
+            {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
+                    return View(model);
+                }
             }
 
             List<JtxPaymentInfo> PaymentDateListMaxCount = null;
@@ -169,12 +186,24 @@ namespace AppSigmaAdmin.Controllers
             int ListNum = 10;
             int EndListNo = PageNo * ListNum;
             int BeginListNo = PageNo - (ListNum -1);
+            string UserId;
+
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteID未入力の場合は空白を設定する
+                UserId = "";
+            }
+            else
+            {
+                //myrouteIDが指定されている場合は入力内容を設定する
+                UserId = model.UserId;
+            }
 
             //検索条件に一致する全リスト件数取得
-            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast);
+            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, BeginListNo, EndListNo);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, BeginListNo, EndListNo, UserId);
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
 
             //表示リストの総数
@@ -209,6 +238,7 @@ namespace AppSigmaAdmin.Controllers
             Dictionary<string, string> searchKey = new Dictionary<string, string>();
             searchKey.Add("TargetDateBegin", model.TargetDateBegin);
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
+            searchKey.Add("MyrouteNo", UserId);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("ListNum", ListNum.ToString());   //リスト表示件数
             Session.Add(SESSION_SEARCH_JapanTaxi, searchKey);
@@ -244,6 +274,19 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0201/Index.cshtml");
             }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteIDが入力されていないため操作なし
+            }
+            else
+            {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
+                    return View("~/Views/MPA0201/Index.cshtml");
+                }
+            }
 
             List<JtxPaymentInfo> PaymentDateListMaxCount = null;
             List<JtxPaymentInfo> SelectPaymentDateList = null;
@@ -251,8 +294,22 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateStart = DateTime.Parse(model.TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(model.TargetDateEnd);
 
+            string UserId;
+
+            //検索条件としてmyrouteIDが入力されているかの判定
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteID未入力の場合は空白を設定する
+                UserId = "";
+            }
+            else
+            {
+                //myrouteIDが指定されている場合は入力内容を設定する
+                UserId = model.UserId;
+            }
+
             //検索条件に一致する全リスト件数取得
-            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast);
+            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId);
 
             //ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
@@ -261,7 +318,7 @@ namespace AppSigmaAdmin.Controllers
             int maxListCount = PaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId);
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
 
 

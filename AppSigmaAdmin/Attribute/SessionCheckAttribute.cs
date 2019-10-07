@@ -48,7 +48,7 @@ namespace AppSigmaAdmin.Attribute
                     var routeDate = filterContext.RouteData;
                     string path = routeDate.Values["controller"].ToString();
 
-                    if (path != "Menu")
+                    if (path != "Menu" && path != "Inquiry")//一時的に問い合わせ番号参照ページを無効化(Inquiry)
                     {
                         //Menu以外にアクセスしようとした場合に権限の有無を確認する
                         List<RoleFunction> upperRoleInfo = null;

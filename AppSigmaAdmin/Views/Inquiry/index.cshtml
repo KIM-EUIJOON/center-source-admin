@@ -1,0 +1,81 @@
+﻿@model AppSigmaAdmin.ResponseData.InquiryInfo
+@using AppSigmaAdmin.Utility
+@using System.Data
+@using AppSigmaAdmin.Library
+
+@{
+    ViewBag.Title = "予約・決済情報確認";
+}
+@section funcTitle {
+<div class="funcTitleBer">
+    予約・決済情報確認
+</div>
+}
+<input type="hidden" id="NishitetsuUrl" value="@Common.CreateUrl("/MPA0101", false)" />
+<input type="hidden" id="NasseUrl" value="@Common.CreateUrl("/MPA0301", false)" />
+<input type="hidden" id="JTXUrl" value="@Common.CreateUrl("/MPA0201", false)" />
+
+<form action="@Common.CreateUrl("/inquiry", false)" method="post" id="form1">
+
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableCell">
+                    問い合わせ番号：
+                    @Html.TextBoxFor(m => m.InquiryNo, new { Class = "std-textbox", placeholder = "問い合わせ番号" })
+                    @Html.ValidationMessageFor(m => m.InquiryNo)
+                </div>
+                <div class="GridTableCell">
+                    <input type="submit" formaction="@Common.CreateUrl("/Inquiry", false)" formmethod="post" id="InquiryNo" value="問い合わせ番号照会" class="accent-color-button" style="margin-bottom:10px" />
+                </div>
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
+            </div>
+            @{
+                if (Model != null)
+                {
+                    if (Model.UserId != null)
+                    {
+                        string UserId = Model.UserId.ToString();
+
+                        <div>
+                            @Html.Label("MyrouteID:" + @UserId, new { style = "font-size: 1.5em" })
+                        </div>
+                        <div class="errorMessage">
+                            @Html.HiddenFor(Model => Model.UserId)
+                        </div>
+                        <div class="GridTable">
+                            <div class="GridTableRow">
+                                <div class="GridTableCell">
+                                    西日本鉄道
+                                </div>
+                                <div class="GridTableCell">
+
+                                    <button type="submit" class="accent-color-button" style="margin-bottom:10px" formaction="@Common.CreateUrl("/MPA0101", false)" formtarget="new_window_Nishi" id="Nishitetsu">西鉄決済状況照会</button>
+                                </div>
+                            </div>
+                            <div class="GridTableRow">
+                                <div class="GridTableCell">
+                                    Japan Taxi
+                                </div>
+                                <div class="GridTableCell">
+                                    <button type="submit" class="accent-color-button" style="margin-bottom:10px" formaction="@Common.CreateUrl("/MPA0201", false)" formtarget="new_window_JTX" id="Japan Taxi">Japan Taxi決済状況照会</button>
+                                </div>
+                            </div>
+                            <div class="GridTableRow">
+                                <div class="GridTableCell">
+                                    ナッセグルメパスポート
+                                </div>
+                                <div class="GridTableCell">
+                                    <button type="submit" class="accent-color-button" style="margin-bottom:10px" formaction="@Common.CreateUrl("/MPA0301", false)" formtarget="new_window_Nasse" id="Nasse">ナッセ決済状況照会</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+
+        </div>
+    </div>
+</form>

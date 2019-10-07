@@ -67,6 +67,8 @@ namespace AppSigmaAdmin.Controllers
             string maxListCount = searchKey["maxListCount"];
             //パスポートID
             string PassID = searchKey["PassportID"];
+            //ユーザーID
+            string UserID = searchKey["UserID"];
             //リスト件数
             int ListNum = int.Parse(searchKey["ListNum"]);
 
@@ -83,7 +85,7 @@ namespace AppSigmaAdmin.Controllers
                 if (pageNo > ListMaxPageNum)
                 {
                     ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
-                    return View();
+                    return View(PulldownList);
                 }
             }
             catch (FormatException error)
@@ -99,7 +101,7 @@ namespace AppSigmaAdmin.Controllers
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
 
             //表示情報を取得
-            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, PassID);
+            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, PassID, UserID);
 
             NassePaymentInfoListEntity info = new NassePaymentInfoListEntity();
             int ListCount = int.Parse(maxListCount);
@@ -170,7 +172,19 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View(info);
             }
-
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteIDが入力されていないため操作なし
+            }
+            else
+            {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
+                    return View(model);
+                }
+            }
             List<NassePaymentInfo> NassePaymentDateListMaxCount = null;
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
 
@@ -183,6 +197,7 @@ namespace AppSigmaAdmin.Controllers
             int EndListNo = PageNo * ListNum;
             int ListNoBegin = EndListNo - (ListNum -1);
             string PassID;
+            string UserId;
 
             if (string.IsNullOrEmpty(model.PassportID))
             {
@@ -194,11 +209,23 @@ namespace AppSigmaAdmin.Controllers
                 PassID = model.PassportID;
             }
 
+
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteID未入力の場合は空白を設定する
+                UserId = "";
+            }
+            else
+            {
+                //myrouteIDが指定されている場合は入力内容を設定する
+                UserId = model.UserId;
+            }
+
             //検索条件に一致する全リスト件数取得
-            NassePaymentDateListMaxCount = new NassePaymentModel().NassePaymentDateListMaxCount(TargetDateStart, TargetDateLast, PassID);
+            NassePaymentDateListMaxCount = new NassePaymentModel().NassePaymentDateListMaxCount(TargetDateStart, TargetDateLast, PassID, UserId);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, PassID);
+            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, PassID, UserId);
 
 
             //表示リストの総数
@@ -238,6 +265,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("PassportID", model.PassportID);
+            searchKey.Add("UserID", UserId);
             searchKey.Add("ListNum", ListNum.ToString());
             Session.Add(SESSION_SEARCH_Nasse, searchKey);
 
@@ -278,6 +306,19 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
                 return View("~/Views/MPA0301/Index.cshtml", model);
             }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteIDが入力されていないため操作なし
+            }
+            else
+            {
+                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                {
+                    //myrouteIDのテキストボックスに半角数字以外が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
+                    return View(model);
+                }
+            }
 
             List<NassePaymentInfo> NassePaymentDateListMaxCount = null;
             List<NassePaymentInfo> SelectNassePaymentDateList = null;
@@ -286,6 +327,7 @@ namespace AppSigmaAdmin.Controllers
             DateTime TargetDateLast = DateTime.Parse(model.TargetDateEnd);
 
             string PassID;
+            string MyrouteNo;
 
             if (string.IsNullOrEmpty(model.PassportID))
             {
@@ -296,9 +338,19 @@ namespace AppSigmaAdmin.Controllers
                 //選択されているパスポートIDを保存する
                 PassID = model.PassportID;
             }
+            if (string.IsNullOrEmpty(model.UserId))
+            {
+                //myrouteID未入力の場合は空白を設定する
+                MyrouteNo = "";
+            }
+            else
+            {
+                //myrouteIDが指定されている場合は入力内容を設定する
+                MyrouteNo = model.UserId;
+            }
 
             //検索条件に一致する全リスト件数取得
-            NassePaymentDateListMaxCount = new NassePaymentModel().NassePaymentDateListMaxCount(TargetDateStart, TargetDateLast, PassID);
+            NassePaymentDateListMaxCount = new NassePaymentModel().NassePaymentDateListMaxCount(TargetDateStart, TargetDateLast, PassID, MyrouteNo);
 
             //ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
@@ -307,7 +359,7 @@ namespace AppSigmaAdmin.Controllers
             int maxListCount = NassePaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストを取得
-            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, PassID);
+            SelectNassePaymentDateList = new NassePaymentModel().GetNassePaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, PassID, MyrouteNo);
 
             //開始日時
             info.TargetDateBegin = TargetDateStart.ToString();

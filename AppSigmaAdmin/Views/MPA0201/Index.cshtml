@@ -24,34 +24,41 @@
     <div class="ContentsBase">
         <div class="userInfoBox">
             <div class="GridTable">
-                <div class="GridTableCell">
-                    期間:
-                    @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
-                    @Html.ValidationMessageFor(m => m.TargetDateBegin)
-                    から
-                    @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
-                    @Html.ValidationMessageFor(m => m.TargetDateEnd)
-                    まで
-                </div>
-                <div class="GridTableCol">
+                <div class="GridTableRow">
                     <div class="GridTableCell">
-                        <div class="GridTableRow">
-                            <div class="GridTableCell">
-                                <input type="submit" formaction="@Common.CreateUrl("/MPA0201/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
-                            </div>
-                        </div>
-                        <div class="GridTableRow">
-                            <div class="GridTableCell">
-                                <input type="submit" formaction="@Common.CreateUrl("/MPA0201/JtxOutPutDate", false)" formmethod="post" id="JtxOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
-                            </div>
-                        </div>
-                        <div class="GridTableRow">
-                            <div class="GridTableCell">
-                                <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
-                            </div>
-                        </div>
+                        期間:
+                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateBegin)
+                        から
+                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateEnd)
+                        まで
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0201/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+
+                </div>
+
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        myroute会員ID：
+                        @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                        @Html.ValidationMessageFor(Model => Model.UserId)
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0201/JtxOutPutDate", false)" formmethod="post" id="JtxOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
                     </div>
                 </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                    </div>
+
+                </div>
+
             </div>
             <div class="errorMessage">
                 @Html.ValidationSummary(false, "")
@@ -81,5 +88,6 @@
                 }
             </div>
         </div>
+        
     </div>
 </form>

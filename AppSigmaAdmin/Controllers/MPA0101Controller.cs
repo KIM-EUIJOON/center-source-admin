@@ -235,8 +235,9 @@ namespace AppSigmaAdmin.Controllers
             string TransePortCheck = "-";       //チケット種別保存用
             string TransportType = "-";         //交通種別保存用
 
-            if (model.TicketInfo != "-")//商品種別が選択済でチケット種別が未選択の場合
+            if (model.TicketInfo != "-" && model.TicketInfo != null)//商品種別が選択済でチケット種別が未選択の場合
             {
+
                 num = model.TicketInfo.IndexOf(SearchOb);
                 Tickettype = model.TicketInfo.Substring(0, num);       //商品種別分離
                 int Tpt = model.TicketInfo.Length - (num + 1);
@@ -250,6 +251,11 @@ namespace AppSigmaAdmin.Controllers
                 {
                     TransportType = model.TransportType;
                 }
+            }
+            else if (model.TicketInfo == null)
+            {
+                TransportType = "-";
+                model.TransportType = TransportType;
             }
             else
             {
@@ -279,15 +285,15 @@ namespace AppSigmaAdmin.Controllers
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                 }
             }
-            if (model.TicketInfo == "-")
-            {
-                //未選択の場合
-                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
-            }
-            else
+            if (model.TicketInfo != "-" && model.TicketInfo!=null)
             {
                 //商品種別が選択されている場合
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+            else
+            {
+                //未選択の場合
+                TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
             }
             //商品種別プルダウンリストを保存
             ViewBag.TicketList = TicketTypeList;

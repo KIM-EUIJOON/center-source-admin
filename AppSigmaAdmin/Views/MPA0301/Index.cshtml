@@ -49,6 +49,17 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
+                        myroute会員ID：
+                        @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                        @Html.ValidationMessageFor(Model => Model.UserId)
+                    </div>
+                   
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0301/NasseOutPutDate", false)" formmethod="post" id="NasseOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
                         @{
                             // イベント種別プルダウンリスト
                             List<SelectListItem> PassPortID = new List<SelectListItem>();
@@ -86,17 +97,8 @@
                         イベント名：
                         @Html.DropDownListFor(m => m.PassportID, PassPortID, new { Class = "DropList" })
                     </div>
-                    <div class="GridTableCol">
-                        <div class="GridTableRow">
-                            <div class="GridTableCell">
-                                <input type="submit" formaction="@Common.CreateUrl("/MPA0301/NasseOutPutDate", false)" formmethod="post" id="NasseOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
-                            </div>
-                        </div>
-                        <div class="GridTableRow">
-                            <div class="GridTableCell">
-                                <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
-                            </div>
-                        </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
                     </div>
                 </div>
             </div>

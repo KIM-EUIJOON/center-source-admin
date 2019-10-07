@@ -164,6 +164,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\Inquiry.cs" />
     <Compile Include="Controllers\MSA0301Controller.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\MPA0101Controller.cs" />
@@ -280,6 +281,7 @@
     <Content Include="Views\MPA0201\Index.cshtml" />
     <Content Include="Views\MPA0301\Index.cshtml" />
     <Content Include="Views\MSA0301\Index.cshtml" />
+    <Content Include="Views\Inquiry\index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

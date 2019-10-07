@@ -239,4 +239,11 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public List<NishitetsuPaymentInfo> NishitetsuPullDownList { get; set; }
     }
-}
+    /// <summary>
+    /// 問い合わせ番号
+    /// </summary>
+    public class InquiryInfo : PaymentInfo
+    {
+        public string InquiryNo { get; set; }
+    }
+    }
