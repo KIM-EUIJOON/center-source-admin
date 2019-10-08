@@ -13,7 +13,11 @@ namespace AppSigmaAdmin.Controllers
 {
     public class MSA0401Controller : Controller
     {
-
+        /// <summary>
+        /// ID検索画面(ボタン押下以外)
+        /// </summary>
+        /// <returns>ID検索画面</returns>
+        [SessionCheck(WindowName = "ID検索画面")]
         public ActionResult Index()
         {
             ViewData["message"] = "";
@@ -25,13 +29,14 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// ID検索処理
         /// </summary>
-        /// <returns>予約・決済情報確認</returns>
+        /// <returns>ID検索画面</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "ユーザ情報画面")]
+        [SessionCheck(WindowName = "ID検索画面")]
         public ActionResult Index(InquiryInfo model)
         {
             ViewData["message"] = "";
 
+            //問い合わせ番号入力チェック
             if (model.InquiryNo==null)
             {
                 ModelState.AddModelError("", "問い合わせ番号が入力されていません。半角数字のみで再入力してください。");
