@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace AppSigmaAdmin.Controllers
 {
-    public class InquiryController : Controller
+    public class MSA0401Controller : Controller
     {
 
         public ActionResult Index()
@@ -31,6 +31,13 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index(InquiryInfo model)
         {
             ViewData["message"] = "";
+
+            if (model.InquiryNo==null)
+            {
+                ModelState.AddModelError("", "問い合わせ番号が入力されていません。半角数字のみで再入力してください。");
+                return View(model);
+            }
+
             int InquiryNo = 0;
             string InputNo = model.InquiryNo.ToString();
             string CheckInput = InputNo.Trim();

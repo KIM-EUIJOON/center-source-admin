@@ -4,29 +4,29 @@
 @using AppSigmaAdmin.Library
 
 @{
-    ViewBag.Title = "予約・決済情報確認";
+    ViewBag.Title = "内部ID検索";
 }
 @section funcTitle {
 <div class="funcTitleBer">
-    予約・決済情報確認
+    内部ID検索
 </div>
 }
 <input type="hidden" id="NishitetsuUrl" value="@Common.CreateUrl("/MPA0101", false)" />
 <input type="hidden" id="NasseUrl" value="@Common.CreateUrl("/MPA0301", false)" />
 <input type="hidden" id="JTXUrl" value="@Common.CreateUrl("/MPA0201", false)" />
 
-<form action="@Common.CreateUrl("/inquiry", false)" method="post" id="form1">
+<form action="@Common.CreateUrl("/MSA0401", false)" method="post" id="form1">
 
     <div class="ContentsBase">
         <div class="userInfoBox">
             <div class="GridTable">
                 <div class="GridTableCell">
                     問い合わせ番号：
-                    @Html.TextBoxFor(m => m.InquiryNo, new { Class = "std-textbox", placeholder = "問い合わせ番号" })
+                    @Html.TextBoxFor(m => m.InquiryNo, new { Class = "std-textbox", placeholder = "問い合わせ番号入力" })
                     @Html.ValidationMessageFor(m => m.InquiryNo)
                 </div>
                 <div class="GridTableCell">
-                    <input type="submit" formaction="@Common.CreateUrl("/Inquiry", false)" formmethod="post" id="InquiryNo" value="問い合わせ番号照会" class="accent-color-button" style="margin-bottom:10px" />
+                    <input type="submit" formaction="@Common.CreateUrl("/MSA0401", false)" formmethod="post" id="InquiryNo" value="問い合わせ番号照会" class="accent-color-button" style="margin-bottom:10px" />
                 </div>
             </div>
             <div class="errorMessage">
