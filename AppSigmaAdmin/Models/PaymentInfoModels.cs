@@ -403,7 +403,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
-                    sb.AppendLine("     , tbl.TicketType");
+                    sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
+                    sb.AppendLine("     , tbl.TicketGroup");
                     sb.AppendLine("     , tbl.Value");                                                                   /*チケット名称*/
                     sb.AppendLine("     , tbl.AdultNum");
                     sb.AppendLine("     , tbl.ChildNum");
@@ -436,6 +437,9 @@ namespace AppSigmaAdmin.Models
                 }
             }
 
+            /// <summary>
+            /// 西鉄バス旧DB内容取得
+            /// </summary>
             private string NishitetsuBusPayment()
             {
                 using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
@@ -455,6 +459,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("            , pm.Amount");
                     sb.AppendLine("            , pm.ReceiptNo");
                     sb.AppendLine("            ,fsm.BizCompanyCd");
+                    sb.AppendLine("            ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("         from NishitetsuFreeTicket nft");
                     sb.AppendLine("        inner join PaymentManage pm");
                     sb.AppendLine("           on nft.UserId = pm.UserId");
@@ -465,8 +470,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          and pm.GmoProcType = '2'");                // 決済実行
                     sb.AppendLine("          left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
-                    sb.AppendLine("          and fsm.BizCompanyCd='NIS'");           //西鉄
+                    sb.AppendLine("          and fsm.BizCompanyCd='NIS'");              //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketGroup ='0'");                //auは含まれないので0固定
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
@@ -485,6 +491,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("             , pm.Amount * -1 as Amount");
                     sb.AppendLine("             , pm.ReceiptNo");
                     sb.AppendLine("            ,fsm.BizCompanyCd");
+                    sb.AppendLine("            ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("          from NishitetsuFreeTicket nft");
                     sb.AppendLine("         inner join PaymentManage pm");
                     sb.AppendLine("            on nft.UserId = pm.UserId");
@@ -497,6 +504,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
                     sb.AppendLine("          and fsm.BizCompanyCd='NIS'");           //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketGroup ='0'");                //auは含まれないので0固定
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
@@ -515,6 +523,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("             , pm.Amount");
                     sb.AppendLine("             , pm.ReceiptNo");
                     sb.AppendLine("            ,fsm.BizCompanyCd");
+                    sb.AppendLine("            ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("          from NishitetsuFreeTicket nft");
                     sb.AppendLine("         inner join PaymentManage pm");
                     sb.AppendLine("            on nft.UserId = pm.UserId");
@@ -528,6 +537,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
                     sb.AppendLine("          and fsm.BizCompanyCd='NIS'");           //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketGroup ='0'");                //auは含まれないので0固定
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
@@ -536,6 +546,9 @@ namespace AppSigmaAdmin.Models
                 }
             }
 
+            /// <summary>
+            /// 西鉄DB内容取得
+            /// </summary>
             private string GetNishitetsuPaymentList()
             {
                 using (SqlDbInterface NishitetsudbInterface = new SqlDbInterface())
@@ -555,6 +568,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	, pm.Amount");
                     sb.AppendLine("        	, pm.ReceiptNo");
                     sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
@@ -584,6 +598,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	, pm.Amount* -1 as Amount");
                     sb.AppendLine("        	, pm.ReceiptNo");
                     sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
@@ -613,6 +628,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	, pm.Amount");
                     sb.AppendLine("        	, pm.ReceiptNo");
                     sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketGroup");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
@@ -638,7 +654,7 @@ namespace AppSigmaAdmin.Models
             /// <param name="stDate">抽出範囲開始日</param>
             /// <param name="edDate">抽出範囲終了日</param>
             /// <returns>西鉄決済情報</returns>
-            public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType)
+            public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType,string TransportTypeGroup)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
 
@@ -689,6 +705,12 @@ namespace AppSigmaAdmin.Models
                         //検索条件に枚数種別：子供
                         Nsb.AppendLine("   and tbl.AdultNum = '0' ");
                     }
+                    if (TransportTypeGroup != "-")
+                    {
+                        //検索条件に券種指定
+                        Nsb.AppendLine("   and tbl.TicketGroup = @TicketGroup ");
+                        cmd.Parameters.Add("@TicketGroup", SqlDbType.NVarChar).Value = TransportTypeGroup;
+                    }
                     Nsb.AppendLine("  ) as MA  where MA.RecNo between @PageNum and @ListEnd");
 
                     cmd.CommandText = Nsb.ToString();
@@ -716,6 +738,11 @@ namespace AppSigmaAdmin.Models
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString()
                         };
+                        if (row["TicketGroup"].ToString()=="1")
+                        {
+                            //auスマパス購入チケットの判別
+                            infoN.TicketName = infoN.TicketName + "(au)";
+                        }
                         result.Add(infoN);
                     }
                     return result;
@@ -726,8 +753,13 @@ namespace AppSigmaAdmin.Models
             /// </summary>
             /// <param name="stDate"></param>
             /// <param name="edDate"></param>
+            /// <param name="MyrouteNo"></param>
+            /// <param name="TicketType"></param>
+            /// <param name="PaymentType"></param>
+            /// <param name="TicketNumType"></param>
+            /// <param name="TransportType"></param>
             /// <returns></returns>
-            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType)
+            public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string TicketType, string PaymentType, string TicketNumType, string TransportType ,string TransportTypeGroup)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
                 //現在表示されているリストの通し番号
@@ -780,6 +812,12 @@ namespace AppSigmaAdmin.Models
                         //検索条件に枚数種別：子供
                         NishiSb.AppendLine("   and tbl.AdultNum = '0' ");
                     }
+                    if (TransportTypeGroup != "-")
+                    {
+                        //検索条件に券種指定
+                        NishiSb.AppendLine("   and tbl.TicketGroup = @TicketGroup ");
+                        cmd.Parameters.Add("@TicketGroup", SqlDbType.NVarChar).Value = TransportTypeGroup;
+                    }
 
                     cmd.CommandText = NishiSb.ToString();
 
@@ -817,6 +855,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("select fsm.TicketType");
                     sb.AppendLine("   ,cr.Value");
                     sb.AppendLine("   ,fsm.BizCompanyCd");
+                    sb.AppendLine("   ,fsm.TicketGroup");
                     sb.AppendLine("   from FreeTicketSalesMaster fsm");
                     sb.AppendLine("   left join CharacterResource cr");
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
@@ -833,6 +872,7 @@ namespace AppSigmaAdmin.Models
                             TicketType = row["TicketType"].ToString(),
                             TransportType = row["BizCompanyCd"].ToString(),
                             TicketName = row["Value"].ToString(),
+                            TicketGroup = row["TicketGroup"].ToString(),
                         };
 
                         result.Add(info);

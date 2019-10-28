@@ -7,13 +7,13 @@
     ViewBag.Title = "内部ID検索";
 }
 @section funcTitle {
-<div class="funcTitleBer">
-    内部ID検索
-</div>
+    <div class="funcTitleBer">
+        内部ID検索
+    </div>
 }
-<input type="hidden" id="NishitetsuUrl" value="@Common.CreateUrl("/MPA0101", false)" />
-<input type="hidden" id="NasseUrl" value="@Common.CreateUrl("/MPA0301", false)" />
-<input type="hidden" id="JTXUrl" value="@Common.CreateUrl("/MPA0201", false)" />
+
+<input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
 
 <form action="@Common.CreateUrl("/MSA0401", false)" method="post" id="form1">
 
