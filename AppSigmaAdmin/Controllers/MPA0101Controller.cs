@@ -67,18 +67,8 @@ namespace AppSigmaAdmin.Controllers
                 foreach (var TicketList in NishitetsuTicket)
                 {
                     string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                    string ListTicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別/交通手段
-
-                    //auスマパス購入チケット判別用
-                    if (TicketList.TicketGroup.ToString()=="0")
-                    {
-                        TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
-                    }
-                    else if(TicketList.TicketGroup.ToString() == "1")
-                    {
-                        TicketTypeList.Add(new SelectListItem { Text = TicketName+"(au)", Value = ListTicketType });
-                    }
-                    
+                    string ListTicketType = TicketList.TicketId.ToString() + "/" + TicketList.TransportType.ToString(); //チケットID/交通手段
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
                 }
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
                 ViewBag.TicketList = TicketTypeList;
@@ -106,8 +96,6 @@ namespace AppSigmaAdmin.Controllers
             string MyrouteNo = searchKey["MyrouteNo"];
             //検索条件：チケット種別
             string TransportType = searchKey["TransportType"];
-            //検索条件：商品種別
-            string TicketType = searchKey["TicketType"];
             //検索条件：決済種別
             string PaymentType = searchKey["PaymentType"];
             //検索条件：枚数種別
@@ -115,22 +103,14 @@ namespace AppSigmaAdmin.Controllers
             //リスト件数
             int ListNum = int.Parse(searchKey["ListNum"]);
             string TicketInfo = searchKey["TicketInfo"];
-            //検索条件：auスマパスチケット
-            string TransportTypeGroup = searchKey["TransportTypeGroup"];
+            //検索条件：チケットID
+            string TicketId = searchKey["TicketId"];
 
             foreach (var TicketList in NishitetsuTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string ListTicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別/交通手段
+                string ListTicketType = TicketList.TicketId.ToString() + "/" + TicketList.TransportType.ToString(); //チケットID/交通手段
 
-                if (TicketList.TicketGroup.ToString()=="0")
-                {
-                    //auスマパスでの購入チケットでないため処理なし
-                }
-                else if (TicketList.TicketGroup.ToString() == "1")
-                {
-                    TicketName = TicketName + "(au)";
-                }
 
                 if (TicketInfo != ListTicketType)
                 {
@@ -175,7 +155,7 @@ namespace AppSigmaAdmin.Controllers
                 if (pageNo > ListMaxPageNum)
                 {
                     info.TransportType = "-";
-                    info.TicketType = "-";
+                    info.TicketId = "-";
                     ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
                     return View(info);
                 }
@@ -184,7 +164,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 Trace.TraceError(Logger.GetExceptionMessage(error));
                 info.TransportType = "-";
-                info.TicketType = "-";
+                info.TicketId = "-";
                 ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
                 return View(info);
             }
@@ -196,7 +176,7 @@ namespace AppSigmaAdmin.Controllers
 
 
             //表示情報を取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, TicketType, PaymentType, TicketNumType, TransportType, TransportTypeGroup);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId);
 
             
             int ListCount = int.Parse(maxListCount);
@@ -212,8 +192,8 @@ namespace AppSigmaAdmin.Controllers
             info.ListPageNo = pageNo;
             //指定MyrouteID
             info.UserId = MyrouteNo;
-            //指定商品種別
-            info.TicketType = TicketType;
+            //指定チケットID
+            info.TicketId = TicketId;
             //チケット種別
             info.TransportType = TransportType;
             //指定決済種別
@@ -249,18 +229,17 @@ namespace AppSigmaAdmin.Controllers
             //商品種別選択肢から交通種別を分離する
             string SearchOb = "/"; //「/」判定用
             int num;
-            //選択商品種別
-            string Tickettype = "-";
+            //選択チケットID
+            string TicketId = "-";
             //選択チケット種別
             string TransePortCheck = "-";       //チケット種別保存用
             string TransportType = "-";         //交通種別保存用
-            string TransportTypeGroup = "-";         //チケット名種別保存用
 
             if (model.TicketInfo != "-" && model.TicketInfo != null)//商品種別が選択済でチケット種別が未選択の場合
             {
 
                 num = model.TicketInfo.IndexOf(SearchOb);
-                Tickettype = model.TicketInfo.Substring(0, num);       //商品種別分離
+                TicketId = model.TicketInfo.Substring(0, num);       //チケットID分離
                 int Tpt = model.TicketInfo.Length - (num + 1);
                 TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
 
@@ -288,28 +267,19 @@ namespace AppSigmaAdmin.Controllers
             NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
             //商品種別プルダウンリスト
             List<SelectListItem> TicketTypeList = new List<SelectListItem>();
-
             //商品種別プルダウンリスト作成(商品種別はチケット種別の影響を受けない)
             foreach (var TicketList in NishitetsuTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別+/+交通手段
+                string TicketType = TicketList.TicketId.ToString() + "/" + TicketList.TransportType.ToString(); //チケットID+/+交通手段
+
                 if (model.TicketInfo != TicketType)
                 {
-                    if (TicketList.TicketGroup.ToString() == "1")
-                    {
-                        TicketName = TicketName + "(au)";
-                    }
                     //選択されていない商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
                 }
                 else if (model.TicketInfo == TicketType)
                 {
-                    if (TicketList.TicketGroup.ToString() == "1")
-                    {
-                        TicketName = TicketName + "(au)";
-                        TransportTypeGroup = "1";
-                    }
                     //選択されている商品種別の場合
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                 }
@@ -405,7 +375,7 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
-            //商品種別とバス/鉄道選択肢が一致するか確認(どちらかが未選択の場合は確認対象外)
+            //チケットIDとバス/鉄道選択肢が一致するか確認(どちらかが未選択の場合は確認対象外)
             if (TransePortCheck != "-" && TransportType != "-")
             {
                 if (TransePortCheck != TransportType)
@@ -415,10 +385,10 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType, TransportTypeGroup);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType, TransportTypeGroup);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
 
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
 
@@ -440,8 +410,8 @@ namespace AppSigmaAdmin.Controllers
 
             //表示リスト件数
             info.ListNum = ListNum;
-            //指定商品種別
-            info.TicketType = Tickettype;
+            //指定チケットID
+            info.TicketId = TicketId;
 
             //チケット種別
             info.TransportType = TransportType;
@@ -472,12 +442,11 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("MyrouteNo", UserId);
             searchKey.Add("TransportType", TransportType);
-            searchKey.Add("TicketType", Tickettype);
             searchKey.Add("TicketInfo", model.TicketInfo);
             searchKey.Add("PaymentType", model.PaymentType);
             searchKey.Add("TicketNumType", model.TicketNumType);
             searchKey.Add("ListNum", ListNum.ToString());
-            searchKey.Add("TransportTypeGroup", TransportTypeGroup);
+            searchKey.Add("TicketId", TicketId);
             Session.Add(SESSION_SEARCH_Nishitetsu, searchKey);
 
             return View(info);
@@ -499,7 +468,7 @@ namespace AppSigmaAdmin.Controllers
             string SearchOb = "/"; //「/」判定用
             int num;
             //選択商品種別
-            string Tickettype = "-";
+            string TicketId = "-";
             //選択チケット種別
             string TransePortCheck = "-";       //チケット種別保存用
             string TransportType = "-";         //交通種別保存用
@@ -507,7 +476,7 @@ namespace AppSigmaAdmin.Controllers
             if (model.TicketInfo != "-")//商品種別が選択済の場合
             {
                 num = model.TicketInfo.IndexOf(SearchOb);
-                Tickettype = model.TicketInfo.Substring(0, num);       //商品種別分離
+                TicketId = model.TicketInfo.Substring(0, num);       //商品種別分離
                 int Tpt = model.TicketInfo.Length - (num + 1);
                 TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
 
@@ -532,31 +501,20 @@ namespace AppSigmaAdmin.Controllers
             NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
             //商品種別プルダウンリスト
             List<SelectListItem> TicketTypeList = new List<SelectListItem>();
-            string TransportTypeGroup = "-";
             //商品種別プルダウンリスト作成(商品種別はチケット種別の影響を受けない)
             foreach (var TicketList in NishitetsuTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string TicketType = TicketList.TicketType.ToString() + "/" + TicketList.TransportType.ToString(); //商品種別/交通手段
+                string TicketType = TicketList.TicketId.ToString() + "/" + TicketList.TransportType.ToString(); //チケットID/交通手段
 
                     if (model.TicketInfo != TicketType)
                     {
-                        if (TicketList.TicketGroup.ToString() == "1")
-                        {
-                            TicketName = TicketName + "(au)";
-                        }
                         //選択されていない商品種別の場合
                         TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType });
                     }
                     else if (model.TicketInfo == TicketType)
                     {
-                        if (TicketList.TicketGroup.ToString() == "1")
-                        {
-                            TicketName = TicketName + "(au)";
-                            TransportTypeGroup = "1";
-                        }
-                        //選択されている商品種別の場合
-                        TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
+                        //選択されている商品種別の場合                        TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                     }
             }
             if (model.TicketInfo == "-")
@@ -654,13 +612,13 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType, TransportTypeGroup);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
 
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, Tickettype, model.PaymentType, model.TicketNumType, TransportType, TransportTypeGroup);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
 
 
             //開始日時
