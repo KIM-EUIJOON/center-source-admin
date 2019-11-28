@@ -4,7 +4,7 @@
 @using AppSigmaAdmin.Library
 
 @{
-    ViewBag.Title = "内部ID検索";
+    ViewBag.Title = "問い合わせID検索";
 }
 @section funcTitle {
     <div class="funcTitleBer">
@@ -21,12 +21,12 @@
         <div class="userInfoBox">
             <div class="GridTable">
                 <div class="GridTableCell">
-                    問い合わせ番号：
-                    @Html.TextBoxFor(m => m.InquiryNo, new { Class = "std-textbox", placeholder = "問い合わせ番号入力" })
+                    問い合わせID：
+                    @Html.TextBoxFor(m => m.InquiryNo, new { Class = "std-textbox", placeholder = "問い合わせID入力" })
                     @Html.ValidationMessageFor(m => m.InquiryNo)
                 </div>
                 <div class="GridTableCell">
-                    <input type="submit" formaction="@Common.CreateUrl("/MSA0401", false)" formmethod="post" id="InquiryNo" value="問い合わせ番号照会" class="accent-color-button" style="margin-bottom:10px" />
+                    <input type="submit" formaction="@Common.CreateUrl("/MSA0401", false)" formmethod="post" id="InquiryNo" value="問い合わせID検索" class="accent-color-button" style="margin-bottom:10px" />
                 </div>
             </div>
             <div class="errorMessage">
