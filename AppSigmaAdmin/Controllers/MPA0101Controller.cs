@@ -9,6 +9,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using static AppSigmaAdmin.Models.JTXPaymentModel;
+using AppSigmaAdmin.Library;
+using AppSigmaAdmin.Models;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -49,8 +51,16 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "西鉄決済画面")]
         public ActionResult Index(string page)
         {
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             List<NishitetsuPaymentInfo> NishitetsuTicket = null;
-            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList(UserRole);
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
             //プルダウンリスト
 
@@ -176,7 +186,7 @@ namespace AppSigmaAdmin.Controllers
 
 
             //表示情報を取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, UserRole);
 
             
             int ListCount = int.Parse(maxListCount);
@@ -262,9 +272,18 @@ namespace AppSigmaAdmin.Controllers
                 TransportType = model.TransportType;
             }
 
+
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             //商品種別プルダウンリスト項目取得
             List<NishitetsuPaymentInfo> NishitetsuTicket = null;
-            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList(UserRole);
             //商品種別プルダウンリスト
             List<SelectListItem> TicketTypeList = new List<SelectListItem>();
             //商品種別プルダウンリスト作成(商品種別はチケット種別の影響を受けない)
@@ -385,10 +404,10 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, UserRole);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, UserRole);
 
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
 
@@ -496,9 +515,17 @@ namespace AppSigmaAdmin.Controllers
                 TransportType = model.TransportType;
             }
 
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             //商品種別プルダウンリスト項目取得
             List<NishitetsuPaymentInfo> NishitetsuTicket = null;
-            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList();
+            NishitetsuTicket = new NishitetsuPaymentModel().NishitetsuSelectList(UserRole);
             //商品種別プルダウンリスト
             List<SelectListItem> TicketTypeList = new List<SelectListItem>();
             //商品種別プルダウンリスト作成(商品種別はチケット種別の影響を受けない)
@@ -612,13 +639,13 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
+            NishitetsuPaymentDateListMaxCount = new NishitetsuPaymentModel().NishitetsuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, UserRole);
 
             //表示リストの総数
             int maxListCount = NishitetsuPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId);
+            SelectNishitetsuPaymentDateList = new NishitetsuPaymentModel().GetNishitetsuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, UserRole);
 
 
             //開始日時
