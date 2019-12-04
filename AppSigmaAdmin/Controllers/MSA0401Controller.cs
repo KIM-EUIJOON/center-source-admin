@@ -17,7 +17,7 @@ namespace AppSigmaAdmin.Controllers
         /// ID検索画面(ボタン押下以外)
         /// </summary>
         /// <returns>ID検索画面</returns>
-        [SessionCheck(WindowName = "ID検索画面")]
+        [SessionCheck(WindowName = "問い合わせID検索画面")]
         public ActionResult Index()
         {
             ViewData["message"] = "";
@@ -31,7 +31,7 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <returns>ID検索画面</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "ID検索画面")]
+        [SessionCheck(WindowName = "問い合わせID検索画面")]
         public ActionResult Index(InquiryInfo model)
         {
             ViewData["message"] = "";
@@ -39,7 +39,7 @@ namespace AppSigmaAdmin.Controllers
             //問い合わせ番号入力チェック
             if (model.InquiryNo==null)
             {
-                ModelState.AddModelError("", "問い合わせ番号が入力されていません。半角数字のみで再入力してください。");
+                ModelState.AddModelError("", "問い合わせIDが入力されていません。半角数字のみで再入力してください。");
                 return View(model);
             }
 
@@ -53,7 +53,7 @@ namespace AppSigmaAdmin.Controllers
             }
             catch
             {
-                ModelState.AddModelError("", "問い合わせ番号に数字以外が入力されました。半角数字のみで再入力してください。");
+                ModelState.AddModelError("", "問い合わせIDに数字以外が入力されました。半角数字のみで再入力してください。");
                 return View(model);
             }
             /*新しい入力値をテキストボックスに反映させるため、model内の値を削除する*/
@@ -107,7 +107,7 @@ namespace AppSigmaAdmin.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "誤った問い合わせ番号が入力されました。再入力してください。");
+                ModelState.AddModelError("", "誤った問い合わせIDが入力されました。再入力してください。");
                 return Idnum;
             }
 
