@@ -102,6 +102,59 @@ namespace AppSigmaAdmin.Models
             return result;
         }
 
+        /// <summary>
+        /// myrouteID有無検索
+        /// </summary>
+        /// <param name="MyrouteId">入力されたmyrouteId</param>
+        /// <returns>Idの有無</returns>
+        public string UserIdSearch(string MyrouteId)
+        {
+            List<UserIdInfoRespons> result = new List<UserIdInfoRespons>();
+
+            using (SqlDbInterface dbInterface = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine("SELECT UserId, DeleteFlag");
+                sb.AppendLine("FROM [dbo].[UserInfoOid]");
+                sb.AppendLine("    WHERE UserId = @MyrouteId");
+
+                cmd.CommandText = sb.ToString();
+                cmd.Parameters.Add("@MyrouteId", SqlDbType.NVarChar).Value = MyrouteId;
+
+                DataTable dt = dbInterface.ExecuteReader(cmd);
+                int searchresult = 0;
+
+                foreach (DataRow IdDataRow in dt.Rows)
+                {
+                    UserIdInfoRespons userInfo = new UserIdInfoRespons();
+                    //UserID
+                    userInfo.UserId = IdDataRow["UserId"].ToString();
+
+                    //削除フラグ
+                    Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
+
+                    //削除フラグ判定
+                    if (DeleteId == true)
+                    {
+                        /*削除済アカウント*/
+                        searchresult =-1;
+                    }
+                    else
+                    {
+                        /*存在しているアカウント*/
+                        searchresult= searchresult +1;
+                    }
+                    result.Add(userInfo);
+                }
+
+                string SearchResult = searchresult.ToString();
+
+                return SearchResult;
+            }
+        }
+
     }
 }
  

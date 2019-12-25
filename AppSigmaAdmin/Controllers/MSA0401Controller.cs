@@ -40,6 +40,7 @@ namespace AppSigmaAdmin.Controllers
             if (model.InquiryNo==null)
             {
                 ModelState.AddModelError("", "問い合わせIDが入力されていません。半角数字のみで再入力してください。");
+                model.UserId = null;
                 return View(model);
             }
 
@@ -51,9 +52,16 @@ namespace AppSigmaAdmin.Controllers
             {
                 InquiryNo = int.Parse(CheckInput);
             }
+            catch(OverflowException)
+            {
+                ModelState.AddModelError("", "問い合わせIDに誤った数値が入力されました。再入力してください。");
+                model.UserId = null;
+                return View(model);
+            }
             catch
             {
                 ModelState.AddModelError("", "問い合わせIDに数字以外が入力されました。半角数字のみで再入力してください。");
+                model.UserId = null;
                 return View(model);
             }
             /*新しい入力値をテキストボックスに反映させるため、model内の値を削除する*/
@@ -65,6 +73,21 @@ namespace AppSigmaAdmin.Controllers
             if (UserIdNo != "")
             {
                 model.UserId = UserIdNo;
+                if (UserIdNo != "")
+                {
+                    string result = new UserInfo().UserIdSearch(UserIdNo);
+                    if (result == "0")
+                    {
+                        ModelState.AddModelError("", "入力されたIDに該当するユーザーが存在していません。");
+                        return View(model);
+                    }
+                    else if (result == "-1")
+                    {
+                        ModelState.AddModelError("", "入力されたIDに該当するユーザーは退会済です。");
+                        return View(model);
+                    }
+
+                }
             }
             
 

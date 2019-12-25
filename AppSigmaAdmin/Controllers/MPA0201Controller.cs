@@ -166,7 +166,17 @@ namespace AppSigmaAdmin.Controllers
             }
             else
             {
-                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                try
+                {
+                    int.Parse(model.UserId.ToString());
+                }
+                catch (OverflowException)
+                {
+                    //myrouteIDのテキストボックスに誤った数値が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDに誤った数値が入力されました。半角数字で再入力してください。");
+                    return View(model);
+                }
+                catch
                 {
                     //myrouteIDのテキストボックスに半角数字以外が入力された場合
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
@@ -280,7 +290,17 @@ namespace AppSigmaAdmin.Controllers
             }
             else
             {
-                if (!Int32.TryParse(model.UserId.ToString(), out int i))
+                try
+                {
+                    int.Parse(model.UserId.ToString());
+                }
+                catch (OverflowException)
+                {
+                    //myrouteIDのテキストボックスに誤った数値が入力された場合
+                    ModelState.AddModelError("", "myroute会員IDに誤った数値が入力されました。半角数字で再入力してください。");
+                    return View("~/Views/MPA0201/Index.cshtml");
+                }
+                catch
                 {
                     //myrouteIDのテキストボックスに半角数字以外が入力された場合
                     ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
