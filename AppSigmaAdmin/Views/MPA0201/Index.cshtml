@@ -52,6 +52,13 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
+                            @{
+                                //アプリ種別ドロップリスト項目作成
+                                List<SelectListItem> AplList = new List<SelectListItem>();
+                                AplList = @ViewBag.AplList;
+                            }
+                            アプリ種別：
+                            @Html.DropDownListFor(Model => Model.Apltype, AplList, new { Class = "DropList" })
                     </div>
                     <div class="GridTableCell">
                         <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
@@ -76,10 +83,10 @@
 
                             <div class="grid-table">
                                 @grid.GetHtml(tableStyle:"gridTable",headerStyle: "gridhead" ,
-                 columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody12"), grid.Column("TranDatetime", header: "決済日", style: "gridbody18"),
+                 columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"), grid.Column("TranDatetime", header: "決済日", style: "gridbody18"),
                  grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("CompanyName", header: "加盟店屋号", style: "gridbody14"),
                  grid.Column("OrderId", header: "JTXオーダーID", style: "gridbody35"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
-                   grid.Column("Amount", header: "利用金額", style: "gridbody9")
+                   grid.Column("Amount", header: "利用金額", style: "gridbody8"), grid.Column("Apltype", header: "アプリ種別", style: "gridbody6")
                  ))
                             </div>
 

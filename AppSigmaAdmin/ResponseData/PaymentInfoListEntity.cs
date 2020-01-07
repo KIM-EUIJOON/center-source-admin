@@ -49,6 +49,11 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public int ListNum { get; set; }
 
+        ///<summary>
+        ///アプリ種別
+        ///</summary>
+        public string Apltype { get; set; }
+
     }
 
     /// <summary>
@@ -200,6 +205,9 @@ namespace AppSigmaAdmin.ResponseData
         /// 領収書番号
         /// </summary>
         public string ReceiptNo { get; set; }
+
+
+
     }
     /// <summary>
     /// 西鉄決済情報リスト作成用情報

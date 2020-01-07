@@ -1,4 +1,5 @@
 ﻿using AppSigmaAdmin.Attribute;
+using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
 using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Utility;
@@ -46,10 +47,37 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "Japantaxi決済データ画面")]
         public ActionResult Index(string page)
         {
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
+            //アプリ種別プルダウン
+            List<SelectListItem> AplTypeList = new List<SelectListItem>();
+
+            JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-                return View();
+                //アプリ種別ドロップダウン作成
+                /*ユーザーIDがKDDIの場合*/
+                if (UserRole == "13")
+                {
+                    AplTypeList.Add(new SelectListItem { Text = "au", Value = "1", Selected = true });
+                }
+                else
+                {
+                    AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                    AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+                }
+
+                //アプリ種別ドロップダウンリストを保存
+                ViewBag.AplList = AplTypeList;
+                return View(info);
             }
 
             //セッション情報の取得
@@ -65,6 +93,27 @@ namespace AppSigmaAdmin.Controllers
             int ListNum = int.Parse(searchKey["ListNum"]);
             //検索条件：Myroute番号
             string MyrouteNo = searchKey["MyrouteNo"];
+            //検索条件：アプリ種別
+            string Apltype = searchKey["Apltype"];
+
+            //アプリ種別プルダウン
+            /*ユーザーIDがKDDIの場合*/
+            if (UserRole == "13")
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1", Selected = true });
+                Apltype = "1";
+            }
+            else
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+
+            
+
+            //アプリ種別ドロップダウンリストを保存
+            ViewBag.AplList = AplTypeList;
+
 
             DateTime TargetDateStart = DateTime.Parse(TargetDateBegin);
             DateTime TargetDateLast = DateTime.Parse(TargetDateEnd);
@@ -96,9 +145,9 @@ namespace AppSigmaAdmin.Controllers
             List<JtxPaymentInfo> SelectPaymentDateList = null;
 
             //表示情報を取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, Apltype);
 
-            JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
+            
             int ListCount = int.Parse(maxListCount);
 
 
@@ -114,6 +163,8 @@ namespace AppSigmaAdmin.Controllers
             info.ListNum = ListNum;
             //指定MyrouteID
             info.UserId = MyrouteNo;
+            //アプリ種別
+            info.Apltype = Apltype;
 
             //取得したリスト件数が0以上
             if (SelectPaymentDateList.Count > 0)
@@ -138,6 +189,41 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
+            
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
+            //アプリ種別プルダウン
+            List<SelectListItem> AplTypeList = new List<SelectListItem>();
+            string Apltype = "";
+            /*ユーザーIDがKDDIの場合*/
+            if (UserRole == "13")
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1", Selected = true });
+                Apltype = "1";
+            }
+            else if (model.Apltype != null && model.Apltype != "-")
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                Apltype = model.Apltype;
+                AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-"});
+            }
+            else
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                Apltype = model.Apltype;
+                AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            }
+
+
+
+            //アプリ種別ドロップダウンリストを保存
+            ViewBag.AplList = AplTypeList;
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
@@ -210,10 +296,10 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //検索条件に一致する全リスト件数取得
-            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId);
+            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId, Apltype);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, BeginListNo, EndListNo, UserId);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, BeginListNo, EndListNo, UserId, Apltype);
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
 
             //表示リストの総数
@@ -234,6 +320,9 @@ namespace AppSigmaAdmin.Controllers
             //表示リスト件数
             info.ListNum = ListNum;
 
+            //アプリ種別
+            info.Apltype = Apltype;
+
             //取得したリスト件数が0以上
             if (SelectPaymentDateList.Count > 0)
             {
@@ -251,6 +340,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("MyrouteNo", UserId);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("ListNum", ListNum.ToString());   //リスト表示件数
+            searchKey.Add("Apltype", Apltype.ToString());   //アプリ種別
             Session.Add(SESSION_SEARCH_JapanTaxi, searchKey);
 
             return View(info);
@@ -262,6 +352,34 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
+            
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
+            //アプリ種別プルダウン
+            List<SelectListItem> AplTypeList = new List<SelectListItem>();
+            string Apltype = "";
+            /*ユーザーIDがKDDIの場合*/
+            if (UserRole == "13")
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1", Selected = true });
+                Apltype = "1";
+            }
+            else
+            {
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                Apltype = model.Apltype;
+                AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
+            }
+
+            //アプリ種別ドロップダウンリストを保存
+            ViewBag.AplList = AplTypeList;
+
 
             if (string.IsNullOrEmpty(model.TargetDateBegin))
             {
@@ -329,7 +447,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //検索条件に一致する全リスト件数取得
-            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId);
+            PaymentDateListMaxCount = new JTXPaymentModel().GetJtxPaymentDateListCount(TargetDateStart, TargetDateLast, UserId, Apltype);
 
             //ボタン押下で取得されるページ数は0のため1加算する
             int PageNo = model.ListPageNo + 1;
@@ -338,7 +456,7 @@ namespace AppSigmaAdmin.Controllers
             int maxListCount = PaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得
-            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId);
+            SelectPaymentDateList = new JTXPaymentModel().GetJtxPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId , Apltype);
             JtxPaymentInfoListEntity info = new JtxPaymentInfoListEntity();
 
 
@@ -382,7 +500,9 @@ namespace AppSigmaAdmin.Controllers
             Jtxsw.Write(',');
             Jtxsw.Write("\"決済種別\"");
             Jtxsw.Write(',');
-            Jtxsw.WriteLine("\"利用金額\"");
+            Jtxsw.Write("\"利用金額\"");
+            Jtxsw.Write(',');
+            Jtxsw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.JtxPaymentInfoList)
             {
@@ -399,7 +519,9 @@ namespace AppSigmaAdmin.Controllers
                 Jtxsw.Write(',');
                 Jtxsw.Write("\"" + item.PaymentType.ToString() + "\"");
                 Jtxsw.Write(',');
-                Jtxsw.WriteLine("\"" + item.Amount.ToString() + "\"");
+                Jtxsw.Write("\"" + item.Amount.ToString() + "\"");
+                Jtxsw.Write(',');
+                Jtxsw.WriteLine("\"" + item.Apltype.ToString() + "\"");
             }
             Jtxsw.Close();
 
