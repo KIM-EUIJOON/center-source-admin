@@ -58,7 +58,7 @@
                                 AplList = @ViewBag.AplList;
                             }
                             アプリ種別：
-                            @Html.DropDownListFor(Model => Model.Apltype, AplList, new { Class = "DropList" })
+                            @Html.DropDownListFor(Model => Model.Apltype, AplList, new { Class = "DropList", id = "AplTypeSelect" })
                     </div>
                     <div class="GridTableCell">
                         <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
@@ -69,6 +69,7 @@
             </div>
             <div class="errorMessage">
                 @Html.ValidationSummary(false, "")
+                @Html.HiddenFor(Model => Model.Apltype, new { id = "ModelAplType" })
             </div>
 
             <div>

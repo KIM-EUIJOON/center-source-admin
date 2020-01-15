@@ -30,6 +30,16 @@ namespace AppSigmaAdmin.Models
         public string UserId { get; set; }
 
         /// <summary>
+        /// アプリ種別
+        /// </summary>
+        public string AplType { get; set; }
+
+        /// <summary>
+        /// 削除フラグ
+        /// </summary>
+        public string DeleteFlag { get; set; }
+
+        /// <summary>
         /// 更新日時
         /// </summary>
         public string CreateDatetime { get; set; }

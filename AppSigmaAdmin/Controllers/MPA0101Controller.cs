@@ -377,7 +377,7 @@ namespace AppSigmaAdmin.Controllers
             }
             else if (model.Apltype != null && model.Apltype != "-")
             {
-                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
+                AplTypeList.Add(new SelectListItem { Text = "au", Value = "1"});
                 AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-"});
                 AplType = model.Apltype;
             }
@@ -386,7 +386,7 @@ namespace AppSigmaAdmin.Controllers
                 AplTypeList.Add(new SelectListItem { Text = "au", Value = "1" });
                 AplTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
                 AplType = model.Apltype;
-
+                
             }
            
             //アプリ種別ドロップダウンリストを保存
@@ -620,7 +620,8 @@ namespace AppSigmaAdmin.Controllers
                     }
                     else if (model.TicketInfo == TicketType)
                     {
-                        //選択されている商品種別の場合                        TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
+                    //選択されている商品種別の場合                       
+                    TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = TicketType, Selected = true });
                     }
             }
             if (model.TicketInfo == "-")

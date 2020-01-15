@@ -72,21 +72,33 @@ namespace AppSigmaAdmin.Controllers
 
             if (UserIdNo != "")
             {
+                string text = "UserId";
                 model.UserId = UserIdNo;
+                
                 if (UserIdNo != "")
                 {
-                    string result = new UserInfo().UserIdSearch(UserIdNo);
-                    if (result == "0")
+                    Dictionary<string,string> result = new UserInfo().UserIdSearch(text, UserIdNo);
+                    if (result["AplTypeNo"].ToString() == "1")
+                    {
+                        model.Apltype = "1";
+                    }
+                    else
+                    {
+
+                    }
+                    if (result["Deleteflugkey"].ToString() == "0")
                     {
                         ModelState.AddModelError("", "入力されたIDに該当するユーザーが存在していません。");
                         return View(model);
                     }
-                    else if (result == "-1")
+                    else if (result["Deleteflugkey"].ToString() == "-1")
                     {
                         ModelState.AddModelError("", "入力されたIDに該当するユーザーは退会済です。");
                         return View(model);
                     }
 
+                    
+                    
                 }
             }
             

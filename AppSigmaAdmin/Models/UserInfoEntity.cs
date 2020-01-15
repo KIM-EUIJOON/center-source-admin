@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Web;
-
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Utility;
 
@@ -107,16 +106,16 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         /// <param name="MyrouteId">入力されたmyrouteId</param>
         /// <returns>Idの有無</returns>
-        public string UserIdSearch(string MyrouteId)
+        public Dictionary<string,string> UserIdSearch(string keyvalue,string MyrouteId)
         {
-            List<UserIdInfoRespons> result = new List<UserIdInfoRespons>();
+            var result = new Dictionary<string,string>();
 
             using (SqlDbInterface dbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
 
-                sb.AppendLine("SELECT UserId, DeleteFlag");
+                sb.AppendLine("SELECT UserId, DeleteFlag,AplType");
                 sb.AppendLine("FROM [dbo].[UserInfoOid]");
                 sb.AppendLine("    WHERE UserId = @MyrouteId");
 
@@ -130,8 +129,13 @@ namespace AppSigmaAdmin.Models
                 {
                     UserIdInfoRespons userInfo = new UserIdInfoRespons();
                     //UserID
-                    userInfo.UserId = IdDataRow["UserId"].ToString();
-
+                    string Useridkey = "UserId";
+                    string UserId = IdDataRow["UserId"].ToString();
+                    result.Add(Useridkey, UserId);
+                    //AplType
+                    string AplTypekey = "AplTypeNo";
+                    string AplType = IdDataRow["AplType"].ToString();
+                    result.Add(AplTypekey, AplType);
                     //削除フラグ
                     Boolean DeleteId = (Boolean)IdDataRow["DeleteFlag"];
 
@@ -146,12 +150,12 @@ namespace AppSigmaAdmin.Models
                         /*存在しているアカウント*/
                         searchresult= searchresult +1;
                     }
-                    result.Add(userInfo);
+                    string Deleteflugkey = "Deleteflugkey";
+                    string SearchResult = searchresult.ToString();
+                    result.Add(Deleteflugkey, SearchResult);
                 }
 
-                string SearchResult = searchresult.ToString();
-
-                return SearchResult;
+                return result;
             }
         }
 

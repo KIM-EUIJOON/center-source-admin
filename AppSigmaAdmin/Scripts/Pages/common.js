@@ -48,3 +48,13 @@ function SetcalenderTo() {
 $.datepicker._gotoToday = function (id) {
     $(id).datepicker('setDate', new Date()).datepicker('hide').blur().change();
 };
+//ユーザーID検索からページ読み込み時にアプリ種別を設定する
+$(window).on('load', function () {
+    var modelval = $('#ModelAplType').val();
+    var selectval = $('#AplTypeSelect').val();
+    if (modelval != null && modelval != selectval) {
+        if (selectval == "1") {
+            $('#AplTypeSelect').val("-");
+        }
+    }
+});
