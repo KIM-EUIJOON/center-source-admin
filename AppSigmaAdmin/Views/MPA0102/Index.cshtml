@@ -61,7 +61,7 @@
                                 FacilityList = @ViewBag.FacilityList;
                             }
                             施設名：
-                            @Html.DropDownListFor(Model => Model.FacilityName, FacilityList, new { Class = "DropList" })
+                            @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList" })
                         </div>
                     </div>
                     <div class="GridTableCell">
@@ -80,7 +80,7 @@
                                     ShopList = @ViewBag.ShopList;
                                 }
                                 テナント名：
-                                @Html.DropDownListFor(Model => Model.ShopName, ShopList, new { Class = "DropList" })
+                                @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList" })
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@
                         if (Model.CouponInfoList != null)
                         {
                             // 表示件数：10件 
-                            var grid = new WebGrid(null, rowsPerPage: Model.ListMaxCount, canSort: false);
+                            var grid = new WebGrid(null, rowsPerPage: Model.rowsPerPage, canSort: false);
                             grid.Bind(source: Model.CouponInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
                             <div class="grid-table">
                                 @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead", columns:

@@ -160,17 +160,17 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   AND uio.AplType = @AplType ");
                     cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = model.AplType;
                 }
-                if ("-"  != model.FacilityName)
+                if ("-"  != model.FacilityId)
                 //if (false == string.IsNullOrEmpty(model.FacilityName))
                 {
-                    sb.AppendLine("   AND facM.FacilityName = @FacilityName ");
-                    cmd.Parameters.Add("@FacilityName", SqlDbType.NVarChar).Value = model.FacilityName;
+                    sb.AppendLine("   AND facM.FacilityId = @FacilityId ");
+                    cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
                 }
-                if ("-" != model.ShopName)
+                if ("-" != model.ShopCode)
                 //if (false == string.IsNullOrEmpty(model.ShopName))
                 {
-                    sb.AppendLine("   AND shpM.ShopName = @ShopName ");
-                    cmd.Parameters.Add("@ShopName", SqlDbType.NVarChar).Value = model.ShopName;
+                    sb.AppendLine("   AND shpM.ShopCode = @ShopCode ");
+                    cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
                 }
 
                 sb.AppendLine(" AND Cp.UsageDateTime BETWEEN @StartDatatTime AND @EndDatatTime");
@@ -206,6 +206,7 @@ namespace AppSigmaAdmin.Models
                 foreach (DataRow row in dt.Rows)
                 {
                     result.Add(new CouponInfoEntity { FacilityName = row["FacilityName"].ToString()});
+                    result.Add(new CouponInfoEntity { FacilityId = row["FacilityId"].ToString() });
                 }
                 return result;
             }

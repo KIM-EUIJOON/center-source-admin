@@ -86,6 +86,11 @@ namespace AppSigmaAdmin.Models
         ///</summary>
         public int ListMaxCount { get; set; }
 
+        ///<summary>
+        ///ページング数
+        ///</summary>
+        public int rowsPerPage { get; set; } = 10;
+        
         /// <summary>
         /// クーポン一覧
         /// </summary>
