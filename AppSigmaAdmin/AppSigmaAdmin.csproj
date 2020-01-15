@@ -164,6 +164,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\MPA0102Controller.cs" />
     <Compile Include="Controllers\MSA0401Controller.cs" />
     <Compile Include="Controllers\MSA0301Controller.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -171,6 +172,8 @@
     <Compile Include="Controllers\MPA0201Controller.cs" />
     <Compile Include="Controllers\MPA0301Controller.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
+    <Compile Include="Models\CouponInfoEntity.cs" />
+    <Compile Include="Models\CouponInfoModel.cs" />
     <Compile Include="Models\PaymentInfoModels.cs" />
     <Compile Include="Controllers\LogoutController.cs" />
     <Compile Include="Controllers\MSA0101Controller.cs" />
@@ -185,6 +188,7 @@
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
+    <Compile Include="ResponseData\CouponResponseEntity.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
     <Compile Include="Utility\BundleHtmlTag.cs" />
     <Compile Include="Utility\Crypto.cs" />
@@ -282,6 +286,7 @@
     <Content Include="Views\MPA0301\Index.cshtml" />
     <Content Include="Views\MSA0301\Index.cshtml" />
     <Content Include="Views\MSA0401\index.cshtml" />
+    <Content Include="Views\MPA0102\Index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
