@@ -76,26 +76,55 @@ namespace AppSigmaAdmin.Models
         public string TargetDateEnd { get; set; }
 
         ///<summary>
-        ///ページ番号
-        ///</summary>
-        [DataMember(Name = "PageNo")]
-        public int ListPageNo { get; set; }
-
-        ///<summary>
         ///総リスト件数
         ///</summary>
         public int ListMaxCount { get; set; }
 
         ///<summary>
+        ///ページ番号
+        ///</summary>
+        [DataMember(Name = "PageNo")]
+        public int PageNo { get; set; }
+
+        ///<summary>
         ///ページング数
         ///</summary>
         public int rowsPerPage { get; set; } = 10;
-        
+
+        ///<summary>
+        ///総ページ数
+        ///</summary>
+        public int PageCount { get; set; }
+
         /// <summary>
         /// クーポン一覧
         /// </summary>
         public List<CouponInfoEntity> CouponInfoList { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public CouponInfoEntityList()
+        {
+            CouponInfoList = new List<CouponInfoEntity>();
+        }
+
+        /// <summary>
+        /// コピーコンストラクタ
+        /// </summary>
+        /// <param name="source">コピー元</param>
+        public CouponInfoEntityList(CouponInfoEntityList source)
+        {
+            this.TargetDateBegin = source.TargetDateBegin;
+            this.TargetDateEnd = source.TargetDateEnd;
+            this.ListMaxCount = source.ListMaxCount;
+            this.PageNo = source.PageNo;
+            this.rowsPerPage = source.rowsPerPage;
+            this.PageCount = source.PageCount;
+            CouponInfoList = new List<CouponInfoEntity>(source.PageCount);
+        }
     }
+
     /// <summary>
     /// 運用レポートデータCSVマッピングクラス
     /// </summary>

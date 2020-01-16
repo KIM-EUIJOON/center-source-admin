@@ -21,18 +21,6 @@ namespace AppSigmaAdmin.Controllers
 
         private const string SESSION_Coupon_Nishitetsu = "SESSION_Coupon_Nishitetsu";
 
-        private Dictionary<string, string> searchkey = new Dictionary<string, string>()
-        {
-            {"TargetDateBegin", string.Empty },
-            {"TargetDateEnd",   string.Empty },
-            {"maxListCount",    string.Empty },
-            {"MyrouteNo",       string.Empty },
-            {"FacilityId",      string.Empty },
-            {"ShopCode",        string.Empty },
-            {"ListNum",         string.Empty },
-            {"AplType",         string.Empty }
-        };
-
         /// <summary>
         ///入力日付チェック関数
         /// </summary>
@@ -69,43 +57,28 @@ namespace AppSigmaAdmin.Controllers
             //現在ログイン中のUserRole取得
             string UserRole = UserInfo.Role;
 
+            // プルダウン初期化
+            this.InitFacilityList();        // 施設情報
+            this.InitShopList();            // テナント情報
+            this.InitAplTypeList(UserRole); // アプリ種別情報
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
-
-                // プルダウン初期化
-                this.InitFacilityList();        // 施設情報
-                this.InitShopList();            // テナント情報
-                this.InitAplTypeList(UserRole); // アプリ種別情報
-
                 return View(info);
             }
 
             //セッション情報の取得
-            Dictionary<string, string> searchKey = new Dictionary<string, string>();
-            searchkey = (Dictionary<string, string>)Session[SESSION_Coupon_Nishitetsu];
-            int ListNum = int.Parse(searchKey["ListNum"]);
-
-            CouponInfoEntityList sessiondata = new CouponInfoEntityList()
-            {
-                TargetDateBegin = searchkey["TargetDateBegin"],
-                TargetDateEnd = searchkey["TargetDateEnd"],
-                UserId = searchkey["MyrouteNo"],
-                ListMaxCount = int.Parse(searchkey["maxListCount"]),
-                FacilityId = searchkey["FacilityId"],
-                ShopCode = searchkey["ShopCode"],
-                AplType = searchkey["AplType"],
-            };
+            CouponInfoEntityList sessiondata = (CouponInfoEntityList)Session[SESSION_Coupon_Nishitetsu];
 
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             try
             {
                 pageNo = int.Parse(page);
-                int ListMaxPageNum = (int)Math.Ceiling((float.Parse(searchkey["maxListCount"]) / ListNum));
 
                 // 直接入力されたページ数が存在しない場合
-                if (pageNo > ListMaxPageNum)
+                if (pageNo > sessiondata.PageCount)
                 {
                     ModelState.AddModelError("", "誤ったページ番号にアクセスされました。");
                     return View(info);
@@ -118,40 +91,25 @@ namespace AppSigmaAdmin.Controllers
                 return View(info);
             }
 
-            int EndListNo = pageNo * ListNum;
-         
-            //ページ数から取得するリストの開始位置を指定(10件ずつのリスト)
-            int ListNoBegin = EndListNo - (ListNum - 1);
-
-            DataTable GetData = new CouponInfoModel().GetCouponDateList(sessiondata);
-
+            // 取得開始行を指定
+            int index = (pageNo -1) * sessiondata.rowsPerPage;
+            int count = (pageNo == sessiondata.PageCount) ? sessiondata.ListMaxCount - index : sessiondata.rowsPerPage;
             //現在のページ位置
-            sessiondata.ListPageNo = pageNo;
+            sessiondata.PageNo = pageNo;
 
             // 取得したリスト件数が0以上
-            if (0 == GetData.Rows.Count)
+            if (0 == sessiondata.ListMaxCount)
             {
                 ModelState.AddModelError("", "一致するクーポンがありませんでした。");
                 info.CouponInfoList = null;
                 return View(info);
             }
+            // セッション情報を複製
+            info =new CouponInfoEntityList(sessiondata);
+            // 指定範囲のデータを取得
+            info.CouponInfoList = sessiondata.CouponInfoList.GetRange(index, count);
 
-            foreach (DataRow row in GetData.Rows)
-            {
-                
-                info.CouponInfoList.Add(new CouponInfoEntity()
-                {
-                    UserId = row["UserId"].ToString(),
-                    FacilityName = row["FacilityName"].ToString(),
-                    ShopCode = row["UsageShopCode"].ToString(),
-                    ShopName = row["ShopName"].ToString(),
-                    UsageDateTime = DateTime.Parse(row["UsageDateTime"].ToString()),
-                    AplType = row["AplType"].ToString(),
-                    UseCount = 1, // 暫定
-                    IndustryName = row["IndustryName"].ToString()
-                });
-            }
-                return View(info);
+            return View(info);
         }
 
         /// <summary>
@@ -212,7 +170,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 検索ボタン押下で取得されるページ数は0のため1加算する
-            int PageNo = model.ListPageNo + 1;
+            int PageNo = model.PageNo + 1;
 
             // 10件ずつ表示する
             int ListNum = 10;
@@ -239,8 +197,10 @@ namespace AppSigmaAdmin.Controllers
             info.TargetDateBegin = model.TargetDateBegin;
             info.TargetDateEnd = model.TargetDateEnd;
             info.ListMaxCount = maxListCount;
-            info.ListPageNo = model.ListPageNo;
+            info.PageNo = model.PageNo;
+            info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
             info.CouponInfoList = new List<CouponInfoEntity>();
+
             foreach (DataRow row in GetData.Rows)
             {
                 info.CouponInfoList.Add(new CouponInfoEntity()
@@ -256,26 +216,8 @@ namespace AppSigmaAdmin.Controllers
                 });
             }
 
-            //ページ切り替え時用に検索条件を保存する
-            //Dictionary<string, string> searchKey = new Dictionary<string, string>();
-            //searchKey.Add("TargetDateBegin", model.TargetDateBegin);
-            //searchKey.Add("TargetDateEnd", model.TargetDateEnd);
-            //searchKey.Add("maxListCount", maxListCount.ToString());
-            //searchKey.Add("MyrouteNo", model.UserId);
-            //searchKey.Add("FacilityId", model.FacilityId);
-            //searchKey.Add("ShopCode", model.ShopCode);
-            //searchKey.Add("ListNum", ListNum.ToString());
-            //searchKey.Add("AplType",model.AplType);
-            searchkey["TargetDateBegin"] = model.TargetDateBegin;
-            searchkey["TargetDateEnd"] = model.TargetDateEnd;
-            searchkey["maxListCount"] = maxListCount.ToString();
-            searchkey["MyrouteNo"] = model.UserId;
-            searchkey["FacilityId"] = model.FacilityId;
-            searchkey["ShopCode"] = model.ShopCode;
-            searchkey["ListNum"] = ListNum.ToString();
-            searchkey["AplType"] = model.AplType;
-            Session.Add(SESSION_Coupon_Nishitetsu, searchkey);
-
+            // セッションを作成
+            Session.Add(SESSION_Coupon_Nishitetsu, info);
             return View(info);
         }
 
