@@ -224,7 +224,7 @@ namespace AppSigmaAdmin.Controllers
                     ShopName = row["ShopName"].ToString(),
                     UseCount = 1, // 暫定
                     IndustryName = row["IndustryName"].ToString(),
-                    AplType = row["AplType"].ToString(),
+                    AplType = row["AplName"].ToString(),
                 });
             }
 
@@ -329,7 +329,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
                     strings.Add(EncloseDbQuotes("1"));
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["AplType"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }

@@ -139,7 +139,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("SELECT Cp.*, ");
                 sb.AppendLine("       facM.FacilityName, ");
                 sb.AppendLine("       shpM.ShopName, ");
-                sb.AppendLine("       uio.AplType, ");
+                sb.AppendLine("       CASE");
+                sb.AppendLine("           WHEN uio.AplType =1 THEN 'au' ");
+                sb.AppendLine("           ELSE '' ");
+                sb.AppendLine("       END AS AplName, ");
                 sb.AppendLine("       indM.IndustryName ");
                 sb.AppendLine("FROM CouponManage Cp ");
                 sb.AppendLine("LEFT JOIN FacilityMaster facM ON Cp.UsageFacilityId = facM.FacilityId ");
