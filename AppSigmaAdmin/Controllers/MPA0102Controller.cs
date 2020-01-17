@@ -360,7 +360,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 itemList.Add(new SelectListItem { Text = row["FacilityName"].ToString(), Value = row["FacilityId"].ToString()});
             }
-            itemList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 
             ViewBag.FacilityList = itemList;
         }
@@ -378,7 +378,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(), Value = row["ShopCode"].ToString() });
             }
-            itemList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+            itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 
             ViewBag.ShopList = itemList;
 
@@ -400,7 +400,7 @@ namespace AppSigmaAdmin.Controllers
             else
             {
                 itemList.Add(new SelectListItem { Text = "au", Value = "1" });
-                itemList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
+                itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
             }
 
             ViewBag.AplList = itemList;

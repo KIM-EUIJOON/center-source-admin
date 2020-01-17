@@ -137,13 +137,13 @@ namespace AppSigmaAdmin.Models
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("SELECT Cp.*, ");
-                sb.AppendLine("       facM.FacilityName, ");
-                sb.AppendLine("       shpM.ShopName, ");
-                sb.AppendLine("       CASE");
-                sb.AppendLine("           WHEN uio.AplType =1 THEN 'au' ");
-                sb.AppendLine("           ELSE '' ");
-                sb.AppendLine("       END AS AplName, ");
-                sb.AppendLine("       indM.IndustryName ");
+                sb.AppendLine("    facM.FacilityName, ");
+                sb.AppendLine("    shpM.ShopName, ");
+                sb.AppendLine("    CASE");
+                sb.AppendLine("       WHEN uio.AplType =1 THEN 'au' ");
+                sb.AppendLine("       ELSE '' ");
+                sb.AppendLine("    END AS AplName, ");
+                sb.AppendLine("    indM.IndustryName ");
                 sb.AppendLine("FROM CouponManage Cp ");
                 sb.AppendLine("LEFT JOIN FacilityMaster facM ON Cp.UsageFacilityId = facM.FacilityId ");
                 sb.AppendLine("     JOIN ShopMaster shpM ON Cp.UsageShopCode = shpM.ShopCode ");
@@ -154,29 +154,27 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("WHERE 1 = 1");
                 if (false == string.IsNullOrEmpty(model.UserId))
                 {
-                    sb.AppendLine("   AND Cp.UserId = @UserId");
+                    sb.AppendLine("    AND Cp.UserId = @UserId");
                     cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = model.UserId;
                 }
                 if (false == string.IsNullOrEmpty(model.AplType))
                 {
-                    sb.AppendLine("   AND uio.AplType = @AplType ");
+                    sb.AppendLine("    AND uio.AplType = @AplType ");
                     cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = model.AplType;
                 }
-                if ("-"  != model.FacilityId)
-                //if (false == string.IsNullOrEmpty(model.FacilityName))
+                if (false == string.IsNullOrEmpty(model.FacilityId))
                 {
-                    sb.AppendLine("   AND facM.FacilityId = @FacilityId ");
+                    sb.AppendLine("    AND facM.FacilityId = @FacilityId ");
                     cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
                 }
-                if ("-" != model.ShopCode)
-                //if (false == string.IsNullOrEmpty(model.ShopName))
+                if (false == string.IsNullOrEmpty(model.ShopCode))
                 {
-                    sb.AppendLine("   AND shpM.ShopCode = @ShopCode ");
+                    sb.AppendLine("    AND shpM.ShopCode = @ShopCode ");
                     cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
                 }
 
-                sb.AppendLine(" AND Cp.UsageDateTime BETWEEN @StartDatatTime AND @EndDatatTime");
-                sb.AppendLine(" ORDER BY Cp.UsageDateTime");
+                sb.AppendLine("    AND Cp.UsageDateTime BETWEEN @StartDatatTime AND @EndDatatTime");
+                sb.AppendLine("ORDER BY Cp.UsageDateTime");
                 
                 cmd.CommandText = sb.ToString();
 

@@ -82,6 +82,15 @@
                                 テナント名：
                                 @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList" })
                             </div>
+                            <div class="GridTableCell">
+                                @{
+                                    // アプリ種別ドロップリスト項目作成
+                                    List<SelectListItem> AplList = new List<SelectListItem>();
+                                    AplList = @ViewBag.AplList;
+                                }
+                                アプリ種別：
+                                @Html.DropDownListFor(Model => Model.AplType, AplList, new { Class = "DropList" })
+                            </div>
                         </div>
                     </div>
                     <div class="GridTableCell">
