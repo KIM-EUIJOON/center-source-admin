@@ -31,6 +31,7 @@ namespace AppSigmaAdmin.Controllers
             "業種",
             "アプリ種別"
         };
+
         private const string SESSION_Coupon_Nishitetsu = "SESSION_Coupon_Nishitetsu";
 
         /// <summary>
@@ -38,17 +39,17 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         private static bool IsDate(string s)
         {
-            //入力された日時が年/月/日以外はエラーで返す
+            // 入力された日時が年/月/日以外はエラーで返す
             string baseDatePaturn = "yyyy/M/d";
 
             try
             {
-                //入力された日時がDateTime型に変換できるか確認することにより入力日付のチェックを行う
+                // 入力された日時がDateTime型に変換できるか確認することにより入力日付のチェックを行う
                 DateTime.ParseExact(s, baseDatePaturn, System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
             }
             catch
             {
-                //変換ができない場合はfalseを返す
+                // 変換ができない場合はfalseを返す
                 return false;
             }
             return true;
@@ -63,7 +64,7 @@ namespace AppSigmaAdmin.Controllers
         {
             CouponInfoEntityList info = new CouponInfoEntityList();
 
-            //セッションに保存されているユーザー情報を取得する
+            // セッションに保存されているユーザー情報を取得する
             UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
 
             //現在ログイン中のUserRole取得
@@ -308,10 +309,9 @@ namespace AppSigmaAdmin.Controllers
             MemoryStream ms = new MemoryStream();
             using (StreamWriter sw = new StreamWriter(ms, System.Text.Encoding.GetEncoding("shift_jis")))
             { 
-                // ヘッダー部
-
-
                 List<string> strings = new List<string>();
+                
+                // ヘッダー部
                 foreach (string str in header)
                 {
                     strings.Add(EncloseDbQuotes(str));
@@ -320,7 +320,7 @@ namespace AppSigmaAdmin.Controllers
 
                 // データ部
                 foreach (DataRow row in GetData.Rows)
-                {                
+                {
                     strings.Clear();
                     strings.Add(EncloseDbQuotes(row["UsageDateTime"].ToString()));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
