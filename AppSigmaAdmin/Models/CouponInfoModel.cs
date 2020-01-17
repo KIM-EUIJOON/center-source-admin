@@ -36,7 +36,6 @@ namespace AppSigmaAdmin.Models
             }
         }
 
-
         /// <summary>
         /// 西鉄の決済情報リスト取得
         /// </summary>

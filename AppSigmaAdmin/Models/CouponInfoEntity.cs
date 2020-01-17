@@ -124,24 +124,4 @@ namespace AppSigmaAdmin.Models
             CouponInfoList = new List<CouponInfoEntity>(source.PageCount);
         }
     }
-
-    /// <summary>
-    /// 運用レポートデータCSVマッピングクラス
-    /// </summary>
-    public sealed class CouponInfoEntityClassMap : ClassMap<CouponInfoEntity>
-    {
-        /// <summary>
-        /// 運用レポートデータCSVマッピング
-        /// </summary>
-        public CouponInfoEntityClassMap()
-        {
-            Map(m => m.UsageDateTime).Index(0).Name("獲得日");
-        //    Map(m => m.RoleInstance).Index(1).Name("インスタンス名");
-        //    Map(m => m.CounterName).Index(2).Name("カウンター名");
-        //    Map(m => m.CounterValue).Index(3).Name("カウンター値");
-        //    Map(m => m.CounterName).Index(4).Name("カウンター名");
-        //    Map(m => m.CounterValue).Index(5).Name("カウンター値");
-        }
-    }
-
 }
