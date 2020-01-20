@@ -36,7 +36,11 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// テナントコード
         /// </summary>
-        public string ShopCode { get; set; }
+        public string ShopCode1 { get; set; }
+        /// <summary>
+        /// テナントコード
+        /// </summary>
+        public string ShopCode2 { get; set; }
 
         /// <summary>
         /// テナント名

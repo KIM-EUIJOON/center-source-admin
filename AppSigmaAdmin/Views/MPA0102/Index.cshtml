@@ -78,11 +78,14 @@
                             <div class="GridTableCell">
                                 @{
                                     // テナントドロップリスト項目作成
-                                    List<SelectListItem> ShopList = new List<SelectListItem>();
-                                    ShopList = @ViewBag.ShopList;
+                                    List<SelectListItem> ShopList1 = new List<SelectListItem>();
+                                    List<SelectListItem> ShopList2 = new List<SelectListItem>();
+                                    ShopList1 = @ViewBag.ShopList1;
+                                    ShopList2 = @ViewBag.ShopList2;
                                 }
                                 テナント名：
-                                @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList", id = "layer2" })
+                                @Html.DropDownListFor(Model => Model.ShopCode1, ShopList1, new { Class = "DropList", id = "shoplist1", style  = "display:none;" })
+                                @Html.DropDownListFor(Model => Model.ShopCode2, ShopList1, new { Class = "DropList", id = "shoplist2", style = "display:none;" })
                             </div>
                             <div class="GridTableCell">
                                 @{

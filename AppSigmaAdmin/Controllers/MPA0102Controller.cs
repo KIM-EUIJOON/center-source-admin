@@ -221,7 +221,7 @@ namespace AppSigmaAdmin.Controllers
                     UsageDateTime = DateTime.Parse(row["UsageDateTime"].ToString()),
                     UserId = row["UserId"].ToString(),
                     FacilityName = row["FacilityName"].ToString(),
-                    ShopCode = row["UsageShopCode"].ToString(),
+                    ShopCode1 = row["UsageShopCode"].ToString(),
                     ShopName = row["ShopName"].ToString(),
                     UseCount = 1, // 暫定
                     IndustryName = row["IndustryName"].ToString(),
@@ -377,20 +377,25 @@ namespace AppSigmaAdmin.Controllers
             DataTable db = new CouponInfoModel().GetShopNames();
             foreach (DataRow row in db.Rows)
             {
-                if(! group.TryGetValue(row["FacilityId"].ToString(),out SelectListGroup slg))
+                //if(! group.TryGetValue(row["FacilityId"].ToString(),out SelectListGroup slg))
+                //{
+                //    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
+                //    slg = group[row["FacilityId"].ToString()];
+                //}
+                //itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(),
+                //                                            Value = row["FacilityId"].ToString(),
+                //                                            Group = slg
+                //                                });
+                itemList.Add(new SelectListItem
                 {
-                    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
-                    slg = group[row["FacilityId"].ToString()];
-                }
-                itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(),
-                                                            Value = row["ShopCode"].ToString(),
-                                                            Group = slg
-                                                });
+                    Text = row["ShopName"].ToString(),
+                    Value = row["ShopCode"].ToString()
+                });
             }
             itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 
-            ViewBag.ShopList = itemList;
-
+            ViewBag.ShopList1 = itemList;
+            ViewBag.ShopList2 = itemList;
         }
 
         /// <summary>

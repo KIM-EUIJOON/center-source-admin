@@ -57,10 +57,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("    AND facM.FacilityId = @FacilityId ");
                     cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
                 }
-                if (false == string.IsNullOrEmpty(model.ShopCode))
+                if (false == string.IsNullOrEmpty(model.ShopCode1))
                 {
                     sb.AppendLine("    AND shpM.ShopCode = @ShopCode ");
-                    cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
+                    cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode1;
                 }
                 sb.AppendLine("    AND Cp.UsageDateTime BETWEEN @StartDatatTime AND @EndDatatTime");
 
