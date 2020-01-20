@@ -105,7 +105,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 取得開始行を指定
-            int index = (pageNo -1) * sessiondata.rowsPerPage;
+            int index = (pageNo - 1) * sessiondata.rowsPerPage;
             int count = (pageNo == sessiondata.PageCount) ? sessiondata.ListMaxCount - index : sessiondata.rowsPerPage;
             //現在のページ位置
             sessiondata.PageNo = pageNo;
@@ -118,7 +118,7 @@ namespace AppSigmaAdmin.Controllers
                 return View(info);
             }
             // セッション情報を複製
-            info =new CouponInfoEntityList(sessiondata);
+            info = new CouponInfoEntityList(sessiondata);
             // 指定範囲のデータを取得
             info.CouponInfoList = sessiondata.CouponInfoList.GetRange(index, count);
 
@@ -197,7 +197,7 @@ namespace AppSigmaAdmin.Controllers
 
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
-            
+
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
@@ -308,9 +308,9 @@ namespace AppSigmaAdmin.Controllers
             // CSVファイルに書き込み
             MemoryStream ms = new MemoryStream();
             using (StreamWriter sw = new StreamWriter(ms, System.Text.Encoding.GetEncoding("shift_jis")))
-            { 
+            {
                 List<string> strings = new List<string>();
-                
+
                 // ヘッダー部
                 foreach (string str in header)
                 {
@@ -333,7 +333,6 @@ namespace AppSigmaAdmin.Controllers
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
-
             //ファイル名を「Nishitetsu_Coupon_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
             return File(ms.ToArray(), FILE_CONTENTTYPE, "Nishitetsu_Coupon_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
@@ -358,7 +357,7 @@ namespace AppSigmaAdmin.Controllers
             DataTable db = new CouponInfoModel().GetFacilityNames();
             foreach (DataRow row in db.Rows)
             {
-                itemList.Add(new SelectListItem { Text = row["FacilityName"].ToString(), Value = row["FacilityId"].ToString()});
+                itemList.Add(new SelectListItem { Text = row["FacilityName"].ToString(), Value = row["FacilityId"].ToString() });
             }
             itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 
@@ -372,11 +371,21 @@ namespace AppSigmaAdmin.Controllers
         {
             List<SelectListItem> itemList = new List<SelectListItem>();
 
+            Dictionary<string, SelectListGroup> group = new Dictionary<string, SelectListGroup>();
+
             // 施設マスタを取得
             DataTable db = new CouponInfoModel().GetShopNames();
             foreach (DataRow row in db.Rows)
             {
-                itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(), Value = row["ShopCode"].ToString() });
+                if(! group.TryGetValue(row["FacilityId"].ToString(),out SelectListGroup slg))
+                {
+                    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
+                    slg = group[row["FacilityId"].ToString()];
+                }
+                itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(),
+                                                            Value = row["ShopCode"].ToString(),
+                                                            Group = slg
+                                                });
             }
             itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 

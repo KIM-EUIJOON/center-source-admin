@@ -107,8 +107,11 @@ namespace AppSigmaAdmin.Models
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine("SELECT shpM.ShopName,");
-                sb.AppendLine("       shpM.ShopCode");
+                sb.AppendLine("       shpM.ShopCode,");
+                sb.AppendLine("       shpM.FacilityId,");
+                sb.AppendLine("       facM.FacilityName");
                 sb.AppendLine("FROM ShopMaster shpM");
+                sb.AppendLine("LEFT JOIN FacilityMaster facM ON shpM.FacilityId = facM.FacilityId ");
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);
