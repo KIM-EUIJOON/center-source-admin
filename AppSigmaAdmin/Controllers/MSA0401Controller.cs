@@ -37,22 +37,22 @@ namespace AppSigmaAdmin.Controllers
             ViewData["message"] = "";
 
             //問い合わせ番号入力チェック
-            if (model.InquiryNo==null)
+            if (model.InquiryNo == null)
             {
                 ModelState.AddModelError("", "問い合わせIDが入力されていません。半角数字のみで再入力してください。");
                 model.UserId = null;
                 return View(model);
             }
 
-            int InquiryNo = 0;
+            Int64 InquiryNo = 0;
             string InputNo = model.InquiryNo.ToString();
             string CheckInput = InputNo.Trim();
 
             try
             {
-                InquiryNo = int.Parse(CheckInput);
+                InquiryNo = Int64.Parse(CheckInput);
             }
-            catch(OverflowException)
+            catch (OverflowException)
             {
                 ModelState.AddModelError("", "問い合わせIDに誤った数値が入力されました。再入力してください。");
                 model.UserId = null;
@@ -74,34 +74,40 @@ namespace AppSigmaAdmin.Controllers
             {
                 string text = "UserId";
                 model.UserId = UserIdNo;
-                
+
                 if (UserIdNo != "")
                 {
-                    Dictionary<string,string> result = new UserInfo().UserIdSearch(text, UserIdNo);
-                    if (result["AplTypeNo"].ToString() == "1")
+                    Dictionary<string, string> result = new UserInfo().UserIdSearch(text, UserIdNo);
+                    if (result.Count > 0)
                     {
-                        model.Apltype = "1";
+                        if (result["AplTypeNo"].ToString() == "1")
+                        {
+                            model.Apltype = "1";
+                        }
+                        else
+                        {
+
+                        }
+                        if (result["Deleteflugkey"].ToString() == "0")
+                        {
+                            ModelState.AddModelError("", "入力されたIDに該当するユーザーが存在していません。");
+                            return View(model);
+                        }
+                        else if (result["Deleteflugkey"].ToString() == "-1")
+                        {
+                            ModelState.AddModelError("", "入力されたIDに該当するユーザーは退会済です。");
+                            return View(model);
+                        }
                     }
                     else
-                    {
-
-                    }
-                    if (result["Deleteflugkey"].ToString() == "0")
                     {
                         ModelState.AddModelError("", "入力されたIDに該当するユーザーが存在していません。");
                         return View(model);
                     }
-                    else if (result["Deleteflugkey"].ToString() == "-1")
-                    {
-                        ModelState.AddModelError("", "入力されたIDに該当するユーザーは退会済です。");
-                        return View(model);
-                    }
 
-                    
-                    
                 }
             }
-            
+
 
             return View(model);
         }
