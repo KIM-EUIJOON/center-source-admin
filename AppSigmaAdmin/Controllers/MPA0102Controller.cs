@@ -83,7 +83,7 @@ namespace AppSigmaAdmin.Controllers
 
             //セッション情報の取得
             CouponInfoEntityList sessiondata = (CouponInfoEntityList)Session[SESSION_Coupon_Nishitetsu];
-
+            SelectShopList(sessiondata.FacilityId);
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             try
@@ -143,9 +143,9 @@ namespace AppSigmaAdmin.Controllers
             string UserRole = UserInfo.Role;
 
             // プルダウン初期化
-            this.InitFacilityList();        // 施設情報
-            this.InitShopList();            // テナント情報
-            this.InitAplTypeList(UserRole); // アプリ種別情報
+            this.InitFacilityList();            // 施設情報
+            var shoplist = this.InitShopList(); // テナント情報
+            this.InitAplTypeList(UserRole);     // アプリ種別情報
 
             // 異常判定処理
             if (string.IsNullOrEmpty(model.TargetDateBegin))
@@ -198,6 +198,15 @@ namespace AppSigmaAdmin.Controllers
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
 
+            // SQL取得結果を反映
+            info.TargetDateBegin = model.TargetDateBegin;
+            info.TargetDateEnd = model.TargetDateEnd;
+            info.ListMaxCount = maxListCount;
+            info.PageNo = model.PageNo;
+            info.FacilityId = model.FacilityId;
+            info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
+            info.CouponInfoList = new List<CouponInfoEntity>();
+
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
@@ -205,15 +214,7 @@ namespace AppSigmaAdmin.Controllers
                 info.CouponInfoList = null;
                 return View(info);
             }
-
-            // SQL取得結果を反映
-            info.TargetDateBegin = model.TargetDateBegin;
-            info.TargetDateEnd = model.TargetDateEnd;
-            info.ListMaxCount = maxListCount;
-            info.PageNo = model.PageNo;
-            info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
-            info.CouponInfoList = new List<CouponInfoEntity>();
-
+            
             foreach (DataRow row in GetData.Rows)
             {
                 info.CouponInfoList.Add(new CouponInfoEntity()
@@ -221,7 +222,7 @@ namespace AppSigmaAdmin.Controllers
                     UsageDateTime = DateTime.Parse(row["UsageDateTime"].ToString()),
                     UserId = row["UserId"].ToString(),
                     FacilityName = row["FacilityName"].ToString(),
-                    ShopCode1 = row["UsageShopCode"].ToString(),
+                    ShopCode = row["UsageShopCode"].ToString(),
                     ShopName = row["ShopName"].ToString(),
                     UseCount = 1, // 暫定
                     IndustryName = row["IndustryName"].ToString(),
@@ -297,6 +298,15 @@ namespace AppSigmaAdmin.Controllers
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
 
+            // SQL取得結果を反映
+            info.TargetDateBegin = model.TargetDateBegin;
+            info.TargetDateEnd = model.TargetDateEnd;
+            info.ListMaxCount = maxListCount;
+            info.PageNo = model.PageNo;
+            info.FacilityId = model.FacilityId;
+            info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
+            info.CouponInfoList = new List<CouponInfoEntity>();
+
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
@@ -337,6 +347,13 @@ namespace AppSigmaAdmin.Controllers
             return File(ms.ToArray(), FILE_CONTENTTYPE, "Nishitetsu_Coupon_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
 
+        [HttpGet]
+        public ActionResult SelectShopList(string id)
+        {
+            var itemList = InitShopList(id);
+            return Json(itemList, JsonRequestBehavior.AllowGet);
+        }
+
         /// <summary>
         /// 文字列の前後に"を挿入
         /// </summary>
@@ -367,43 +384,30 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// テナントドロップダウンリスト初期化
         /// </summary>
-        private void InitShopList()
+        private List<SelectListItem> InitShopList(string id = "000")
         {
+            // 店舗マスタを取得
+            DataTable db = new CouponInfoModel().GetShopNames();
             List<SelectListItem> itemList = new List<SelectListItem>();
 
-            Dictionary<string, SelectListGroup> group = new Dictionary<string, SelectListGroup>();
-
-            // 施設マスタを取得
-            DataTable db = new CouponInfoModel().GetShopNames();
             // DataTable → SelectList型に変換
             foreach (DataRow row in db.Rows)
             {
-                if (!group.TryGetValue(row["FacilityId"].ToString(), out SelectListGroup slg))
+                //施設IDと違う場合は登録しない(未選択を除く)
+                if (id != row["FacilityId"].ToString() && id != "000")
                 {
-                    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
-                    slg = group[row["FacilityId"].ToString()];
+                    continue;
                 }
+
                 itemList.Add(new SelectListItem
                 {
                     Text = row["ShopName"].ToString(),
-                    Value = row["FacilityId"].ToString(),
-                    Group = slg
+                    Value = row["ShopCode"].ToString(),
                 });
-                //itemList.Add(new SelectListItem
-                //{
-                //    Text = row["ShopName"].ToString(),
-                //    Value = row["ShopCode"].ToString()
-                //});
             }
-
-            var shop1 = itemList.Where(x => x.Group.Name == "ソラリアプラザ").ToList();
-            shop1.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
-
-            var shop2 = itemList.Where(x => x.Group.Name == "チャチャタウン").ToList();
-            shop2.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
-
-            ViewBag.ShopList1 = shop1;
-            ViewBag.ShopList2 = shop2;
+            itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
+            ViewBag.ShopList = itemList;
+            return itemList;
         }
 
         /// <summary>

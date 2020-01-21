@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
+using System.Web.Mvc;
 
 namespace AppSigmaAdmin.Models
 {
@@ -36,11 +37,7 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// テナントコード
         /// </summary>
-        public string ShopCode1 { get; set; }
-        /// <summary>
-        /// テナントコード
-        /// </summary>
-        public string ShopCode2 { get; set; }
+        public string ShopCode { get; set; }
 
         /// <summary>
         /// テナント名
@@ -125,6 +122,13 @@ namespace AppSigmaAdmin.Models
             this.PageNo = source.PageNo;
             this.rowsPerPage = source.rowsPerPage;
             this.PageCount = source.PageCount;
+            this.UserId = source.UserId;
+            this.FacilityId = source.FacilityId;
+            this.FacilityName = source.FacilityName;
+            this.ShopCode = source.ShopCode;
+            this.ShopName = source.ShopName;
+            this.AplType = source.AplType;
+            this.IndustryName = source.IndustryName;
             CouponInfoList = new List<CouponInfoEntity>(source.PageCount);
         }
     }
