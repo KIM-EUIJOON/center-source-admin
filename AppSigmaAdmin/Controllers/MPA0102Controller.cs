@@ -375,27 +375,35 @@ namespace AppSigmaAdmin.Controllers
 
             // 施設マスタを取得
             DataTable db = new CouponInfoModel().GetShopNames();
+            // DataTable → SelectList型に変換
             foreach (DataRow row in db.Rows)
             {
-                //if(! group.TryGetValue(row["FacilityId"].ToString(),out SelectListGroup slg))
-                //{
-                //    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
-                //    slg = group[row["FacilityId"].ToString()];
-                //}
-                //itemList.Add(new SelectListItem { Text = row["ShopName"].ToString(),
-                //                                            Value = row["FacilityId"].ToString(),
-                //                                            Group = slg
-                //                                });
+                if (!group.TryGetValue(row["FacilityId"].ToString(), out SelectListGroup slg))
+                {
+                    group.Add(row["FacilityId"].ToString(), new SelectListGroup() { Name = row["FacilityName"].ToString() });
+                    slg = group[row["FacilityId"].ToString()];
+                }
                 itemList.Add(new SelectListItem
                 {
                     Text = row["ShopName"].ToString(),
-                    Value = row["ShopCode"].ToString()
+                    Value = row["FacilityId"].ToString(),
+                    Group = slg
                 });
+                //itemList.Add(new SelectListItem
+                //{
+                //    Text = row["ShopName"].ToString(),
+                //    Value = row["ShopCode"].ToString()
+                //});
             }
-            itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
 
-            ViewBag.ShopList1 = itemList;
-            ViewBag.ShopList2 = itemList;
+            var shop1 = itemList.Where(x => x.Group.Name == "ソラリアプラザ").ToList();
+            shop1.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
+
+            var shop2 = itemList.Where(x => x.Group.Name == "チャチャタウン").ToList();
+            shop2.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true });
+
+            ViewBag.ShopList1 = shop1;
+            ViewBag.ShopList2 = shop2;
         }
 
         /// <summary>

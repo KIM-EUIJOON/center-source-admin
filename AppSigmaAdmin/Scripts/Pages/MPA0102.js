@@ -3,12 +3,12 @@ function updateshoplist() {
 
     var facilityId = $('select[id=layer1] option:selected').val();
     if (facilityId == "1") {
-        $('#shoplist1').hide();
-        $('#shoplist2').show();
-    }
-    else {
         $('#shoplist1').show();
         $('#shoplist2').hide();
+    }
+    else {
+        $('#shoplist1').hide();
+        $('#shoplist2').show();
     }
     //var count = $('select[id="layer2"]').children().length;
     //for (var cnt = 0; cnt < count; cnt++) {
