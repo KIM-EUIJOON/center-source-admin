@@ -7,8 +7,8 @@ function updateshoplist() {
         $('#shoplist2').show();
     }
     else {
-        //$('#shoplist1').hidden = false
-        //$('#shoplist2').hidden = true;
+        $('#shoplist1').show();
+        $('#shoplist2').hide();
     }
     //var count = $('select[id="layer2"]').children().length;
     //for (var cnt = 0; cnt < count; cnt++) {
