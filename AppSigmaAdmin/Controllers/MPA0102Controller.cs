@@ -13,6 +13,9 @@ using System.Web.Mvc;
 
 namespace AppSigmaAdmin.Controllers
 {
+    /// <summary>
+    /// MPA0102コントローラークラス
+    /// </summary>
     public class MPA0102Controller : Controller
     {
         //ファイル出力関連
@@ -36,6 +39,8 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         ///入力日付チェック関数
         /// </summary>
+        /// <param name="s">入力文字列</param>
+        /// <returns>判定結果</returns>
         private static bool IsDate(string s)
         {
             // 入力された日時が年/月/日以外はエラーで返す
@@ -55,16 +60,18 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
-        /// 西鉄クーポン画面
+        /// クーポン管理画面(ページ遷移)
         /// </summary>
+        /// <param name="page">ページ数</param>
         /// <returns>ログイン画面</returns>
-        [SessionCheck(WindowName = "西鉄クーポン画面")]
+        [SessionCheck(WindowName = "クーポン管理画面")]
         public ActionResult Index(string page)
         {
             CouponInfoEntityList info = new CouponInfoEntityList();
 
             // 検索条件初期化
             this.InitSearchList();
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
@@ -116,9 +123,10 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
-        /// クーポン管理画面
+        /// 検索結果表示
         /// </summary>
-        /// <returns>クーポン管理画面</returns>
+        /// <param name="model">検索条件</param>
+        /// <returns>検索結果描画</returns>
         [HttpPost]
         [SessionCheck(WindowName = "クーポン管理画面")]
         public ActionResult Index(CouponInfoEntityList model)
@@ -150,7 +158,7 @@ namespace AppSigmaAdmin.Controllers
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
 
-            // SQL取得結果を反映
+            // SQL取得結果(検索条件)を出力
             info.TargetDateBegin = model.TargetDateBegin;
             info.TargetDateEnd = model.TargetDateEnd;
             info.ListMaxCount = maxListCount;
@@ -165,7 +173,7 @@ namespace AppSigmaAdmin.Controllers
                 info.CouponInfoList = null;
                 return View(info);
             }
-            
+            // SQL取得結果(検索結果)を出力
             foreach (DataRow row in GetData.Rows)
             {
                 info.CouponInfoListAll.Add(new CouponInfoEntity()
@@ -191,15 +199,14 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
-        /// 西鉄クーポンダウンロード処理
+        /// クーポンダウンロード処理
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="model">検索情報</param>
+        /// <returns>CSVファイル出力</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "西鉄決済データ画面")]
+        [SessionCheck(WindowName = "クーポンダウンロード処理")]
         public ActionResult NishitetsuOutPutDate(CouponInfoEntityList model)
         {
-
             ViewData["message"] = "";
 
             // 検索条件初期化
@@ -265,6 +272,11 @@ namespace AppSigmaAdmin.Controllers
             return File(ms.ToArray(), FILE_CONTENTTYPE, "Nishitetsu_Coupon_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
 
+        /// <summary>
+        /// テナントリスト更新(動的)
+        /// </summary>
+        /// <param name="id">施設ID</param>
+        /// <returns>テナントリスト取得結果(JSON)</returns>
         [HttpGet]
         public ActionResult SelectShopList(string id)
         {
@@ -273,7 +285,7 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
-        /// 文字列の前後に"を挿入
+        /// 文字列を"で囲む
         /// </summary>
         /// <param name="column">変換前文字列</param>
         /// <returns>変換後文字列</returns>
@@ -287,9 +299,11 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         private void InitFacilityList()
         {
-            List<SelectListItem> itemList = new List<SelectListItem>();
             // 施設マスタを取得
             DataTable db = new CouponInfoModel().GetFacilityNames();
+            List<SelectListItem> itemList = new List<SelectListItem>();
+
+            // DataTable → SelectList型に変換
             foreach (DataRow row in db.Rows)
             {
                 itemList.Add(new SelectListItem { Text = row["FacilityName"].ToString(), Value = row["FacilityId"].ToString() });
@@ -302,6 +316,8 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// テナントドロップダウンリスト初期化
         /// </summary>
+        /// <param name="id">施設ID</param>
+        /// <returns>テナントリスト取得結果</returns>
         private List<SelectListItem> InitShopList(string id = "000")
         {
             // 店舗マスタを取得
@@ -370,6 +386,8 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 検索条件エラー判定
         /// </summary>
+        /// <param name="model">検索条件</param>
+        /// <returns>判定結果</returns>
         private bool CheckSearchError(CouponInfoEntityList model)
         {
             // 検索期間:未入力

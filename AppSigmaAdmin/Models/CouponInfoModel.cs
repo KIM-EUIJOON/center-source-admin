@@ -10,7 +10,7 @@ using System.Text;
 namespace AppSigmaAdmin.Models
 {
     /// <summary>
-    /// クーポン運用画面　リクエストクラス
+    /// クーポン運用画面 リクエストクラス
     /// </summary>
     public class CouponInfoModel
     {
@@ -18,7 +18,7 @@ namespace AppSigmaAdmin.Models
         /// クーポン管理情報リスト取得
         /// </summary>
         /// <param name="model">検索情報</param>
-        /// <returns>検索情報</returns>
+        /// <returns>SQL実行結果</returns>
         public DataTable GetCouponDateList(CouponInfoEntityList model)
         {
             using (SqlDbInterface dbInterface = new SqlDbInterface())
