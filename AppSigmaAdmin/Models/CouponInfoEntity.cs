@@ -103,11 +103,17 @@ namespace AppSigmaAdmin.Models
         public List<CouponInfoEntity> CouponInfoList { get; set; }
 
         /// <summary>
+        /// クーポン一覧(全件)
+        /// </summary>
+        public List<CouponInfoEntity> CouponInfoListAll { get; set; }
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         public CouponInfoEntityList()
         {
             CouponInfoList = new List<CouponInfoEntity>();
+            CouponInfoListAll = new List<CouponInfoEntity>();
         }
 
         /// <summary>
@@ -129,7 +135,8 @@ namespace AppSigmaAdmin.Models
             this.ShopName = source.ShopName;
             this.AplType = source.AplType;
             this.IndustryName = source.IndustryName;
-            CouponInfoList = new List<CouponInfoEntity>(source.PageCount);
+            CouponInfoList = new List<CouponInfoEntity>();
+            CouponInfoListAll = new List<CouponInfoEntity>(source.CouponInfoListAll);
         }
     }
 }

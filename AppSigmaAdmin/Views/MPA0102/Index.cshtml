@@ -125,7 +125,7 @@
                         {
                             // 表示件数：10件
                             var grid = new WebGrid(null, rowsPerPage: Model.rowsPerPage, canSort: false);
-                            grid.Bind(source: Model.CouponInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                            grid.Bind(source: Model.CouponInfoList, autoSortAndPage: false, rowCount:Model.ListMaxCount);
                             <div class="grid-table">
                                 @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead", columns: grid.Columns(
                                                                                                         grid.Column("UsageDateTime", header: "利用日時", style: "gridbody8"),

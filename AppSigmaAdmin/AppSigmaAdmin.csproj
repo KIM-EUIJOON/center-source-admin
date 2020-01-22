@@ -188,7 +188,6 @@
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
-    <Compile Include="ResponseData\CouponResponseEntity.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
     <Compile Include="Utility\BundleHtmlTag.cs" />
     <Compile Include="Utility\Crypto.cs" />

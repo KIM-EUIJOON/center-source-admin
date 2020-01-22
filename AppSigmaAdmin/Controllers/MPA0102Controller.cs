@@ -1,7 +1,6 @@
 ﻿using AppSigmaAdmin.Attribute;
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
-using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
@@ -32,7 +31,7 @@ namespace AppSigmaAdmin.Controllers
             "アプリ種別"
         };
 
-        private const string SESSION_Coupon_Nishitetsu = "SESSION_Coupon_Nishitetsu";
+        private const string SESSION_NAME = "SESSION_Coupon_Nishitetsu";
 
         /// <summary>
         ///入力日付チェック関数
@@ -64,17 +63,8 @@ namespace AppSigmaAdmin.Controllers
         {
             CouponInfoEntityList info = new CouponInfoEntityList();
 
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
-
-            //現在ログイン中のUserRole取得
-            string UserRole = UserInfo.Role;
-
-            // プルダウン初期化
-            this.InitFacilityList();        // 施設情報
-            this.InitShopList();            // テナント情報
-            this.InitAplTypeList(UserRole); // アプリ種別情報
-
+            // 検索条件初期化
+            this.InitSearchList();
             //初回Null判定
             if (string.IsNullOrEmpty(page))
             {
@@ -82,7 +72,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //セッション情報の取得
-            CouponInfoEntityList sessiondata = (CouponInfoEntityList)Session[SESSION_Coupon_Nishitetsu];
+            CouponInfoEntityList sessiondata = (CouponInfoEntityList)Session[SESSION_NAME];
             SelectShopList(sessiondata.FacilityId);
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
@@ -104,7 +94,7 @@ namespace AppSigmaAdmin.Controllers
                 return View(info);
             }
 
-            // 取得開始行を指定
+            // 取得開始行と取得範囲を指定
             int index = (pageNo - 1) * sessiondata.rowsPerPage;
             int count = (pageNo == sessiondata.PageCount) ? sessiondata.ListMaxCount - index : sessiondata.rowsPerPage;
             //現在のページ位置
@@ -120,7 +110,7 @@ namespace AppSigmaAdmin.Controllers
             // セッション情報を複製
             info = new CouponInfoEntityList(sessiondata);
             // 指定範囲のデータを取得
-            info.CouponInfoList = sessiondata.CouponInfoList.GetRange(index, count);
+            info.CouponInfoList = sessiondata.CouponInfoListAll.GetRange(index, count);
 
             return View(info);
         }
@@ -133,52 +123,14 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "クーポン管理画面")]
         public ActionResult Index(CouponInfoEntityList model)
         {
-
             ViewData["message"] = "";
 
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            // 検索条件初期化
+            this.InitSearchList();
 
-            // 現在ログイン中のUserRole取得
-            string UserRole = UserInfo.Role;
-
-            // プルダウン初期化
-            this.InitFacilityList();            // 施設情報
-            var shoplist = this.InitShopList(); // テナント情報
-            this.InitAplTypeList(UserRole);     // アプリ種別情報
-
-            // 異常判定処理
-            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            //検索条件:エラー判定
+            if (false == this.CheckSearchError(model))
             {
-                // 検索期間(開始)が未入力の場合
-                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
-                return View(model);
-            }
-            else if (string.IsNullOrEmpty(model.TargetDateEnd))
-            {
-                // 検索期間(終了)が未入力の場合
-                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
-                return View(model);
-            }
-
-            if (!IsDate(model.TargetDateBegin.ToString()))
-            {
-                // 検索期間(開始)のテキストボックスに日付として正しくない値が入力された場合
-                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View(model);
-            }
-            else if (!IsDate(model.TargetDateEnd.ToString()))
-            {
-                // 検索期間(終了)のテキストボックスに日付として正しくない値が入力された場合
-                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View(model);
-            }
-
-            if ((false == string.IsNullOrEmpty(model.UserId)) &&
-                (!Int32.TryParse(model.UserId.ToString(), out int i)))
-            {
-                // myrouteIDのテキストボックスに半角数字以外が入力された場合
-                ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
                 return View(model);
             }
 
@@ -186,7 +138,7 @@ namespace AppSigmaAdmin.Controllers
             int PageNo = model.PageNo + 1;
 
             // 10件ずつ表示する
-            int ListNum = 10;
+            int ListNum = model.rowsPerPage;
             // 表示開始位置を算出
             int EndListNo = PageNo * ListNum;
             int BeginListNo = EndListNo - (ListNum - 1);
@@ -205,7 +157,6 @@ namespace AppSigmaAdmin.Controllers
             info.PageNo = model.PageNo;
             info.FacilityId = model.FacilityId;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
-            info.CouponInfoList = new List<CouponInfoEntity>();
 
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
@@ -217,21 +168,25 @@ namespace AppSigmaAdmin.Controllers
             
             foreach (DataRow row in GetData.Rows)
             {
-                info.CouponInfoList.Add(new CouponInfoEntity()
+                info.CouponInfoListAll.Add(new CouponInfoEntity()
                 {
                     UsageDateTime = DateTime.Parse(row["UsageDateTime"].ToString()),
                     UserId = row["UserId"].ToString(),
                     FacilityName = row["FacilityName"].ToString(),
                     ShopCode = row["UsageShopCode"].ToString(),
                     ShopName = row["ShopName"].ToString(),
-                    UseCount = 1, // 暫定
+                    UseCount = 1, // 利用件数=1(暫定)
                     IndustryName = row["IndustryName"].ToString(),
                     AplType = row["AplName"].ToString(),
                 });
             }
 
-            // セッションを作成
-            Session.Add(SESSION_Coupon_Nishitetsu, info);
+            // 取得開始行と取得範囲を指定
+            int index = 0;
+            int count = (maxListCount < model.rowsPerPage) ? maxListCount - index : model.rowsPerPage;
+            info.CouponInfoList = info.CouponInfoListAll.GetRange(index, count);
+
+            Session.Add(SESSION_NAME, info);
             return View(info);
         }
 
@@ -246,49 +201,13 @@ namespace AppSigmaAdmin.Controllers
         {
 
             ViewData["message"] = "";
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
 
-            // 現在ログイン中のUserRole取得
-            string UserRole = UserInfo.Role;
+            // 検索条件初期化
+            InitSearchList();
 
-            // プルダウン初期化
-            this.InitFacilityList();        // 施設情報
-            this.InitShopList();            // テナント情報
-            this.InitAplTypeList(UserRole); // アプリ種別情報
-
-            if (string.IsNullOrEmpty(model.TargetDateBegin))
-            {
-                //検索期間(開始)が未入力の場合
-                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
-                return View("~/Views/MPA0101/Index.cshtml", model);
-            }
-            else if (string.IsNullOrEmpty(model.TargetDateEnd))
-            {
-                //検索期間(終了)が未入力の場合
-                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
-                return View("~/Views/MPA0101/Index.cshtml", model);
-            }
-
-            if (!IsDate(model.TargetDateBegin.ToString()))
-            {
-                //検索期間(開始)のテキストボックスに日付として正しくない値が入力された場合
-                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0101/Index.cshtml", model);
-            }
-            else if (!IsDate(model.TargetDateEnd.ToString()))
-            {
-                //検索期間(終了)のテキストボックスに日付として正しくない値が入力された場合
-                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return View("~/Views/MPA0101/Index.cshtml", model);
-            }
-
-            if ((false == string.IsNullOrEmpty(model.UserId)) &&
-                (!Int32.TryParse(model.UserId.ToString(), out int i)))
-            {
-                // myrouteIDのテキストボックスに半角数字以外が入力された場合
-                ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
-                return View(model);
+            //検索条件:エラー判定
+            if (false == this.CheckSearchError(model)){ 
+                return View("~/Views/MPA0102/Index.cshtml",model);
             }
 
             // 検索条件に一致する全リスト件数取得
@@ -305,14 +224,13 @@ namespace AppSigmaAdmin.Controllers
             info.PageNo = model.PageNo;
             info.FacilityId = model.FacilityId;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
-            info.CouponInfoList = new List<CouponInfoEntity>();
 
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
                 ModelState.AddModelError("", "一致するクーポンがありませんでした。");
                 info.CouponInfoList = null;
-                return View(info);
+                return View("~/Views/MPA0102/Index.cshtml", info);
             }
 
             // CSVファイルに書き込み
@@ -337,7 +255,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["FacilityName"].ToString()));
                     strings.Add(EncloseDbQuotes(row["UsageShopCode"].ToString()));
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
-                    strings.Add(EncloseDbQuotes("1"));
+                    strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
                     strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
@@ -430,6 +348,62 @@ namespace AppSigmaAdmin.Controllers
             }
 
             ViewBag.AplList = itemList;
+        }
+
+        /// <summary>
+        /// 検索条件初期化
+        /// </summary>
+        private void InitSearchList()
+        {
+            // セッションに保存されているユーザー情報を取得する
+            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+
+            // 現在ログイン中のUserRole取得
+            string UserRole = UserInfo.Role;
+
+            // プルダウン初期化
+            this.InitFacilityList();        // 施設情報
+            this.InitShopList();            // テナント情報
+            this.InitAplTypeList(UserRole); // アプリ種別情報
+        }
+
+        /// <summary>
+        /// 検索条件エラー判定
+        /// </summary>
+        private bool CheckSearchError(CouponInfoEntityList model)
+        {
+            // 検索期間:未入力
+            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日を指定してください");
+                return false;
+            }
+            else if (string.IsNullOrEmpty(model.TargetDateEnd))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日を指定してください");
+                return false;
+            }
+
+            // 検索期間:日付以外
+            if (!IsDate(model.TargetDateBegin.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の開始年月日が正しくありません。半角英数字で再入力してください。");
+                return false;
+            }
+            else if (!IsDate(model.TargetDateEnd.ToString()))
+            {
+                ModelState.AddModelError("", "表示期間の終了年月日が正しくありません。半角英数字で再入力してください。");
+                return false;
+            }
+
+            // myrouteID:半角数字以外
+            if ((false == string.IsNullOrEmpty(model.UserId)) &&
+                (false == Int32.TryParse(model.UserId.ToString(), out int i)))
+            {
+                ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
+                return false;
+            }
+            return true;
         }
     }
 }
