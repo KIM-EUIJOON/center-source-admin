@@ -8,7 +8,7 @@
         $('#shoplist').prop('disabled', false);
     }
     // ShopListの動的取得
-    var URL = '/MPA0102/SelectShopList';
+    var URL = $('#SelectShopList').val();
     $.getJSON(URL + '/' + $('select[id=layer1] option:selected').val(), function (data) {
         var items = "";
         $.each(data, function (i, shop) {
