@@ -178,7 +178,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 info.CouponInfoListAll.Add(new CouponInfoEntity()
                 {
-                    UsageDateTime = DateTime.Parse(row["UsageDateTime"].ToString()),
+                    UsageDateTime = (DateTime.Parse(row["UsageDateTime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
                     UserId = row["UserId"].ToString(),
                     FacilityName = row["FacilityName"].ToString(),
                     ShopCode = row["UsageShopCode"].ToString(),

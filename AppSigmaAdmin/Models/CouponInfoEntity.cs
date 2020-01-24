@@ -17,7 +17,7 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 利用日
         /// </summary>
-        public DateTime UsageDateTime { get; set; }
+        public string UsageDateTime { get; set; }
 
         /// <summary>
         /// ユーザID
