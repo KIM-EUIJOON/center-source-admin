@@ -70,7 +70,7 @@ namespace AppSigmaAdmin.Controllers
             CouponInfoEntityList info = new CouponInfoEntityList();
 
             // 検索条件初期化
-            this.InitSearchList();
+            this.InitSearchList(info);
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
@@ -134,7 +134,7 @@ namespace AppSigmaAdmin.Controllers
             ViewData["message"] = "";
 
             // 検索条件初期化
-            this.InitSearchList();
+            this.InitSearchList(model);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
@@ -210,7 +210,7 @@ namespace AppSigmaAdmin.Controllers
             ViewData["message"] = "";
 
             // 検索条件初期化
-            InitSearchList();
+            this.InitSearchList(model);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model)){ 
@@ -297,10 +297,10 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 施設ドロップダウンリスト初期化
         /// </summary>
-        private void InitFacilityList()
+        private void InitFacilityList(string language)
         {
             // 施設マスタを取得
-            DataTable db = new CouponInfoModel().GetFacilityNames();
+            DataTable db = new CouponInfoModel().GetFacilityNames(language);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
@@ -369,7 +369,7 @@ namespace AppSigmaAdmin.Controllers
         /// <summary>
         /// 検索条件初期化
         /// </summary>
-        private void InitSearchList()
+        private void InitSearchList(CouponInfoEntityList model)
         {
             // セッションに保存されているユーザー情報を取得する
             UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
@@ -378,7 +378,7 @@ namespace AppSigmaAdmin.Controllers
             string UserRole = UserInfo.Role;
 
             // プルダウン初期化
-            this.InitFacilityList();        // 施設情報
+            this.InitFacilityList(model.Language);        // 施設情報
             this.InitShopList();            // テナント情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
         }

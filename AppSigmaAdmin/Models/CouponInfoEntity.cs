@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Mvc;
+using AppSigmaAdmin.Library;
 
 namespace AppSigmaAdmin.Models
 {
@@ -90,7 +91,7 @@ namespace AppSigmaAdmin.Models
         ///<summary>
         ///ページング数
         ///</summary>
-        public int rowsPerPage { get; set; } = 10;
+        public int rowsPerPage { get; set; } = SystemConst.ROWS_PER_PAGE;
 
         ///<summary>
         ///総ページ数
@@ -106,6 +107,12 @@ namespace AppSigmaAdmin.Models
         /// クーポン一覧(全件)
         /// </summary>
         public List<CouponInfoEntity> CouponInfoListAll { get; set; }
+
+        /// <summary>
+        /// 言語設定
+        /// </summary>
+        public string Language { get; set; } = SystemConst.LANGUAGE_JA;
+
 
         /// <summary>
         /// コンストラクタ

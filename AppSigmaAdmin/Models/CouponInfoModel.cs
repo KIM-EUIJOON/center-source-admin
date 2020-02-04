@@ -1,4 +1,5 @@
-﻿using AppSigmaAdmin.Utility;
+﻿using AppSigmaAdmin.Library;
+using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -79,7 +80,7 @@ namespace AppSigmaAdmin.Models
         /// 施設マスタ取得
         /// </summary>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetFacilityNames()
+        public DataTable GetFacilityNames(string language)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -89,6 +90,9 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("SELECT fclM.FacilityName,");
                 sb.AppendLine("       fclM.FacilityId");
                 sb.AppendLine("FROM FacilityMaster fclM");
+                sb.AppendLine("Where fclM.Language = @lng");
+
+                cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);
@@ -111,7 +115,11 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("       shpM.FacilityId,");
                 sb.AppendLine("       facM.FacilityName");
                 sb.AppendLine("FROM ShopMaster shpM");
-                sb.AppendLine("LEFT JOIN FacilityMaster facM ON shpM.FacilityId = facM.FacilityId ");
+                sb.AppendLine("LEFT JOIN FacilityMaster facM");
+                sb.AppendLine("    ON shpM.FacilityId = facM.FacilityId ");
+                sb.AppendLine("    AND facM.Language = 'ja'");
+
+                cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = SystemConst.LANGUAGE_JA;
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);

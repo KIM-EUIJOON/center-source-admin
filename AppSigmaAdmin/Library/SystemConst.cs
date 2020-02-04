@@ -48,6 +48,16 @@ namespace AppSigmaAdmin.Library
         public const string HTTP_STATUS_CODE_SEND_FAIL = "903";
 
         /**************************/
+        /* 運用画面の定数         */
+        /**************************/
+        /// <summary>ページング行数</summary>
+        public const int ROWS_PER_PAGE = 10;
+
+        /// <summary>表示言語</summary>
+        public const string LANGUAGE_JA = "ja";
+        public const string LANGUAGE_EN = "en";
+
+        /**************************/
         /* モビリティ予約の定数   */
         /**************************/
         /// <summary>
