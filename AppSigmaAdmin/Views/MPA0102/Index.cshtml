@@ -28,6 +28,7 @@
 <input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
 <input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA0102", false)" />
 <input type="hidden" id="SelectShopList" value="@Common.CreateUrl("/MPA0102/SelectShopList", false)" />
+<input type="hidden" id="language" value="@Model.Language" />
 
 <form action="@Common.CreateUrl("/MPA0102", false)" method="post">
     <div class="ContentsBase">
@@ -62,9 +63,10 @@
                                 // 施設ドロップリスト項目作成
                                 List<SelectListItem> FacilityList = new List<SelectListItem>();
                                 FacilityList = @ViewBag.FacilityList;
+                                string str = Model.Language;
                             }
                             施設名：
-                            @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "layer1", onChange = "updateshoplist()"})
+                            @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "layer1", onChange = "updateshoplist()" })
                         </div>
                     </div>
                     <div class="GridTableCell">
@@ -87,11 +89,11 @@
                                     if (Model.FacilityId != null)
                                     {
                                     @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList", id = "shoplist" });
-                                }
-                                else
-                                {
+                                    }
+                                    else
+                                    {
                                     @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList", id = "shoplist", disabled = "disabled" });
-                                }
+                                    }
                                 }
                             </div>
                             <div class="GridTableCell">

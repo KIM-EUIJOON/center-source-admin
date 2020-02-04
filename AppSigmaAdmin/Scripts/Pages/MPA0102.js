@@ -9,7 +9,8 @@
     }
     // ShopListの動的取得
     var URL = $('#SelectShopList').val();
-    $.getJSON(URL + '/' + $('select[id=layer1] option:selected').val(), function (data) {
+    var str = $('#language').val();
+    $.getJSON(URL + '/?id=' + $('select[id=layer1] option:selected').val() + '&language=' + str, function (data) {
         var items = "";
         $.each(data, function (i, shop) {
             if (shop.Selected == true) {

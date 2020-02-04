@@ -37,6 +37,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    indM.IndustryName ");
                 sb.AppendLine("FROM CouponManage Cp ");
                 sb.AppendLine("LEFT JOIN FacilityMaster facM ON Cp.UsageFacilityId = facM.FacilityId ");
+                sb.AppendLine("                             AND facM.Language = @lng ");
                 sb.AppendLine("     JOIN ShopMaster shpM ON Cp.UsageShopCode = shpM.ShopCode ");
                 sb.AppendLine("     JOIN UserInfoOid uio ON Cp.UserId = uio.UserId ");
                 sb.AppendLine("     JOIN IndustryMaster indM ON shpM.IndustryCode = indM.IndustryCode ");
@@ -71,7 +72,7 @@ namespace AppSigmaAdmin.Models
 
                 cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = model.TargetDateBegin;
                 cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = model.TargetDateEnd + " 23:59:59";
-
+                cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = model.Language;
                 return dbInterface.ExecuteReader(cmd);
             }
         }
@@ -103,7 +104,7 @@ namespace AppSigmaAdmin.Models
         /// テナントマスタ取得
         /// </summary>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetShopNames()
+        public DataTable GetShopNames(string language)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -117,9 +118,9 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("FROM ShopMaster shpM");
                 sb.AppendLine("LEFT JOIN FacilityMaster facM");
                 sb.AppendLine("    ON shpM.FacilityId = facM.FacilityId ");
-                sb.AppendLine("    AND facM.Language = 'ja'");
-
-                cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = SystemConst.LANGUAGE_JA;
+                sb.AppendLine("    AND facM.Language = @lng");
+                sb.AppendLine("WHERE shpM.Language = @lng");
+                cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);

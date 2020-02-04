@@ -80,7 +80,7 @@ namespace AppSigmaAdmin.Controllers
 
             //セッション情報の取得
             CouponInfoEntityList sessiondata = (CouponInfoEntityList)Session[SESSION_NAME];
-            SelectShopList(sessiondata.FacilityId);
+            SelectShopList(sessiondata.Language,sessiondata.FacilityId);
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             try
@@ -278,9 +278,9 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="id">施設ID</param>
         /// <returns>テナントリスト取得結果(JSON)</returns>
         [HttpGet]
-        public ActionResult SelectShopList(string id)
+        public ActionResult SelectShopList(string language, string id)
         {
-            var itemList = InitShopList(id);
+            var itemList = InitShopList(language, id);
             return Json(itemList, JsonRequestBehavior.AllowGet);
         }
 
@@ -318,10 +318,10 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <param name="id">施設ID</param>
         /// <returns>テナントリスト取得結果</returns>
-        private List<SelectListItem> InitShopList(string id = "000")
+        private List<SelectListItem> InitShopList( string language, string id = "000")
         {
             // 店舗マスタを取得
-            DataTable db = new CouponInfoModel().GetShopNames();
+            DataTable db = new CouponInfoModel().GetShopNames(language);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
@@ -379,7 +379,7 @@ namespace AppSigmaAdmin.Controllers
 
             // プルダウン初期化
             this.InitFacilityList(model.Language);        // 施設情報
-            this.InitShopList();            // テナント情報
+            this.InitShopList(model.Language,model.FacilityId);            // テナント情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
         }
 
