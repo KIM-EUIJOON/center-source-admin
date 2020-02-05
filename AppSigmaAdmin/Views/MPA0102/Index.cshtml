@@ -63,10 +63,9 @@
                                 // 施設ドロップリスト項目作成
                                 List<SelectListItem> FacilityList = new List<SelectListItem>();
                                 FacilityList = @ViewBag.FacilityList;
-                                string str = Model.Language;
                             }
                             施設名：
-                            @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "layer1", onChange = "updateshoplist()" })
+                            @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "layer1", onChange = "updateshoplist()"})
                         </div>
                     </div>
                     <div class="GridTableCell">
