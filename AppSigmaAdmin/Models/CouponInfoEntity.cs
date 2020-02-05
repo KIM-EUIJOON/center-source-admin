@@ -144,6 +144,7 @@ namespace AppSigmaAdmin.Models
             this.IndustryName = source.IndustryName;
             CouponInfoList = new List<CouponInfoEntity>();
             CouponInfoListAll = new List<CouponInfoEntity>(source.CouponInfoListAll);
+            this.Language = source.Language;
         }
     }
 }

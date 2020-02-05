@@ -65,7 +65,7 @@ namespace AppSigmaAdmin.Models
                     cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
                 }
                 sb.AppendLine("    AND Cp.UsageDateTime BETWEEN @StartDatatTime AND @EndDatatTime");
-
+                sb.AppendLine("    AND shpM.Language = @lng");
                 sb.AppendLine("ORDER BY Cp.UsageDateTime");
                 
                 cmd.CommandText = sb.ToString();

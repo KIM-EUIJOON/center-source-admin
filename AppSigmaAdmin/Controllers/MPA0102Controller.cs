@@ -164,6 +164,7 @@ namespace AppSigmaAdmin.Controllers
             info.ListMaxCount = maxListCount;
             info.PageNo = model.PageNo;
             info.FacilityId = model.FacilityId;
+            info.Language = model.Language;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
 
             // 取得したリスト件数が0以上
@@ -230,6 +231,7 @@ namespace AppSigmaAdmin.Controllers
             info.ListMaxCount = maxListCount;
             info.PageNo = model.PageNo;
             info.FacilityId = model.FacilityId;
+            info.Language = model.Language;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
 
             // 取得したリスト件数が0以上
