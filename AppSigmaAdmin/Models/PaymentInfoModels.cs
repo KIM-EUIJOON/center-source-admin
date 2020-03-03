@@ -423,6 +423,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , case when tbl.BizCompanyCd =N'NNR' then N'鉄道'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'鉄道・バス'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
                     sb.AppendLine("     , tbl.TicketId");
@@ -451,7 +452,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("         where pe.UserId = tbl.UserId");
                     sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
                     sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
-                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4' or pe.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
+                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4' or pe.ServiceId = '5' or pe.ServiceId = '6')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5,にしてつグループ:6)*/
                     sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
                     sb.AppendLine("     )");
                     sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
@@ -605,11 +606,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5' or pm.ServiceId = '6')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5,にしてつグループ:6)*/
                     sb.AppendLine("        	and pm.PaymentType = '3'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -639,11 +640,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5) */
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5' or pm.ServiceId = '6')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5,にしてつグループ:6)*/
                     sb.AppendLine("        	and pm.PaymentType = '5'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '3'");
@@ -673,11 +674,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5)*/
+                    sb.AppendLine("        	and(pm.ServiceId = '2' or pm.ServiceId = '4' or pm.ServiceId = '5' or pm.ServiceId = '6')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5,にしてつグループ:6)*/
                     sb.AppendLine("        	and pm.PaymentType = '4'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");

@@ -90,6 +90,7 @@ namespace AppSigmaAdmin.Controllers
                 TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
                 TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
                 TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+                TranseTypeList.Add(new SelectListItem { Text = "鉄道・バス", Value = "NISG" });
                 TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
                 ViewBag.TranseList = TranseTypeList;
 
@@ -168,6 +169,7 @@ namespace AppSigmaAdmin.Controllers
             TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
             TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道・バス", Value = "NISG" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             ViewBag.TranseList = TranseTypeList;
@@ -361,6 +363,7 @@ namespace AppSigmaAdmin.Controllers
             TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
             TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道・バス", Value = "NISG" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             //チケット種別ドロップダウンリストを保存
@@ -642,6 +645,7 @@ namespace AppSigmaAdmin.Controllers
             TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
             TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道", Value = "NNR" });
+            TranseTypeList.Add(new SelectListItem { Text = "鉄道・バス", Value = "NISG" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             //チケット種別ドロップダウンリストを保存
