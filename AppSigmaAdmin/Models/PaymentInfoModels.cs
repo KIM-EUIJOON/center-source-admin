@@ -498,6 +498,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
                     sb.AppendLine("          and fsm.BizCompanyCd='NIS'");              //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketId in ('3', '4')");          //福岡6H、24Hに限定する
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
@@ -533,6 +534,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
                     sb.AppendLine("          and fsm.BizCompanyCd='NIS'");           //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketId in ('3', '4')");          //福岡6H、24Hに限定する
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
@@ -569,6 +571,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("          on nft.TicketType = fsm.TicketType");
                     sb.AppendLine("          and fsm.BizCompanyCd='NIS'");           //西鉄
                     sb.AppendLine("          and fsm.TrsType ='11'");                   //バス情報のみ取得
+                    sb.AppendLine("          and fsm.TicketId in ('3', '4')");          //福岡6H、24Hに限定する
                     sb.AppendLine("          left join CharacterResource cr");
                     sb.AppendLine("          on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("          and Language = 'ja'");
