@@ -219,5 +219,29 @@ namespace AppSigmaAdmin.Library
         /// </summary>
         public const string MOBRSV_TAXI_STATUS_CANCELED = "canceled";
 
+        /// <summary>
+        /// インフォメーションログテーブル名
+        /// </summary>
+        public const string STORAGE_TABLE_NAME_INFORMATION_LOG = "SigmaInfomationLogsTable";
+        /// <summary>
+        /// デバッグログテーブル名
+        /// </summary>
+        public const string STORAGE_TABLE_NAME_DEBUG_LOG = "SigmaLogsTable";
+        /// <summary>
+        /// 端末インフォメーションログテーブル名
+        /// </summary>
+        public const string STORAGE_TABLE_NAME_MOBILE_INFORMATION_LOG = "SigmaMobileInformationLogsTable";
+        /// <summary>
+        /// アップロードファイルの情報種別　「情報種別:格納先 (カンマ区切り)」形式で設定
+        /// </summary>
+        public const string UPLOAD_FILE_INFO_TYPES = "0:mobile-info,1:general-info";
+        /// <summary>
+        /// 利用者ログ情報ダウンロード：出力ファイル名(User_Log_Report_作成日(yyyyMMddHHmmss)_S検索開始日時(yyyyMMddHHmm)-E終了日時(yyyyMMddHHmm))
+        /// </summary>
+        public const string USER_LOG_FILE_NAME = "User_Log_Report_{0}_S{1}_E{2}.csv";
+        /// <summary>
+        /// 利用者ログ情報ダウンロード：出力ファイルコンテンツタイプ(CSV)
+        /// </summary>
+        public const string USER_LOG_FILE_CONTENTTYPE = "text/comma-separated-values";
     }
 }

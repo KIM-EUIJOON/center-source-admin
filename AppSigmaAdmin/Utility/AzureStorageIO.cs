@@ -29,7 +29,7 @@ namespace AppSigmaAdmin.Utility
         /// </summary>
         public AzureStorageIO()
         {
-            string connetctionString = ApplicationConfig.StorageConnectionString2;
+            string connetctionString = ApplicationConfig.StorageConnectionString;
 
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connetctionString);
             blobClient = storageAccount.CreateCloudBlobClient();
@@ -113,6 +113,34 @@ namespace AppSigmaAdmin.Utility
         }
 
         /// <summary>
+        /// ディレクトリ配下の全てのブロブ名を取得
+        /// </summary>
+        /// <param name="containerName">コンテナ名</param>
+        /// <param name="directoryName">ディレクトリ名</param>
+        /// <returns>ディクショナリー（キー：ファイルパス、値：ファイル名）</returns>
+        public Dictionary<string, string> GetBlobNameDictionary(string containerName, string directoryName)
+        {
+            Dictionary<string, string> dicFileName = new Dictionary<string, string>();
+            // コンテナを取得
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
+            // ディレクトリを取得
+            CloudBlobDirectory directory = container.GetDirectoryReference(directoryName);
+
+            BlobContinuationToken token = null;
+
+            // ディレクトリ配下の全てのブロブを取得
+            foreach (IListBlobItem item in directory.ListBlobsSegmentedAsync(true, BlobListingDetails.Metadata, null, token, null, null).Result.Results)
+            {
+                if (item.GetType() == typeof(CloudBlockBlob))
+                {
+                    CloudBlockBlob blob = (CloudBlockBlob)item;
+                    dicFileName.Add(blob.Name, blob.Uri.Segments[blob.Uri.Segments.Length - 1].ToString());
+                }
+            }
+            return dicFileName;
+        }
+
+        /// <summary>
         /// StorageBlobからファイルデータを取得
         /// </summary>
         /// <param name="containerName">コンテナ名</param>
@@ -126,12 +154,14 @@ namespace AppSigmaAdmin.Utility
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
 
             // コンテナに対象ファイルが存在しない場合、処理中止
-            if (!blockBlob.Exists())
+            //if (!blockBlob.Exists())
+            if (!blockBlob.ExistsAsync().Result)
             {
                 memoryStream = null;
             }
 
-            blockBlob.DownloadToStream(memoryStream);
+            //blockBlob.DownloadToStream(memoryStream);
+            blockBlob.DownloadToStreamAsync(memoryStream).Wait();
         }
 
         /// <summary>
@@ -157,6 +187,222 @@ namespace AppSigmaAdmin.Utility
             var retsurt = table.ExecuteQuery(tableQuery);
 
             return retsurt.Select(_ => new OperationMonitoringEntity { Timestamp= _.Timestamp.DateTime , RoleInstance= _.RoleInstance, CounterName= _.CounterName, CounterValue= _.CounterValue }).ToList();
+        }
+
+        /// <summary>
+        /// インフォメーションログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>インフォメーションログ情報</returns>
+        public List<UserLogInfoEntity> GetInformationLogTable(DateTime start, DateTime end, string userId, List<string> messageList)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_INFORMATION_LOG);
+
+            string query = TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+            }
+
+            string queryMessage = string.Empty;
+            foreach (string message in messageList)
+            {
+                if (string.IsNullOrEmpty(queryMessage))
+                {
+                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
+                }
+                else
+                {
+                    queryMessage = TableQuery.CombineFilters(
+                                queryMessage,
+                                TableOperators.Or,
+                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(queryMessage))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMessage);
+            }
+
+            TableQuery<InformationLogEntity> tableQuery = new TableQuery<InformationLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = _.Timestamp.DateTime.AddHours(9),   // TimestampはUTC→JSTに変換
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                UserId = _.UserId,
+                Level = _.Level,
+                Message = _.Message,
+                InputParams = _.InputParams,
+            }).ToList();
+        }
+
+        /// <summary>
+        /// デバッグログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>デバッグログ情報</returns>
+        public List<UserLogInfoEntity> GetDebugLogTable(DateTime start, DateTime end, string userId, List<string> messageList)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_DEBUG_LOG);
+
+            string query = TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+            }
+
+            string queryMessage = string.Empty;
+            foreach (string message in messageList)
+            {
+                if (string.IsNullOrEmpty(queryMessage))
+                {
+                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
+                }
+                else
+                {
+                    queryMessage = TableQuery.CombineFilters(
+                                queryMessage,
+                                TableOperators.Or,
+                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(queryMessage))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMessage);
+            }
+
+            TableQuery<DebugLogEntity> tableQuery = new TableQuery<DebugLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = _.Timestamp.DateTime.AddHours(9),   // TimestampはUTC→JSTに変換
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                UserId = _.UserId,
+                Level = _.Level,
+                TaskId = _.TaskId,
+                Message = _.Message,
+            }).ToList();
+        }
+
+        /// <summary>
+        /// 端末インフォメーションログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <param name="infoTypeName">情報種別名</param>
+        /// <param name="mobileId">端末ID</param>
+        /// <returns>端末インフォメーションログ情報</returns>
+        public List<UserLogInfoEntity> GetMobileInformationLogTable(DateTime start, DateTime end, string userId, List<string> messageList, string infoTypeName, string mobileId)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_MOBILE_INFORMATION_LOG);
+
+            string query = TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+            }
+
+            string queryMessage = string.Empty;
+            foreach (string message in messageList)
+            {
+                if (string.IsNullOrEmpty(queryMessage))
+                {
+                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
+                }
+                else
+                {
+                    queryMessage = TableQuery.CombineFilters(
+                                queryMessage,
+                                TableOperators.Or,
+                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(queryMessage))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMessage);
+            }
+
+            if (!string.IsNullOrEmpty(infoTypeName))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("InfoTypeName", QueryComparisons.Equal, infoTypeName));
+            }
+
+            if (!string.IsNullOrEmpty(mobileId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("MobileId", QueryComparisons.Equal, mobileId));
+            }
+
+            TableQuery<MobileInformationLogEntity> tableQuery = new TableQuery<MobileInformationLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = _.MobileTimestamp,
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                InfoTypeName = _.InfoTypeName,
+                RequestUserId = _.RequestUserId,
+                RequestMobileId = _.RequestMobileId,
+                Level = _.Level,
+                Message = _.Message,
+                UserId = _.UserId,
+                MobileId = _.MobileId,
+                MobileName = _.MobileName,
+                OsName = _.OsName,
+                OsVersion = _.OsVersion,
+                GooglePlayServicesVersion = _.GooglePlayServicesVersion,
+                Language = _.Language,
+                LocationInformation = _.LocationInformation,
+            }).ToList();
         }
     }
 

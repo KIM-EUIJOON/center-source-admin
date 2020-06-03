@@ -165,6 +165,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\MPA0102Controller.cs" />
+    <Compile Include="Controllers\MSA0501Controller.cs" />
     <Compile Include="Controllers\MSA0401Controller.cs" />
     <Compile Include="Controllers\MSA0301Controller.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
@@ -172,6 +173,10 @@
     <Compile Include="Controllers\MPA0201Controller.cs" />
     <Compile Include="Controllers\MPA0301Controller.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
+    <Compile Include="Models\DebugLogEntity.cs" />
+    <Compile Include="Models\InformationLogEntity.cs" />
+    <Compile Include="Models\MobileInformationLogEntity.cs" />
+    <Compile Include="Models\UserLogInfoEntity.cs" />
     <Compile Include="Models\CouponInfoEntity.cs" />
     <Compile Include="Models\CouponInfoModel.cs" />
     <Compile Include="Models\PaymentInfoModels.cs" />
@@ -287,6 +292,7 @@
     <Content Include="Views\MSA0301\Index.cshtml" />
     <Content Include="Views\MSA0401\index.cshtml" />
     <Content Include="Views\MPA0102\Index.cshtml" />
+    <Content Include="Views\MSA0501\Index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
