@@ -99,6 +99,31 @@ namespace AppSigmaAdmin.Models
         /// 入力パラメータ
         /// </summary>
         public string InputParams { get; set; }
+
+        /// <summary>
+        /// Pushトークン
+        /// </summary>
+        public string PushToken { get; set; }
+
+        /// <summary>
+        /// プロダクト種別
+        /// </summary>
+        public string ProductType { get; set; }
+
+        /// <summary>
+        /// アプリバージョン
+        /// </summary>
+        public string AppVersion { get; set; }
+
+        /// <summary>
+        /// 通信キャリア
+        /// </summary>
+        public string TelecomCarrier { get; set; }
+
+        /// <summary>
+        /// その他情報(JSON形式)
+        /// </summary>
+        public string ExtraInformation { get; set; }
     }
 
     /// <summary>
@@ -128,6 +153,11 @@ namespace AppSigmaAdmin.Models
             Map(m => m.TaskId).Index(14).Name("タスクID");
             Map(m => m.Message).Index(15).Name("メッセージ");
             Map(m => m.InputParams).Index(16).Name("入力パラメータ");
+            Map(m => m.PushToken).Index(17).Name("Pushトークン");
+            Map(m => m.ProductType).Index(18).Name("プロダクト種別");
+            Map(m => m.AppVersion).Index(19).Name("アプリバージョン");
+            Map(m => m.TelecomCarrier).Index(20).Name("通信キャリア");
+            Map(m => m.ExtraInformation).Index(21).Name("その他情報(JSON形式)");
         }
     }
 

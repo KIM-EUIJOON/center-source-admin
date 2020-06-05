@@ -336,10 +336,14 @@ namespace AppSigmaAdmin.Utility
 
             if (!string.IsNullOrEmpty(userId))
             {
+                string queryUserId = TableQuery.CombineFilters(
+                            TableQuery.GenerateFilterCondition("RequestUserId", QueryComparisons.Equal, userId),
+                            TableOperators.Or,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
                 query = TableQuery.CombineFilters(
                             query,
                             TableOperators.And,
-                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+                            queryUserId);
             }
 
             string queryMessage = string.Empty;
@@ -376,10 +380,14 @@ namespace AppSigmaAdmin.Utility
 
             if (!string.IsNullOrEmpty(mobileId))
             {
+                string queryMobileId = TableQuery.CombineFilters(
+                            TableQuery.GenerateFilterCondition("RequestMobileId", QueryComparisons.Equal, mobileId),
+                            TableOperators.Or,
+                            TableQuery.GenerateFilterCondition("MobileId", QueryComparisons.Equal, mobileId));
                 query = TableQuery.CombineFilters(
                             query,
                             TableOperators.And,
-                            TableQuery.GenerateFilterCondition("MobileId", QueryComparisons.Equal, mobileId));
+                            queryMobileId);
             }
 
             TableQuery<MobileInformationLogEntity> tableQuery = new TableQuery<MobileInformationLogEntity>().Where(query);
@@ -387,7 +395,7 @@ namespace AppSigmaAdmin.Utility
 
             return result.Select(_ => new UserLogInfoEntity
             {
-                Timestamp = _.MobileTimestamp,
+                Timestamp = _.MobileTimestamp.AddHours(9),   // TimestampはUTC→JSTに変換
                 PartitionKey = DateTime.Parse(_.PartitionKey),
                 InfoTypeName = _.InfoTypeName,
                 RequestUserId = _.RequestUserId,
@@ -402,6 +410,11 @@ namespace AppSigmaAdmin.Utility
                 GooglePlayServicesVersion = _.GooglePlayServicesVersion,
                 Language = _.Language,
                 LocationInformation = _.LocationInformation,
+                PushToken = _.PushToken,
+                ProductType = _.ProductType,
+                AppVersion = _.AppVersion,
+                TelecomCarrier = _.TelecomCarrier,
+                ExtraInformation = _.ExtraInformation,
             }).ToList();
         }
     }

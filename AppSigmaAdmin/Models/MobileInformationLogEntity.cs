@@ -49,6 +49,11 @@ namespace AppSigmaAdmin.Models
         public DateTime MobileTimestamp { get; set; }
 
         /// <summary>
+        /// Pushトークン
+        /// </summary>
+        public string PushToken { get; set; }
+
+        /// <summary>
         /// 端末ID
         /// </summary>
         public string MobileId { get; set; }
@@ -59,6 +64,16 @@ namespace AppSigmaAdmin.Models
         public string MobileName { get; set; }
 
         /// <summary>
+        /// プロダクト種別
+        /// </summary>
+        public string ProductType { get; set; }
+
+        /// <summary>
+        /// アプリバージョン
+        /// </summary>
+        public string AppVersion { get; set; }
+
+        /// <summary>
         /// OS名
         /// </summary>
         public string OsName { get; set; }
@@ -67,6 +82,11 @@ namespace AppSigmaAdmin.Models
         /// OSバージョン
         /// </summary>
         public string OsVersion { get; set; }
+
+        /// <summary>
+        /// 通信キャリア
+        /// </summary>
+        public string TelecomCarrier { get; set; }
 
         /// <summary>
         /// Google Play Servicesバージョン
@@ -82,5 +102,10 @@ namespace AppSigmaAdmin.Models
         /// 位置情報(経度,緯度)
         /// </summary>
         public string LocationInformation { get; set; }
+
+        /// <summary>
+        /// その他情報(JSON形式)
+        /// </summary>
+        public string ExtraInformation { get; set; }
     }
 }
