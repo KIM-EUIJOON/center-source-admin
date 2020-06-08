@@ -113,34 +113,6 @@ namespace AppSigmaAdmin.Utility
         }
 
         /// <summary>
-        /// ディレクトリ配下の全てのブロブ名を取得
-        /// </summary>
-        /// <param name="containerName">コンテナ名</param>
-        /// <param name="directoryName">ディレクトリ名</param>
-        /// <returns>ディクショナリー（キー：ファイルパス、値：ファイル名）</returns>
-        public Dictionary<string, string> GetBlobNameDictionary(string containerName, string directoryName)
-        {
-            Dictionary<string, string> dicFileName = new Dictionary<string, string>();
-            // コンテナを取得
-            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
-            // ディレクトリを取得
-            CloudBlobDirectory directory = container.GetDirectoryReference(directoryName);
-
-            BlobContinuationToken token = null;
-
-            // ディレクトリ配下の全てのブロブを取得
-            foreach (IListBlobItem item in directory.ListBlobsSegmentedAsync(true, BlobListingDetails.Metadata, null, token, null, null).Result.Results)
-            {
-                if (item.GetType() == typeof(CloudBlockBlob))
-                {
-                    CloudBlockBlob blob = (CloudBlockBlob)item;
-                    dicFileName.Add(blob.Name, blob.Uri.Segments[blob.Uri.Segments.Length - 1].ToString());
-                }
-            }
-            return dicFileName;
-        }
-
-        /// <summary>
         /// StorageBlobからファイルデータを取得
         /// </summary>
         /// <param name="containerName">コンテナ名</param>
@@ -154,14 +126,12 @@ namespace AppSigmaAdmin.Utility
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
 
             // コンテナに対象ファイルが存在しない場合、処理中止
-            //if (!blockBlob.Exists())
-            if (!blockBlob.ExistsAsync().Result)
+            if (!blockBlob.Exists())
             {
                 memoryStream = null;
             }
 
-            //blockBlob.DownloadToStream(memoryStream);
-            blockBlob.DownloadToStreamAsync(memoryStream).Wait();
+            blockBlob.DownloadToStream(memoryStream);
         }
 
         /// <summary>
@@ -201,10 +171,7 @@ namespace AppSigmaAdmin.Utility
         {
             CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_INFORMATION_LOG);
 
-            string query = TableQuery.CombineFilters(
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
-                        TableOperators.And,
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+            string query = this.GetCommonQuery(start, end, messageList);
 
             if (!string.IsNullOrEmpty(userId))
             {
@@ -214,36 +181,12 @@ namespace AppSigmaAdmin.Utility
                             TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
             }
 
-            string queryMessage = string.Empty;
-            foreach (string message in messageList)
-            {
-                if (string.IsNullOrEmpty(queryMessage))
-                {
-                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
-                }
-                else
-                {
-                    queryMessage = TableQuery.CombineFilters(
-                                queryMessage,
-                                TableOperators.Or,
-                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
-                }
-            }
-
-            if (!string.IsNullOrEmpty(queryMessage))
-            {
-                query = TableQuery.CombineFilters(
-                            query,
-                            TableOperators.And,
-                            queryMessage);
-            }
-
             TableQuery<InformationLogEntity> tableQuery = new TableQuery<InformationLogEntity>().Where(query);
             var result = table.ExecuteQuery(tableQuery);
 
             return result.Select(_ => new UserLogInfoEntity
             {
-                Timestamp = _.Timestamp.DateTime.AddHours(9),   // TimestampはUTC→JSTに変換
+                Timestamp = Common.Utc2JstTime(_.Timestamp.DateTime, true),
                 PartitionKey = DateTime.Parse(_.PartitionKey),
                 UserId = _.UserId,
                 Level = _.Level,
@@ -264,10 +207,7 @@ namespace AppSigmaAdmin.Utility
         {
             CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_DEBUG_LOG);
 
-            string query = TableQuery.CombineFilters(
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
-                        TableOperators.And,
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+            string query = this.GetCommonQuery(start, end, messageList);
 
             if (!string.IsNullOrEmpty(userId))
             {
@@ -277,36 +217,12 @@ namespace AppSigmaAdmin.Utility
                             TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
             }
 
-            string queryMessage = string.Empty;
-            foreach (string message in messageList)
-            {
-                if (string.IsNullOrEmpty(queryMessage))
-                {
-                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
-                }
-                else
-                {
-                    queryMessage = TableQuery.CombineFilters(
-                                queryMessage,
-                                TableOperators.Or,
-                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
-                }
-            }
-
-            if (!string.IsNullOrEmpty(queryMessage))
-            {
-                query = TableQuery.CombineFilters(
-                            query,
-                            TableOperators.And,
-                            queryMessage);
-            }
-
             TableQuery<DebugLogEntity> tableQuery = new TableQuery<DebugLogEntity>().Where(query);
             var result = table.ExecuteQuery(tableQuery);
 
             return result.Select(_ => new UserLogInfoEntity
             {
-                Timestamp = _.Timestamp.DateTime.AddHours(9),   // TimestampはUTC→JSTに変換
+                Timestamp = Common.Utc2JstTime(_.Timestamp.DateTime, true),
                 PartitionKey = DateTime.Parse(_.PartitionKey),
                 UserId = _.UserId,
                 Level = _.Level,
@@ -329,10 +245,7 @@ namespace AppSigmaAdmin.Utility
         {
             CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_MOBILE_INFORMATION_LOG);
 
-            string query = TableQuery.CombineFilters(
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
-                        TableOperators.And,
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+            string query = this.GetCommonQuery(start, end, messageList);
 
             if (!string.IsNullOrEmpty(userId))
             {
@@ -344,30 +257,6 @@ namespace AppSigmaAdmin.Utility
                             query,
                             TableOperators.And,
                             queryUserId);
-            }
-
-            string queryMessage = string.Empty;
-            foreach (string message in messageList)
-            {
-                if (string.IsNullOrEmpty(queryMessage))
-                {
-                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
-                }
-                else
-                {
-                    queryMessage = TableQuery.CombineFilters(
-                                queryMessage,
-                                TableOperators.Or,
-                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
-                }
-            }
-
-            if (!string.IsNullOrEmpty(queryMessage))
-            {
-                query = TableQuery.CombineFilters(
-                            query,
-                            TableOperators.And,
-                            queryMessage);
             }
 
             if (!string.IsNullOrEmpty(infoTypeName))
@@ -395,7 +284,7 @@ namespace AppSigmaAdmin.Utility
 
             return result.Select(_ => new UserLogInfoEntity
             {
-                Timestamp = _.MobileTimestamp.AddHours(9),   // TimestampはUTC→JSTに変換
+                Timestamp = Common.Utc2JstTime(_.MobileTimestamp, true),
                 PartitionKey = DateTime.Parse(_.PartitionKey),
                 InfoTypeName = _.InfoTypeName,
                 RequestUserId = _.RequestUserId,
@@ -416,6 +305,47 @@ namespace AppSigmaAdmin.Utility
                 TelecomCarrier = _.TelecomCarrier,
                 ExtraInformation = _.ExtraInformation,
             }).ToList();
+        }
+
+        /// <summary>
+        /// ログ抽出共通条件を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>抽出条件</returns>
+        private string GetCommonQuery(DateTime start, DateTime end, List<string> messageList)
+        {
+            string query = TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            string queryMessage = string.Empty;
+            foreach (string message in messageList)
+            {
+                if (string.IsNullOrEmpty(queryMessage))
+                {
+                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
+                }
+                else
+                {
+                    queryMessage = TableQuery.CombineFilters(
+                                queryMessage,
+                                TableOperators.Or,
+                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(queryMessage))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMessage);
+            }
+
+            return query;
         }
     }
 

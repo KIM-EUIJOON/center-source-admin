@@ -31,12 +31,12 @@
             <div class="GridTable">
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        ●検索条件（共通項目）
+                        ●検索条件(共通項目)
                     </div>
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        開始日時:
+                        開始日時(必須):
                         @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.TargetDateBegin)
                         @{
@@ -60,7 +60,7 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        終了日時:
+                        終了日時(必須):
                         @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.TargetDateEnd)
                         @{
@@ -93,7 +93,7 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        ●追加検索条件（インフォメーションログ）
+                        ●追加検索条件(インフォメーションログ)
                     </div>
                 </div>
                 <div class="GridTableRow">
@@ -118,7 +118,7 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        ●追加検索条件（デバッグログ）
+                        ●追加検索条件(デバッグログ)
                     </div>
                 </div>
                 <div class="GridTableRow">
@@ -143,7 +143,7 @@
                 </div>
                 <div class="GridTableRow">
                     <div class="GridTableCell">
-                        ●追加検索条件（端末ログ）
+                        ●追加検索条件(端末ログ)
                     </div>
                 </div>
                 <div class="GridTableRow">

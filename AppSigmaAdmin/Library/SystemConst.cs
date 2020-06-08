@@ -243,5 +243,9 @@ namespace AppSigmaAdmin.Library
         /// 利用者ログ情報ダウンロード：出力ファイルコンテンツタイプ(CSV)
         /// </summary>
         public const string USER_LOG_FILE_CONTENTTYPE = "text/comma-separated-values";
+        /// <summary>
+        /// 利用者ログ情報ダウンロード：検索条件の上限期間（開始日時～終了日時）
+        /// </summary>
+        public const int USER_LOG_SEARCH_LIMIT_DAYS = 31;
     }
 }

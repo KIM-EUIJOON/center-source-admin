@@ -35,6 +35,9 @@ namespace AppSigmaAdmin.Controllers
             info.IsInformationLog = true;
             info.IsDebugLog = false;
             info.IsMobileLog = true;
+            DateTime now = Common.GetNowTimestamp();
+            info.TargetDateBegin = now.ToString("yyyy/MM/dd");
+            info.TargetDateEnd = now.AddDays(1).ToString("yyyy/MM/dd");
 
             return View(info);
         }
@@ -154,49 +157,17 @@ namespace AppSigmaAdmin.Controllers
         /// <returns>true:正常、false:異常</returns>
         private bool CheckParam(UserLogInfoListEntity model)
         {
-            if (string.IsNullOrEmpty(model.TargetDateBegin))
+            string errorMessage = this.CheckDateTime(true, model.TargetDateBegin, model.StartHour, model.StartMinute);
+            if (!string.IsNullOrEmpty(errorMessage))
             {
-                ModelState.AddModelError("", "検索条件の開始年月日を指定してください。");
-                return false;
-            }
-            else if (string.IsNullOrEmpty(model.TargetDateEnd))
-            {
-                ModelState.AddModelError("", "検索条件の終了年月日を指定してください。");
+                ModelState.AddModelError("", errorMessage);
                 return false;
             }
 
-            if (!IsDate(model.TargetDateBegin.ToString()))
+            errorMessage = this.CheckDateTime(false, model.TargetDateEnd, model.EndHour, model.EndMinute);
+            if (!string.IsNullOrEmpty(errorMessage))
             {
-                ModelState.AddModelError("", "検索条件の開始年月日が正しくありません。半角英数字で再入力してください。");
-                return false;
-            }
-            else if (!IsDate(model.TargetDateEnd.ToString()))
-            {
-                ModelState.AddModelError("", "検索条件の終了年月日が正しくありません。半角英数字で再入力してください。");
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(model.StartHour) || string.IsNullOrEmpty(model.StartMinute))
-            {
-                ModelState.AddModelError("", "検索条件の開始時刻を指定してください。");
-                return false;
-            }
-            else if (string.IsNullOrEmpty(model.EndHour) || string.IsNullOrEmpty(model.EndMinute))
-            {
-                ModelState.AddModelError("", "検索条件の終了時刻を指定してください。");
-                return false;
-            }
-
-            if (!int.TryParse(model.StartHour, out int resStartHour) || !int.TryParse(model.StartMinute, out int resStartMinute)
-                || resStartHour < 0 || resStartHour >= 24 || resStartMinute < 0 || resStartMinute >= 60)
-            {
-                ModelState.AddModelError("", "検索条件の開始時刻が正しくありません。時(00～23)、分(00～59)で再入力してください。");
-                return false;
-            }
-            else if (!int.TryParse(model.EndHour, out int resEndHour) || !int.TryParse(model.EndMinute, out int resEndMinute)
-                || resEndHour < 0 || resEndHour >= 24 || resEndMinute < 0 || resEndMinute >= 60)
-            {
-                ModelState.AddModelError("", "検索条件の終了時刻が正しくありません。時(00～23)、分(00～59)で再入力してください。");
+                ModelState.AddModelError("", errorMessage);
                 return false;
             }
 
@@ -212,25 +183,17 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "検索条件の開始日時が終了日時よりも未来です。再入力してください。");
                 return false;
             }
-
-            if (!string.IsNullOrEmpty(model.UserId))
+            else if ((targetDateEnd - targetDateBegin).Days > SystemConst.USER_LOG_SEARCH_LIMIT_DAYS)
             {
-                try
-                {
-                    int.Parse(model.UserId.ToString());
-                }
-                catch (OverflowException)
-                {
-                    // myrouteIDのテキストボックスに誤った数値が入力された場合
-                    ModelState.AddModelError("", "myroute会員IDに誤った数値が入力されました。半角数字で再入力してください。");
-                    return false;
-                }
-                catch
-                {
-                    // myrouteIDのテキストボックスに半角数字以外が入力された場合
-                    ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。");
-                    return false;
-                }
+                ModelState.AddModelError("", "検索期間（開始日時～終了日時）が上限日数（" + SystemConst.USER_LOG_SEARCH_LIMIT_DAYS + "）を超えています。再入力してください。");
+                return false;
+            }
+
+            errorMessage = Common.CheckUserId(model.UserId);
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                ModelState.AddModelError("", errorMessage);
+                return false;
             }
 
             if (model.IsMobileLog && !string.IsNullOrEmpty(model.MobileLogKey))
@@ -243,6 +206,41 @@ namespace AppSigmaAdmin.Controllers
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 入力日時チェック関数
+        /// </summary>
+        /// <param name="date">日付</param>
+        /// <param name="hour">時刻(時)</param>
+        /// <param name="minute">時刻(分)</param>
+        /// <returns>エラーメッセージ</returns>
+        private string CheckDateTime(bool isStart, string date, string hour, string minute)
+        {
+            string targetDate = isStart ? "開始年月日" : "終了年月日";
+            string targetDateTime = isStart ? "開始時刻" : "終了時刻";
+
+            if (string.IsNullOrEmpty(date))
+            {
+                return "検索条件の" + targetDate + "を指定してください。";
+            }
+
+            if (!IsDate(date))
+            {
+                return "検索条件の" + targetDate + "が正しくありません。半角英数字で再入力してください。";
+            }
+
+            if (string.IsNullOrEmpty(hour) || string.IsNullOrEmpty(minute))
+            {
+                return "検索条件の" + targetDateTime + "を指定してください。";
+            }
+
+            if (!IsDateTime(hour, minute))
+            {
+                return "検索条件の" + targetDateTime + "が正しくありません。時(00～23)、分(00～59)で再入力してください。";
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -260,6 +258,23 @@ namespace AppSigmaAdmin.Controllers
                 DateTime.ParseExact(s, baseDatePaturn, System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
             }
             catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 入力時刻チェック関数
+        /// </summary>
+        /// <param name="hour">時刻(時)</param>
+        /// <param name="minute">時刻(分)</param>
+        /// <returns>true:正常、false:異常</returns>
+        private bool IsDateTime(string hour, string minute)
+        {
+            if (!int.TryParse(hour, out int resHour) || !int.TryParse(minute, out int resMinute)
+                || resHour < 0 || resHour >= 24 || resMinute < 0 || resMinute >= 60)
             {
                 return false;
             }
