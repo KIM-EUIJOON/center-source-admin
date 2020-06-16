@@ -284,7 +284,7 @@ namespace AppSigmaAdmin.Utility
 
             return result.Select(_ => new UserLogInfoEntity
             {
-                Timestamp = Common.Utc2JstTime(_.MobileTimestamp, true),
+                Timestamp = _.MobileTimestamp,
                 PartitionKey = DateTime.Parse(_.PartitionKey),
                 InfoTypeName = _.InfoTypeName,
                 RequestUserId = _.RequestUserId,
