@@ -934,10 +934,328 @@ namespace AppSigmaAdmin.Models
                         {
                             info.TicketName = info.TicketName + "[au]";
                         }
-
+						if (info.TransportType != "NIS"&info.TransportType!= "NISK"& info.TransportType != "NNR" & info.TransportType != "NISG") { continue; }//西鉄以外のものをリストに含めない
                         result.Add(info);
                     }
                     return result;
+
+                }
+
+            }
+        }
+
+
+        /// <summary>
+        /// ドコモ・バイクシェア
+        /// </summary>
+        public class DocomoBikeShare
+        {
+            public DataTable GetPaymentDateList(DocomoPaymentInfoListEntity model)
+            {
+                using (SqlDbInterface dbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    // データ取得
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("select ROW_NUMBER() OVER(ORDER BY dbsu.PaymentId, pm.PaymentType) as RecNo");
+                    sb.AppendLine("     , dbsu.UserId");
+                    sb.AppendLine("     , pm.TranDate");
+                    sb.AppendLine("     ,dbsu.PaymentId");
+                    sb.AppendLine("     ,dbsu.CycleBizName");
+                    sb.AppendLine("     ,dbsu.ReserveId");
+                    sb.AppendLine("     ,case when uio.AplType =1 then 'au' ");
+                    sb.AppendLine("     else ''");
+                    sb.AppendLine("     end as AplName");
+                    sb.AppendLine("     ,case when pm.PaymentType = '3' then N'即時決済'");
+                    sb.AppendLine("           when pm.PaymentType = '4' then N'払戻し'");
+                    sb.AppendLine("           when pm.PaymentType = '5' then N'取消'");
+                    sb.AppendLine("           else N'決済種別不明'end as PaymentType");
+                    sb.AppendLine("     ,pm.Amount");
+                    sb.AppendLine(" from DocomoBicycleShareUsages dbsu");
+                    sb.AppendLine(" inner join PaymentManage pm");
+                    sb.AppendLine("    on dbsu.UserId = pm.UserId");
+                    sb.AppendLine("   and dbsu.PaymentId = pm.PaymentId");
+                    sb.AppendLine("   and pm.ServiceId = '7' ");    /* サービスID(DBS)*/
+                    sb.AppendLine("   and pm.PaymentType = '3'");  /* 即時決済*/
+                    sb.AppendLine("   and pm.GmoStatus = '1'");     /* 成功*/
+                    sb.AppendLine("   and pm.GmoProcType = '2'");   /* 決済実行*/
+                    sb.AppendLine("   left join UserInfoOid uio");   /* アプリ種別取得*/
+                    sb.AppendLine("   on  dbsu.UserId=uio.UserId");
+                    sb.AppendLine(" where pm.TranDate between @StartDatatTime and @EndDatatTime ");        /* クレジット利用*/
+                    sb.AppendLine("   and dbsu.Status = '9'");       /*決済済み*/
+                                                                      /*決済失敗の未処理分は含めない*/
+                    sb.AppendLine("   and not exists(");
+                    sb.AppendLine("       select 1");
+                    sb.AppendLine("         from PaymentError pe");
+                    sb.AppendLine("        where pe.UserId = dbsu.UserId");
+                    sb.AppendLine("          and pe.PaymentId = dbsu.PaymentId");
+                    sb.AppendLine("          and pe.ServiceId = '7' ");     /*サービスID(DBS)*/
+                    sb.AppendLine("          and pe.IsTreat = 0");          /*運用未処理*/
+                    sb.AppendLine("     )");
+                    // 検索条件
+                    if (false == string.IsNullOrEmpty(model.UserId))
+                    {
+                        sb.AppendLine("    AND dbsu.UserId = @UserId");
+                        cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = model.UserId;
+                    }
+                    if (false == string.IsNullOrEmpty(model.Apltype))
+                    {
+                        sb.AppendLine("    AND uio.AplType = @AplType ");
+                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = model.Apltype;
+                    }
+
+                    cmd.CommandText = sb.ToString();
+
+                    cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = model.TargetDateBegin;
+                    cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = model.TargetDateEnd + " 23:59:59";
+                    return dbInterface.ExecuteReader(cmd);
+                }
+            }
+        }
+
+        public class YokohamaPayment
+        {
+            public DataTable GetPaymentDateList(YokohamaPaymentInfo model)
+            {
+                using (SqlDbInterface dbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    // データ取得
+                    StringBuilder Ysb = new StringBuilder();
+                    string YokohamaInfo = GetALLGetYokohamaPaymentDateQuery();
+                    Ysb.AppendLine("select * from (" + YokohamaInfo.ToString() + "");
+
+
+                    if (false == string.IsNullOrEmpty(model.UserId))
+                    {
+                        Ysb.AppendLine("    AND tbl.UserId = @UserId");
+                        cmd.Parameters.Add("@UserId", SqlDbType.NVarChar).Value = model.UserId;
+                    }
+                    if (false == string.IsNullOrEmpty(model.Apltype))
+                    {
+                        Ysb.AppendLine("    AND tbl.AplName = @AplName ");
+                        cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
+                    }
+                    if (false == string.IsNullOrEmpty(model.TicketId))
+                    {
+                        Ysb.AppendLine("   and tbl.TicketId = @TicketId  ");
+                        cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = model.TicketId;
+                    }
+                    if (model.PaymentType == "決済種別不明")
+                    {
+                        //検索条件に決済種別：決済種別不明指定
+                        Ysb.AppendLine("   and tbl.PaymentType not in ('3','4','5')");
+                        cmd.Parameters.Add("@PaymentType", SqlDbType.NVarChar).Value = model.PaymentType;
+                    }
+                    else if (model.PaymentType != "-")
+                    {
+                        //検索条件に決済種別指定
+                        Ysb.AppendLine("   and tbl.PaymentType = @PaymentType ");
+                        cmd.Parameters.Add("@PaymentType", SqlDbType.NVarChar).Value = model.PaymentType;
+                    }
+                    if (model.TicketNumType == "1")
+                    {
+                        //検索条件に枚数種別：大人
+                        Ysb.AppendLine("   and tbl.ChildNum = '0' ");
+                    }
+                    else if (model.TicketNumType == "2")
+                    {
+                        //検索条件に枚数種別：子供
+                        Ysb.AppendLine("   and tbl.AdultNum = '0' ");
+                    }
+                    Ysb.AppendLine("  ) as MA");
+
+                    // 検索条件
+                    Ysb.AppendLine("WHERE 1 = 1");
+                    cmd.CommandText = Ysb.ToString();
+
+                    cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = model.TargetDateBegin;
+                    cmd.Parameters.Add("@EndDatatTime", SqlDbType.NVarChar).Value = model.TargetDateEnd + " 23:59:59";
+                    cmd.Parameters.Add("@lang", SqlDbType.NVarChar).Value = model.Language;
+                    return dbInterface.ExecuteReader(cmd);
+                }
+            }
+
+            ///<summary>
+            ///横浜決済情報取得内容
+            ///<summary>
+            private string GetALLGetYokohamaPaymentDateQuery()
+            {
+                using (SqlDbInterface YokohamadbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");    //決済IDと決済種別でソートする
+                    sb.AppendLine("     , tbl.UserId");
+                    sb.AppendLine("     , tbl.TranDate");
+                    sb.AppendLine("     , tbl.BizCompanyCd" );                                /*チケット種別(交通手段)*/
+                    sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
+                    sb.AppendLine("     , tbl.TicketId");
+                    sb.AppendLine("     , tbl.TicketGroup");
+                    sb.AppendLine("     , tbl.Value");                                                                   /*チケット名称*/
+                    sb.AppendLine("     , tbl.AdultNum");
+                    sb.AppendLine("     , tbl.ChildNum");
+                    sb.AppendLine("     , tbl.PaymentId");
+                    sb.AppendLine("     , tbl.AplName");                                                                /*アプリ種別*/
+                    sb.AppendLine("     , case when tbl.PaymentType = '3' then N'即時決済'");
+                    sb.AppendLine("           when tbl.PaymentType = '4' then N'払戻し'");
+                    sb.AppendLine("           when tbl.PaymentType = '5' then N'取消'");
+                    sb.AppendLine("           else N'決済種別不明' end as PaymentType");
+                    sb.AppendLine("     , tbl.Amount");
+                    sb.AppendLine("     , tbl.ReceiptNo");
+                    sb.AppendLine("  from (");
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'売上' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("     ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/
+                    sb.AppendLine("     else ''");
+                    sb.AppendLine("     end as AplName");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");      /*横浜*/
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("        	and pm.PaymentType = '3'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '2'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language =@lang");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+                    sb.AppendLine("        	union all");
+                    /*払戻し返金データ取得*/
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'売上' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                                /*チケット名称(日本語)*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                          /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                          /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount* -1 as Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケットID*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("     ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/
+                    sb.AppendLine("     else ''");
+                    sb.AppendLine("     end as AplName");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");　　　　　/*横浜*/
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:)*/
+                    sb.AppendLine("        	and pm.PaymentType = '5'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '3'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language =@lang");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+                    sb.AppendLine("        	union all");
+                    /*払戻し手数料取得*/
+                    sb.AppendLine("        	select pm.TranDate");
+                    sb.AppendLine("        	,ftm.UserId");
+                    sb.AppendLine("        	,fsm.TrsType");
+                    sb.AppendLine("        	, N'払戻し' as Summary");
+                    sb.AppendLine("        	,fsm.TicketType");
+                    sb.AppendLine("        	,cr.Value");                        /*チケット名称*/
+                    sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
+                    sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, pm.PaymentId");
+                    sb.AppendLine("        	, pm.PaymentType");
+                    sb.AppendLine("        	, pm.Amount");
+                    sb.AppendLine("        	, pm.ReceiptNo");
+                    sb.AppendLine("        	,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケットID*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("     ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/
+                    sb.AppendLine("     else ''");
+                    sb.AppendLine("     end as AplName");
+                    sb.AppendLine("        	from FreeTicketManage ftm");
+                    sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");　　　　　/*横浜*/
+                    sb.AppendLine("        	inner join PaymentManage pm");
+                    sb.AppendLine("        	on ftm.UserId = pm.UserId");
+                    sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("        	and pm.PaymentType = '4'");
+                    sb.AppendLine("        	and pm.GmoStatus = '1'");
+                    sb.AppendLine("        	and pm.GmoProcType = '2'");
+                    sb.AppendLine("        	left join CharacterResource cr");
+                    sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("        	and Language =@lang");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+                    sb.AppendLine("      ) tbl");
+                    // 決済エラー分は含めない
+                    sb.AppendLine("  where not exists(");
+                    sb.AppendLine("        select 1");
+                    sb.AppendLine("          from PaymentError pe");
+                    sb.AppendLine("         where pe.UserId = tbl.UserId");
+                    sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
+                    sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
+                    sb.AppendLine("        	and(pe.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
+                    sb.AppendLine("     )");
+                    sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
+                    return sb.ToString();
+                }
+            }
+
+
+
+            /// <summary>
+            /// 横浜券種ドロップダウンリスト項目取得
+            /// </summary>
+            /// <returns></returns>
+            public DataTable GetTicketName(string lang)
+            {
+                List<YokohamaPaymentInfo> result = new List<YokohamaPaymentInfo>();
+                using (SqlDbInterface NTdbInterface = new SqlDbInterface())
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.AppendLine("select fsm.TicketType");
+                    sb.AppendLine("   ,cr.Value");
+                    sb.AppendLine("   ,fsm.BizCompanyCd");
+                    sb.AppendLine("   ,fsm.TicketId");
+                    sb.AppendLine("   ,fsm.TicketGroup");
+                    sb.AppendLine("   from FreeTicketSalesMaster fsm");
+                    sb.AppendLine("   left join CharacterResource cr");
+                    sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("   and Language = @lang");
+                    sb.AppendLine("   where BizCompanyCd = @Bizid");
+
+                    cmd.Parameters.Add("@lang", SqlDbType.NVarChar).Value = lang;
+                    cmd.Parameters.Add("@Bizid", SqlDbType.NVarChar).Value = "TBCY";/*横浜のBizCompanyCDわかり次第記入*/
+                    cmd.CommandText = sb.ToString();
+
+                    return NTdbInterface.ExecuteReader(cmd);
 
                 }
 

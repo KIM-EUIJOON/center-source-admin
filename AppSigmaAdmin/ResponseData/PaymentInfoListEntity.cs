@@ -1,4 +1,5 @@
-﻿using AppSigmaAdmin.Utility;
+﻿using AppSigmaAdmin.Library;
+using AppSigmaAdmin.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -259,4 +260,161 @@ namespace AppSigmaAdmin.ResponseData
     {
         public string InquiryNo { get; set; }
     }
+    public class DocomoPaymentInfoListEntity : PaymentInfo
+    {
+        ///<summary>
+        ///抽出開始指定日(YYYY-MM-DD)
+        ///</summary>
+        [DataMember(Name = "targetDateBegin")]
+        public string TargetDateBegin { get; set; }
+
+        ///<summary>
+        ///抽出終了指定日(YYYY-MM-DD)
+        ///</summary>
+        [DataMember(Name = "targetDateEnd")]
+        public string TargetDateEnd { get; set; }
+
+        ///<summary>
+        ///ページ番号
+        ///</summary>
+        [DataMember(Name = "PageNo")]
+        public int ListPageNo { get; set; }
+
+        ///<summary>
+        ///ページング数
+        ///</summary>
+        public int rowsPerPage { get; set; } = SystemConst.ROWS_PER_PAGE;
+
+        ///<summary>
+        ///総ページ数
+        ///</summary>
+        public int PageCount { get; set; }
+
+        ///<summary>
+        ///総リスト件数
+        ///</summary>
+        public int ListMaxCount { get; set; }
+
+        /// <summary>
+        /// 言語設定
+        /// </summary>
+        public string Language { get; set; } = SystemConst.LANGUAGE_JA;
+
+        ///<summary>
+        ///予約ID
+        ///</summary>
+        public string ReserveId { get; set; }
+
+        ///<summary>
+        ///自転車事業者名
+        ///</summary>
+        public string CycleBizName { get; set; }
+
+        /// <summary>
+        /// 決済一覧
+        /// </summary>
+        public List<DocomoPaymentInfoListEntity> DocomoPaymentList { get; set; }
+
+        /// <summary>
+        /// 決済一覧(全件)
+        /// </summary>
+        public List<DocomoPaymentInfoListEntity> DocomoPaymentListAll { get; set; }
+        ///<summary>
+        ///ドコモ表示用リスト
+        ///</summary>
+        public DocomoPaymentInfoListEntity()
+        {
+            DocomoPaymentList = new List<DocomoPaymentInfoListEntity>();
+            DocomoPaymentListAll = new List<DocomoPaymentInfoListEntity>();
+        }
+        /// <summary>
+        /// ドコモ表示用リスト内容
+        /// </summary>
+        /// <param name="source">コピー元</param>
+        public DocomoPaymentInfoListEntity(DocomoPaymentInfoListEntity source)
+        {
+            this.TargetDateBegin = source.TargetDateBegin;
+            this.TargetDateEnd = source.TargetDateEnd;
+            this.ListMaxCount = source.ListMaxCount;
+            this.ListPageNo = source.ListPageNo;
+            this.rowsPerPage = source.rowsPerPage;
+            this.ListMaxCount = source.ListMaxCount;
+            this.UserId = source.UserId;
+            this.Apltype = source.Apltype;
+            this.CycleBizName = source.CycleBizName;
+            this.ReserveId = source.ReserveId;
+            DocomoPaymentList = new List<DocomoPaymentInfoListEntity>();
+            DocomoPaymentListAll = new List<DocomoPaymentInfoListEntity>(source.DocomoPaymentListAll);
+            this.Language = source.Language;
+        }
     }
+
+    /// <summary>
+    /// 横浜決済情報取得用リスト
+    /// </summary>
+    public class  YokohamaPaymentInfo: NishitetsuPaymentInfoListEntity
+    {
+        ///<summary>
+        ///ページ番号
+        ///</summary>
+        [DataMember(Name = "PageNo")]
+        public int PageNo { get; set; }
+
+        ///<summary>
+        ///総ページ数
+        ///</summary>
+        public int PageCount { get; set; }
+
+        /// <summary>
+        /// 言語設定
+        /// </summary>
+        public string Language { get; set; } = SystemConst.LANGUAGE_JA;
+
+        ///<summary>
+        ///ページング数
+        ///</summary>
+        public int rowsPerPage { get; set; } = SystemConst.ROWS_PER_PAGE;
+
+        /// <summary>
+        /// 横浜決済リスト
+        /// </summary>
+        public List<YokohamaPaymentInfo> YokohamaPaymentInfoList { get; set; }
+
+        /// <summary>
+        /// 横浜決済リスト一覧
+        /// </summary>
+        public List<YokohamaPaymentInfo> YokohamaPaymentInfoListAll { get; set; }
+
+        ///<summary>
+        ///横浜表示用リスト
+        ///</summary>
+        public YokohamaPaymentInfo()
+        {
+            YokohamaPaymentInfoList = new List<YokohamaPaymentInfo>();
+            YokohamaPaymentInfoListAll = new List<YokohamaPaymentInfo>();
+        }
+        /// <summary>
+        /// 横浜表示用リスト内容
+        /// </summary>
+        /// <param name="source">コピー元</param>
+        public YokohamaPaymentInfo(YokohamaPaymentInfo source)
+        {
+            this.TargetDateBegin = source.TargetDateBegin;
+            this.TargetDateEnd = source.TargetDateEnd;
+            this.ListMaxCount = source.ListMaxCount;
+            this.ListPageNo = source.ListPageNo;
+            this.rowsPerPage = source.rowsPerPage;
+            this.ListMaxCount = source.ListMaxCount;
+            this.UserId = source.UserId;
+            this.Apltype = source.Apltype;
+            this.TicketName = source.TicketName;
+            this.PaymentType = source.PaymentType;
+            this.AdultNum = source.AdultNum;
+            this.ChildNum = source.ChildNum;
+            this.Apltype = source.Apltype;
+            YokohamaPaymentInfoList = new List<YokohamaPaymentInfo>();
+            YokohamaPaymentInfoListAll = new List<YokohamaPaymentInfo>(source.YokohamaPaymentInfoListAll);
+            this.Language = source.Language;
+        }
+    }
+}
