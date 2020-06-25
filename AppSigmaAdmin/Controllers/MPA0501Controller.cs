@@ -71,6 +71,7 @@ namespace AppSigmaAdmin.Controllers
         private const string SESSION_SEARCH_Yokohama = "SESSION_SEARCH_Yokohama";
 
         // GET: MPA0501
+        [SessionCheck(WindowName = "横浜決済画面")]
         public ActionResult Index(string page)
         {
             YokohamaPaymentInfo info = new YokohamaPaymentInfo();
@@ -180,14 +181,26 @@ namespace AppSigmaAdmin.Controllers
                 return View(info);
             }
             // SQL取得結果(検索結果)を出力
+            
+            //au付加用
+            string TicketNameValue;
             foreach (DataRow row in GetData.Rows)
             {
+                if (row["TicketGroup"].ToString() == "1")
+                {
+                    TicketNameValue = row["Value"].ToString() + "[au]";
+                }
+                else
+                {
+                    TicketNameValue = row["Value"].ToString();
+                }
+
                 info.YokohamaPaymentInfoListAll.Add(new YokohamaPaymentInfo()
                 {
                     UserId = row["UserId"].ToString(),
                     TranDatetime = (DateTime.Parse(row["TranDate"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
                     PaymentId = row["PaymentId"].ToString(),
-                    TicketName = row["Value"].ToString(),
+                    TicketName = TicketNameValue,
                     AdultNum = row["AdultNum"].ToString(),
                     ChildNum = row["ChildNum"].ToString(),
                     PaymentType = row["PaymentType"].ToString(),
@@ -196,6 +209,7 @@ namespace AppSigmaAdmin.Controllers
                     Apltype = row["AplName"].ToString(),
 
                 });
+
             }
 
             // 取得開始行と取得範囲を指定
@@ -339,11 +353,21 @@ namespace AppSigmaAdmin.Controllers
             foreach (DataRow row in db.Rows)
             {
                 string idCheck = row["TicketId"].ToString();
+                string AplCheck = row["TicketGroup"].ToString();
+                string TicketName;
+                if (AplCheck == "1")
+                {
+                    TicketName = row["Value"].ToString() + "[au]";
+                }
+                else
+                {
+                    TicketName = row["Value"].ToString();
+                }
                 if (idCheck == id)
                 {
                     itemList.Add(new SelectListItem
                     {
-                        Text = row["Value"].ToString(),
+                        Text = TicketName,
                         Value = row["TicketId"].ToString(),
                         Selected = true,
                     });
@@ -352,7 +376,7 @@ namespace AppSigmaAdmin.Controllers
                 {
                     itemList.Add(new SelectListItem
                     {
-                        Text = row["Value"].ToString(),
+                        Text = TicketName,
                         Value = row["TicketId"].ToString(),
                     });
                 }

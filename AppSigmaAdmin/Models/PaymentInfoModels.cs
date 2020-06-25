@@ -961,8 +961,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , dbsu.UserId");
                     sb.AppendLine("     , pm.TranDate");
                     sb.AppendLine("     ,dbsu.PaymentId");
-                    sb.AppendLine("     ,dbsu.CycleBizName");
+                    sb.AppendLine("     ,dbsu.CycleBizId");
                     sb.AppendLine("     ,dbsu.ReserveId");
+                    sb.AppendLine("     ,cr.Value");
                     sb.AppendLine("     ,case when uio.AplType =1 then 'au' ");
                     sb.AppendLine("     else ''");
                     sb.AppendLine("     end as AplName");
@@ -972,6 +973,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           else N'決済種別不明'end as PaymentType");
                     sb.AppendLine("     ,pm.Amount");
                     sb.AppendLine(" from DocomoBicycleShareUsages dbsu");
+                    sb.AppendLine(" left join DocomoBicycleShareEnterpriseMaster dbsem");
+                    sb.AppendLine(" on dbsu.CycleBizId=dbsem.BizId");
+                    sb.AppendLine(" left join CharacterResource cr");
+                    sb.AppendLine(" on dbsem.BizName = cr.ResourceId");
+                    sb.AppendLine(" and Language = 'ja'");
                     sb.AppendLine(" inner join PaymentManage pm");
                     sb.AppendLine("    on dbsu.UserId = pm.UserId");
                     sb.AppendLine("   and dbsu.PaymentId = pm.PaymentId");
@@ -1015,6 +1021,12 @@ namespace AppSigmaAdmin.Models
 
         public class YokohamaPayment
         {
+
+            /// <summary>
+            /// 横浜決済情報取得
+            /// </summary>
+            /// <param name="model"></param>
+            /// <returns></returns>
             public DataTable GetPaymentDateList(YokohamaPaymentInfo model)
             {
                 using (SqlDbInterface dbInterface = new SqlDbInterface())
@@ -1252,7 +1264,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   where BizCompanyCd = @Bizid");
 
                     cmd.Parameters.Add("@lang", SqlDbType.NVarChar).Value = lang;
-                    cmd.Parameters.Add("@Bizid", SqlDbType.NVarChar).Value = "TBCY";/*横浜のBizCompanyCDわかり次第記入*/
+                    cmd.Parameters.Add("@Bizid", SqlDbType.NVarChar).Value = "TBCY";/*横浜のBizCompanyCD*/
                     cmd.CommandText = sb.ToString();
 
                     return NTdbInterface.ExecuteReader(cmd);
