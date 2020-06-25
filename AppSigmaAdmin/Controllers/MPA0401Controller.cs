@@ -66,9 +66,9 @@ namespace AppSigmaAdmin.Controllers
         }
 
         private const string SESSION_SEARCH_Docomo = "SESSION_SEARCH_Docomo";
-        
-        
+
         // GET: DocomoBicycleSharing
+        [SessionCheck(WindowName = "Docomo決済画面")]
         public ActionResult Index(string page)
         {
 
@@ -180,7 +180,7 @@ namespace AppSigmaAdmin.Controllers
                     UserId = row["UserId"].ToString(),
                     TranDatetime = (DateTime.Parse(row["TranDate"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
                     PaymentId = row["PaymentId"].ToString(),
-                    CycleBizName = row["CycleBizName"].ToString(),
+                    CycleBizName = row["Value"].ToString(),
                     ReserveId = row["ReserveId"].ToString(),
                     PaymentType = row["PaymentType"].ToString(),
                     Amount = (int)row["Amount"],
@@ -261,7 +261,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
                     strings.Add(EncloseDbQuotes(row["TranDate"].ToString()));
                     strings.Add(EncloseDbQuotes(row["PaymentId"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["CycleBizName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["Value"].ToString()));
                     strings.Add(EncloseDbQuotes(row["ReserveId"].ToString()));
                     strings.Add(EncloseDbQuotes(row["PaymentType"].ToString()));
                     strings.Add(EncloseDbQuotes(row["Amount"].ToString()));
