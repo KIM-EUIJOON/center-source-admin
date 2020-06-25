@@ -209,7 +209,6 @@ namespace AppSigmaAdmin.Controllers
                     Apltype = row["AplName"].ToString(),
 
                 });
-
             }
 
             // 取得開始行と取得範囲を指定
