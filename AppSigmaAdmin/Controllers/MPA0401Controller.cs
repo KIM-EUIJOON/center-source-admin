@@ -67,7 +67,7 @@ namespace AppSigmaAdmin.Controllers
 
         private const string SESSION_SEARCH_Docomo = "SESSION_SEARCH_Docomo";
 
-		// GET: DocomoBicycleSharing
+		
         [SessionCheck(WindowName = "Docomo決済画面")]
         public ActionResult Index(string page)
         {
