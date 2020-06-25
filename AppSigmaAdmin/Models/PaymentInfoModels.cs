@@ -9,9 +9,8 @@ using AppSigmaAdmin.ResponseData;
 
 namespace AppSigmaAdmin.Models
 {
-    /// <summary>
-    /// 決済データ取得クラス
-    /// </summary>
+    
+    // 決済データ取得クラス
     public class JTXPaymentModel
     {
         /// <summary>
@@ -945,11 +944,11 @@ namespace AppSigmaAdmin.Models
         }
 
 
-        /// <summary>
-        /// ドコモ・バイクシェア
-        /// </summary>
         public class DocomoBikeShare
         {
+            /// <summary>
+            /// ドコモ・バイクシェア決済内容取得
+            /// </summary>
             public DataTable GetPaymentDateList(DocomoPaymentInfoListEntity model)
             {
                 using (SqlDbInterface dbInterface = new SqlDbInterface())
