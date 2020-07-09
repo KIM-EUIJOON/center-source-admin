@@ -29,7 +29,7 @@ namespace AppSigmaAdmin.Utility
         /// </summary>
         public AzureStorageIO()
         {
-            string connetctionString = ApplicationConfig.StorageConnectionString2;
+            string connetctionString = ApplicationConfig.StorageConnectionString;
 
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connetctionString);
             blobClient = storageAccount.CreateCloudBlobClient();
@@ -157,6 +157,195 @@ namespace AppSigmaAdmin.Utility
             var retsurt = table.ExecuteQuery(tableQuery);
 
             return retsurt.Select(_ => new OperationMonitoringEntity { Timestamp= _.Timestamp.DateTime , RoleInstance= _.RoleInstance, CounterName= _.CounterName, CounterValue= _.CounterValue }).ToList();
+        }
+
+        /// <summary>
+        /// インフォメーションログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>インフォメーションログ情報</returns>
+        public List<UserLogInfoEntity> GetInformationLogTable(DateTime start, DateTime end, string userId, List<string> messageList)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_INFORMATION_LOG);
+
+            string query = this.GetCommonQuery(start, end, messageList);
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+            }
+
+            TableQuery<InformationLogEntity> tableQuery = new TableQuery<InformationLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = Common.Utc2JstTime(_.Timestamp.DateTime, true),
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                UserId = _.UserId,
+                Level = _.Level,
+                Message = _.Message,
+                InputParams = _.InputParams,
+            }).ToList();
+        }
+
+        /// <summary>
+        /// デバッグログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>デバッグログ情報</returns>
+        public List<UserLogInfoEntity> GetDebugLogTable(DateTime start, DateTime end, string userId, List<string> messageList)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_DEBUG_LOG);
+
+            string query = this.GetCommonQuery(start, end, messageList);
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+            }
+
+            TableQuery<DebugLogEntity> tableQuery = new TableQuery<DebugLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = Common.Utc2JstTime(_.Timestamp.DateTime, true),
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                UserId = _.UserId,
+                Level = _.Level,
+                TaskId = _.TaskId,
+                Message = _.Message,
+            }).ToList();
+        }
+
+        /// <summary>
+        /// 端末インフォメーションログ情報を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="userId">ユーザID</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <param name="infoTypeName">情報種別名</param>
+        /// <param name="mobileId">端末ID</param>
+        /// <returns>端末インフォメーションログ情報</returns>
+        public List<UserLogInfoEntity> GetMobileInformationLogTable(DateTime start, DateTime end, string userId, List<string> messageList, string infoTypeName, string mobileId)
+        {
+            CloudTable table = tableClient.GetTableReference(SystemConst.STORAGE_TABLE_NAME_MOBILE_INFORMATION_LOG);
+
+            string query = this.GetCommonQuery(start, end, messageList);
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                string queryUserId = TableQuery.CombineFilters(
+                            TableQuery.GenerateFilterCondition("RequestUserId", QueryComparisons.Equal, userId),
+                            TableOperators.Or,
+                            TableQuery.GenerateFilterCondition("UserId", QueryComparisons.Equal, userId));
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryUserId);
+            }
+
+            if (!string.IsNullOrEmpty(infoTypeName))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            TableQuery.GenerateFilterCondition("InfoTypeName", QueryComparisons.Equal, infoTypeName));
+            }
+
+            if (!string.IsNullOrEmpty(mobileId))
+            {
+                string queryMobileId = TableQuery.CombineFilters(
+                            TableQuery.GenerateFilterCondition("RequestMobileId", QueryComparisons.Equal, mobileId),
+                            TableOperators.Or,
+                            TableQuery.GenerateFilterCondition("MobileId", QueryComparisons.Equal, mobileId));
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMobileId);
+            }
+
+            TableQuery<MobileInformationLogEntity> tableQuery = new TableQuery<MobileInformationLogEntity>().Where(query);
+            var result = table.ExecuteQuery(tableQuery);
+
+            return result.Select(_ => new UserLogInfoEntity
+            {
+                Timestamp = _.MobileTimestamp,
+                PartitionKey = DateTime.Parse(_.PartitionKey),
+                InfoTypeName = _.InfoTypeName,
+                RequestUserId = _.RequestUserId,
+                RequestMobileId = _.RequestMobileId,
+                Level = _.Level,
+                Message = _.Message,
+                UserId = _.UserId,
+                MobileId = _.MobileId,
+                MobileName = _.MobileName,
+                OsName = _.OsName,
+                OsVersion = _.OsVersion,
+                GooglePlayServicesVersion = _.GooglePlayServicesVersion,
+                Language = _.Language,
+                LocationInformation = _.LocationInformation,
+                PushToken = _.PushToken,
+                ProductType = _.ProductType,
+                AppVersion = _.AppVersion,
+                TelecomCarrier = _.TelecomCarrier,
+                ExtraInformation = _.ExtraInformation,
+            }).ToList();
+        }
+
+        /// <summary>
+        /// ログ抽出共通条件を取得
+        /// </summary>
+        /// <param name="start">開始日時</param>
+        /// <param name="end">終了日時</param>
+        /// <param name="messageList">メッセージリスト</param>
+        /// <returns>抽出条件</returns>
+        private string GetCommonQuery(DateTime start, DateTime end, List<string> messageList)
+        {
+            string query = TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.GreaterThanOrEqual, start.ToString("yyyy-MM-dd HH:mm:ss")),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.LessThanOrEqual, end.ToString("yyyy-MM-dd HH:mm:ss")));
+
+            string queryMessage = string.Empty;
+            foreach (string message in messageList)
+            {
+                if (string.IsNullOrEmpty(queryMessage))
+                {
+                    queryMessage = TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message);
+                }
+                else
+                {
+                    queryMessage = TableQuery.CombineFilters(
+                                queryMessage,
+                                TableOperators.Or,
+                                TableQuery.GenerateFilterCondition("Message", QueryComparisons.Equal, message));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(queryMessage))
+            {
+                query = TableQuery.CombineFilters(
+                            query,
+                            TableOperators.And,
+                            queryMessage);
+            }
+
+            return query;
         }
     }
 

@@ -15,11 +15,12 @@ namespace AppSigmaAdmin.Utility
         /// 世界標準時から日本時間に変換します
         /// </summary>
         /// <param name="utcTime">世界標準時</param>
+        /// <param name="isForced">true:強制変換する、false:強制変換しない</param>
         /// <returns>日本時間</returns>
-        public static DateTime Utc2JstTime(DateTime utcTime)
+        public static DateTime Utc2JstTime(DateTime utcTime, bool isForced = false)
         {
             // タイムゾーンを指定してUTCからJSTへ変換
-            if (utcTime.Kind == DateTimeKind.Utc)
+            if (utcTime.Kind == DateTimeKind.Utc || isForced)
             {
                 TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time");
                 return TimeZoneInfo.ConvertTimeFromUtc(utcTime, timeZone);
@@ -58,6 +59,34 @@ namespace AppSigmaAdmin.Utility
             {
                 return tilde + "/sigma" + url;
             }
+        }
+
+        /// <summary>
+        /// 入力チェック(ユーザID)
+        /// </summary>
+        /// <param name="userId">ユーザID</param>
+        /// <returns>エラーメッセージ</returns>
+        public static string CheckUserId(string userId)
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                try
+                {
+                    int.Parse(userId);
+                }
+                catch (OverflowException)
+                {
+                    // myrouteIDのテキストボックスに誤った数値が入力された場合
+                    return "myroute会員IDに誤った数値が入力されました。半角数字で再入力してください。";
+                }
+                catch
+                {
+                    // myrouteIDのテキストボックスに半角数字以外が入力された場合
+                    return "myroute会員IDが数字以外で入力されました。半角数字で再入力してください。";
+                }
+            }
+
+            return string.Empty;
         }
     }
 }

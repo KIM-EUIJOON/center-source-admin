@@ -1,0 +1,190 @@
+﻿@model AppSigmaAdmin.Models.UserLogInfoListEntity
+@using AppSigmaAdmin.Utility
+
+@section style{
+    <style>
+
+        .GridTable {
+            border-spacing: 50px 5px !important;
+        }
+
+        .GridTableCol {
+            margin-left: -50px;
+        }
+    </style>
+}
+
+@{
+    ViewBag.Title = "利用者ログ情報ダウンロード";
+}
+@section funcTitle {
+    <div class="funcTitleBer">
+        利用者ログ情報ダウンロード
+    </div>
+}
+
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MSA0501", false)" />
+
+<form action="@Common.CreateUrl("/MSA0501", false)" method="post">
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        ●検索条件(共通項目)
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        開始日時(必須):
+                        @Html.TextBoxFor(m => m.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateBegin)
+                        @{
+                            // 開始時刻(時)ドロップリスト項目作成
+                            List<SelectListItem> StartHourList = new List<SelectListItem>();
+                            StartHourList = @ViewBag.StartHourList;
+                        }
+                        @Html.DropDownListFor(Model => Model.StartHour, StartHourList, new { Class = "DropList" })
+                        時
+                        @{
+                            // 開始時刻(分)ドロップリスト項目作成
+                            List<SelectListItem> StartMinuteList = new List<SelectListItem>();
+                            StartMinuteList = @ViewBag.StartMinuteList;
+                        }
+                        @Html.DropDownListFor(Model => Model.StartMinute, StartMinuteList, new { Class = "DropList" })
+                        分
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MSA0501/UserLogOutPutData", false)" formmethod="post" id="UserLogOutPutData" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        終了日時(必須):
+                        @Html.TextBoxFor(m => m.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(m => m.TargetDateEnd)
+                        @{
+                            // 終了時刻(時)ドロップリスト項目作成
+                            List<SelectListItem> EndHourList = new List<SelectListItem>();
+                            EndHourList = @ViewBag.EndHourList;
+                        }
+                        @Html.DropDownListFor(Model => Model.EndHour, EndHourList, new { Class = "DropList" })
+                        時
+                        @{
+                            // 終了時刻(分)ドロップリスト項目作成
+                            List<SelectListItem> EndMinuteList = new List<SelectListItem>();
+                            EndMinuteList = @ViewBag.EndMinuteList;
+                        }
+                        @Html.DropDownListFor(Model => Model.EndMinute, EndMinuteList, new { Class = "DropList" })
+                        分
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        myroute会員ID:
+                        @Html.TextBoxFor(m => m.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID(任意)" })
+                        @Html.ValidationMessageFor(m => m.UserId)
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        ●追加検索条件(インフォメーションログ)
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        @Html.CheckBoxFor(m => m.IsInformationLog, new { })
+                        インフォメーションログを取得する
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ1:
+                        @Html.TextBoxFor(m => m.InformationLogMessage1, new { Class = "std-textbox", placeholder = "メッセージ1(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ2:
+                        @Html.TextBoxFor(m => m.InformationLogMessage2, new { Class = "std-textbox", placeholder = "メッセージ2(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        ●追加検索条件(デバッグログ)
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        @Html.CheckBoxFor(m => m.IsDebugLog, new { })
+                        デバッグログを取得する
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ1:
+                        @Html.TextBoxFor(m => m.DebugLogMessage1, new { Class = "std-textbox", placeholder = "メッセージ1(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ2:
+                        @Html.TextBoxFor(m => m.DebugLogMessage2, new { Class = "std-textbox", placeholder = "メッセージ2(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        ●追加検索条件(端末ログ)
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        @Html.CheckBoxFor(m => m.IsMobileLog, new { })
+                        端末ログを取得する
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        取得対象選択：
+                        @{
+                            // 端末ログ取得対象ドロップリスト項目作成
+                            List<SelectListItem> MobileLogList = new List<SelectListItem>();
+                            MobileLogList = @ViewBag.MobileLogList;
+                        }
+                        @Html.DropDownListFor(Model => Model.MobileLogKey, MobileLogList, new { Class = "DropList" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        端末ID:
+                        @Html.TextBoxFor(m => m.MobileInformationLogMobileId, new { Class = "std-textbox", placeholder = "端末ID(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ1:
+                        @Html.TextBoxFor(m => m.MobileInformationLogMessage1, new { Class = "std-textbox", placeholder = "メッセージ1(任意)" })
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        メッセージ2:
+                        @Html.TextBoxFor(m => m.MobileInformationLogMessage2, new { Class = "std-textbox", placeholder = "メッセージ2(任意)" })
+                    </div>
+                </div>
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
+            </div>
+        </div>
+    </div>
+</form>
