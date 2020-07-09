@@ -279,10 +279,7 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="model"></param>
         private void InitSearchList(DocomoPaymentInfoListEntity model)
         {
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
-
-            // 現在ログイン中のUserRole取得
+            // 検索条件のUserRole取得
             string UserRole = model.Apltype;
 
             // プルダウン初期化
@@ -296,6 +293,14 @@ namespace AppSigmaAdmin.Controllers
         private void InitAplTypeList(string userRole)
         {
             List<SelectListItem> itemList = new List<SelectListItem>();
+
+            // セッションに保存されているユーザー情報を取得する
+            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //auチェック
+            if (UserInfo.Role == "13")
+            {
+                userRole = UserInfo.Role;
+            }
 
             //アプリ種別ドロップダウンリスト作成
             if (userRole == "13")
