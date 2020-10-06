@@ -11,26 +11,26 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Models.JTXPaymentModel;
+using static AppSigmaAdmin.Models.MiyakohInfoModels;
 
 namespace AppSigmaAdmin.Controllers
 {
-    public class MPA0401Controller : Controller
+    public class MPA1001Controller : Controller
     {
-
+        // GET: MPA1001
         //ファイル出力関連
         private string FILE_CONTENTTYPE = "text/comma-separated-values";
         private string FILE_EXTENSION = ".csv";
 
         List<string> header = new List<string>()
         {
+            "利用日時",
             "myroute会員ID",
-            "決済日時",
-            "決済ID",
-            "駐輪事業者名",
-            "予約ID",
-            "決済種別",
-            "金額",
+            "施設名",
+            "テナントコード",
+            "テナント名",
+            "利用件数",
+            "業種",
             "アプリ種別"
         };
 
@@ -54,7 +54,7 @@ namespace AppSigmaAdmin.Controllers
             }
             return true;
         }
-        
+
         /// <summary>
         /// 文字列を"で囲む
         /// </summary>
@@ -65,15 +65,17 @@ namespace AppSigmaAdmin.Controllers
             return "\"" + column + "\"";
         }
 
-        private const string SESSION_SEARCH_Docomo = "SESSION_SEARCH_Docomo";
+        private const string SESSION_SEARCH_MuseumUsage = "SESSION_SEARCH_MuseumUsage";
 
-        // GET: DocomoBicycleSharing
-        [SessionCheck(WindowName = "Docomo決済画面")]
+        /// <summary>
+        /// 施設利用実績画面
+        /// </summary>
+        /// <param name="page">ページ数</param>
+        /// <returns>ログイン画面</returns>
+        [SessionCheck(WindowName = "施設利用実績画面")]
         public ActionResult Index(string page)
         {
-
-            DocomoPaymentInfoListEntity info = new DocomoPaymentInfoListEntity();
-
+            MuseumUseInfo info = new MuseumUseInfo();
 
             // 検索条件初期化
             this.InitSearchList(info);
@@ -85,8 +87,12 @@ namespace AppSigmaAdmin.Controllers
             }
 
             //セッション情報の取得
-            DocomoPaymentInfoListEntity sessiondata = (DocomoPaymentInfoListEntity)Session[SESSION_SEARCH_Docomo];
-            InitAplTypeList(sessiondata.Apltype);
+            MuseumUseInfo sessiondata = (MuseumUseInfo)Session[SESSION_SEARCH_MuseumUsage];
+            SelectTicketTypeList(sessiondata.Language, sessiondata.FacilityId);
+            InitAplTypeList(sessiondata.Apltype); // アプリ種別情報
+            InitFacilityNameList(sessiondata.Language, sessiondata.FacilityId);
+            InitShopNameList(sessiondata.Language, sessiondata.FacilityId);
+            info.UserId = sessiondata.UserId;
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
             try
@@ -111,23 +117,22 @@ namespace AppSigmaAdmin.Controllers
             int index = (pageNo - 1) * sessiondata.rowsPerPage;
             int count = (pageNo == sessiondata.PageCount) ? sessiondata.ListMaxCount - index : sessiondata.rowsPerPage;
             //現在のページ位置
-            sessiondata.ListPageNo = pageNo;
+            sessiondata.PageCount = pageNo;
 
             // 取得したリスト件数が0以上
             if (0 == sessiondata.ListMaxCount)
             {
-                ModelState.AddModelError("", "一致する決済データがありませんでした。");
-                info.DocomoPaymentList = null;
+                ModelState.AddModelError("", "一致する決済情報がありませんでした。");
+                info.MuseumUseInfoList = null;
                 return View(info);
             }
             // セッション情報を複製
-            info = new DocomoPaymentInfoListEntity(sessiondata);
+            info = new MuseumUseInfo(sessiondata);
             // 指定範囲のデータを取得
-            info.DocomoPaymentList = sessiondata.DocomoPaymentListAll.GetRange(index, count);
+            info.MuseumUseInfoList = sessiondata.MuseumUseInfoListAll.GetRange(index, count);
 
             return View(info);
         }
-
 
         /// <summary>
         /// 検索結果表示
@@ -135,8 +140,8 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="model">検索条件</param>
         /// <returns>検索結果描画</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "Docomo決済画面")]
-        public ActionResult Index(DocomoPaymentInfoListEntity model)
+        [SessionCheck(WindowName = "JR九州クーポン画面")]
+        public ActionResult Index(MuseumUseInfo model)
         {
             ViewData["message"] = "";
 
@@ -146,12 +151,12 @@ namespace AppSigmaAdmin.Controllers
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
             {
-                return View("~/Views/MPA0401/Index.cshtml", model);
+                return View("~/Views/MPA1001/Index.cshtml", model);
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new DocomoBikeShare().GetPaymentDateList(model);
-            DocomoPaymentInfoListEntity info = new DocomoPaymentInfoListEntity();
+            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model);
+            MuseumUseInfo info = new MuseumUseInfo();
 
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
@@ -161,7 +166,11 @@ namespace AppSigmaAdmin.Controllers
             info.TargetDateEnd = model.TargetDateEnd;
             info.ListMaxCount = maxListCount;
             info.ListPageNo = model.ListPageNo;
+            info.UserId = model.UserId;
             info.Language = model.Language;
+            info.TenantID = model.TenantID;
+            info.FacilityId = model.FacilityId;
+            info.ShopType = model.ShopType;
             info.Apltype = model.Apltype;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
 
@@ -169,42 +178,44 @@ namespace AppSigmaAdmin.Controllers
             if (maxListCount == 0)
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
-                info.DocomoPaymentList = null;
+                info.MuseumUseInfoList = null;
                 return View(info);
             }
             // SQL取得結果(検索結果)を出力
+
             foreach (DataRow row in GetData.Rows)
             {
-                info.DocomoPaymentListAll.Add(new DocomoPaymentInfoListEntity()
+                info.MuseumUseInfoListAll.Add(new MuseumUseInfo()
                 {
                     UserId = row["UserId"].ToString(),
-                    TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
-                    PaymentId = row["PaymentId"].ToString(),
-                    CycleBizName = row["Value"].ToString(),
-                    ReserveId = row["ReserveId"].ToString(),
-                    PaymentType = row["PaymentType"].ToString(),
-                    Amount = (int)row["Amount"],
+                    UseDatetime = (DateTime.Parse(row["UsageDateTime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
+                    FacilityName = row["FacilityName"].ToString(),
+                    TenantName = row["TenantName"].ToString(),
+                    TenantID = row["TenantID"].ToString(),
+                    UseCount = 1, // 利用件数=1(暫定)
+                    Denomination = row["Denomination"].ToString(),/*業種(仮)*/
                     Apltype = row["AplName"].ToString(),
+
                 });
             }
 
             // 取得開始行と取得範囲を指定
             int index = 0;
             int count = (maxListCount < model.rowsPerPage) ? maxListCount - index : model.rowsPerPage;
-            info.DocomoPaymentList = info.DocomoPaymentListAll.GetRange(index, count);
+            info.MuseumUseInfoList = info.MuseumUseInfoListAll.GetRange(index, count);
 
-            Session.Add(SESSION_SEARCH_Docomo, info);
+            Session.Add(SESSION_SEARCH_MuseumUsage, info);
             return View(info);
         }
 
         /// <summary>
-        /// バイクシェア決済一覧ダウンロード処理
+        /// 横浜決済一覧ダウンロード処理
         /// </summary>
         /// <param name="model">検索情報</param>
         /// <returns>CSVファイル出力</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "ドコモバイクシェアダウンロード処理")]
-        public ActionResult DocomoBikeShareOutPutDate(DocomoPaymentInfoListEntity model)
+        [SessionCheck(WindowName = "横浜ダウンロード処理")]
+        public ActionResult JRKyushuCoupomOutPutDate(MuseumUseInfo model)
         {
             ViewData["message"] = "";
 
@@ -214,12 +225,12 @@ namespace AppSigmaAdmin.Controllers
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
             {
-                return View("~/Views/MPA0401/Index.cshtml", model);
+                return View("~/Views/MPA1001/Index.cshtml", model);
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new DocomoBikeShare().GetPaymentDateList(model);
-            DocomoPaymentInfoListEntity info = new DocomoPaymentInfoListEntity();
+            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model);
+            MuseumUseInfo info = new MuseumUseInfo();
 
             // 表示リストの総数
             int maxListCount = GetData.Rows.Count;
@@ -229,15 +240,21 @@ namespace AppSigmaAdmin.Controllers
             info.TargetDateEnd = model.TargetDateEnd;
             info.ListMaxCount = maxListCount;
             info.ListPageNo = model.ListPageNo;
+            info.UserId = model.UserId;
             info.Language = model.Language;
+            info.TenantID = model.TenantID;
+            info.FacilityId = model.FacilityId;
+            info.ShopType = model.ShopType;
             info.Apltype = model.Apltype;
             info.PageCount = (int)Math.Ceiling((float)maxListCount / (float)model.rowsPerPage);
+
+
 
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
                 ModelState.AddModelError("", "一致する決済データがありませんでした。");
-                info.DocomoPaymentList = null;
+                info.MuseumUseInfoList = null;
                 return View(info);
             }
 
@@ -258,32 +275,137 @@ namespace AppSigmaAdmin.Controllers
                 foreach (DataRow row in GetData.Rows)
                 {
                     strings.Clear();
+                    strings.Add(EncloseDbQuotes(row["UsageDateTime"].ToString()));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["TranDate"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["PaymentId"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["FacilityName"].ToString()));
                     strings.Add(EncloseDbQuotes(row["Value"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ReserveId"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["PaymentType"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["Amount"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["ShopCode"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
+                    strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
+                    strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
                     strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
             //ファイル名を「Nishitetsu_Coupon_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-            return File(ms.ToArray(), FILE_CONTENTTYPE, "DocomoBicycleShare_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateEnd).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
+            return File(ms.ToArray(), FILE_CONTENTTYPE, "FukuokaMuseumUse_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateEnd).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
+
 
         /// <summary>
         /// 検索条件リスト作成
         /// </summary>
         /// <param name="model"></param>
-        private void InitSearchList(DocomoPaymentInfoListEntity model)
+        private void InitSearchList(MuseumUseInfo model)
         {
-            // 検索条件のUserRole取得
+            //検索条件のUserRole取得
             string UserRole = model.Apltype;
+            // string TicetType = model.TicketType;
 
             // プルダウン初期化
+            this.InitFacilityNameList(model.Language, UserRole); // チケット種別情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
+            this.InitFacilityNameList(UserRole, model.FacilityId);
+            this.InitShopNameList(model.Language,model.ShopType);
+
+        }
+
+        /// <summary>
+        /// 商品種別リスト(動的)
+        /// </summary>
+        /// <param name="id">チケットID</param>
+        /// <returns>チケットリスト取得結果(JSON)</returns>
+        [HttpGet]
+        public ActionResult SelectTicketTypeList(string language, string id)
+        {
+            var itemList = InitFacilityNameList(language, id);
+            return Json(itemList, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 施設名ドロップダウンリスト初期化
+        /// </summary>
+        /// <param name="language">言語</param>
+        /// <returns>券種リスト取得結果</returns>
+        private List<SelectListItem> InitFacilityNameList(string language, string id)
+        {
+            // 施設名リストを取得
+            DataTable db = new CouponInfoModel().GetFacilityNames(language);
+            List<SelectListItem> itemList = new List<SelectListItem>();
+
+            // DataTable → SelectList型に変換
+            foreach (DataRow row in db.Rows)
+            {
+                string idCheck = row["FacilityId"].ToString();
+                string Facility = row["Value"].ToString();
+
+                if (idCheck == id)
+                {
+                    itemList.Add(new SelectListItem
+                    {
+                        Text = Facility,
+                        Value = row["FacilityId"].ToString(),
+                        Selected = true,
+                    });
+                }
+                else
+                {
+                    itemList.Add(new SelectListItem
+                    {
+                        Text = Facility,
+                        Value = row["FacilityId"].ToString(),
+                    });
+                }
+            }
+            if (id != null) { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty }); }
+            else { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true }); }
+
+            ViewBag.FacilityList = itemList;
+            return itemList;
+        }
+
+       
+        /// <summary>
+        /// テナント名ドロップダウンリスト初期化
+        /// </summary>
+        /// <param name="language">言語</param>
+        /// <returns>テナント名リスト取得結果</returns>
+        private List<SelectListItem> InitShopNameList(string language, string id)
+        {
+            // チケットリストを取得
+            DataTable db = new MuseumInfoModels().GetShopName(language);
+            List<SelectListItem> itemList = new List<SelectListItem>();
+
+            // DataTable → SelectList型に変換
+            foreach (DataRow row in db.Rows)
+            {
+                string ShopName = row["Value"].ToString();
+                string ListShopType = row["FacilityId"].ToString() + "/" + row["ServiceResourceId"].ToString(); //施設ID/サービスリソースID
+
+
+                if (ListShopType == id)
+                {
+                    itemList.Add(new SelectListItem
+                    {
+                        Text = ShopName,
+                        Value = ListShopType,
+                        Selected = true,
+                    });
+                }
+                else
+                {
+                    itemList.Add(new SelectListItem
+                    {
+                        Text = ShopName,
+                        Value = ListShopType,
+                    });
+                }
+            }
+            if (id != null) { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty }); }
+            else { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true }); }
+
+            ViewBag.ShopList = itemList;
+            return itemList;
         }
 
         /// <summary>
@@ -316,12 +438,13 @@ namespace AppSigmaAdmin.Controllers
             ViewBag.AplList = itemList;
         }
 
+
         /// <summary>
         /// 検索条件エラー判定
         /// </summary>
         /// <param name="model">検索条件</param>
         /// <returns>判定結果</returns>
-        private bool CheckSearchError(DocomoPaymentInfoListEntity model)
+        private bool CheckSearchError(MuseumUseInfo model)
         {
             // 検索期間:未入力
             if (string.IsNullOrEmpty(model.TargetDateBegin))
@@ -356,5 +479,6 @@ namespace AppSigmaAdmin.Controllers
             }
             return true;
         }
+    
     }
 }

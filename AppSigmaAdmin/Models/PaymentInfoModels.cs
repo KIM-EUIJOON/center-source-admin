@@ -422,7 +422,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , case when tbl.BizCompanyCd =N'NNR' then N'鉄道'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
-                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'鉄道・バス'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'マルチ'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
                     sb.AppendLine("     , tbl.TicketId");
