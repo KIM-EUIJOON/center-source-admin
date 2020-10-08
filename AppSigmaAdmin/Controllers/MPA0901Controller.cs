@@ -303,7 +303,7 @@ namespace AppSigmaAdmin.Controllers
            // string TicetType = model.TicketType;
 
             // プルダウン初期化
-            this.InitTicketTypeList(model.Language, UserRole); // チケット種別情報
+            this.InitShopNameList(model.Language, model.ShopCode); // チケット種別情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
             this.InitTicketTypeList(UserRole,model.CouponId);
             this.InitFacilityNameList(model.FacilityId);
@@ -396,7 +396,7 @@ namespace AppSigmaAdmin.Controllers
                     itemList.Add(new SelectListItem
                     {
                         Text = TicketName,
-                        Value = row["TicketId"].ToString(),
+                        Value = row["FacilityId"].ToString(),
                     });
                 }
             }

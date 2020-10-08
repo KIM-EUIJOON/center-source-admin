@@ -155,6 +155,9 @@ namespace AppSigmaAdmin.Models
 
         public string BizCompanyCd { get; set; }
 
+        //public string ShopName { get; set; }
+
+        //public string ShopCode { get; set; }
         /// <summary>
         /// コンストラクタ
         /// </summary>

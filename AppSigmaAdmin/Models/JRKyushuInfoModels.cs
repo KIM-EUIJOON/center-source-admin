@@ -38,7 +38,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   left join CharacterResource cr");
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("   and Language = 'ja'");
-                    sb.AppendLine("   where fsm.BizCompanyCd=''");//JR九州のコード不明
+                    sb.AppendLine("   where fsm.BizCompanyCd='JRK'");//JR九州のコード不明
 
                     cmd.CommandText = sb.ToString();
 
@@ -153,13 +153,13 @@ namespace AppSigmaAdmin.Models
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString(),
-                            Apltype = row["AplType"].ToString()
+                            Apltype = row["AplName"].ToString()
                         };
                         if (row["TicketGroup"].ToString() == "1")
                         {
                             infoN.TicketName = infoN.TicketName + "[au]";
                         }
-                        if (row["AplType"].ToString() == "1")
+                        if (row["AplName"].ToString() == "1")
                         {
                             infoN.Apltype = "au";
                         }
@@ -193,10 +193,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");    //決済IDと決済種別でソートする
                     sb.AppendLine("     , tbl.UserId");
                     sb.AppendLine("     , tbl.TranDate");
-                    sb.AppendLine("     , case when tbl.BizCompanyCd =N'NNR' then N'鉄道'");
-                    sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
-                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
-                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'マルチ'");
+                    sb.AppendLine("     , case when tbl.BizCompanyCd =N'JRK' then N'JR九州'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
                     sb.AppendLine("     , tbl.TicketId");
@@ -205,18 +202,121 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.AdultNum");
                     sb.AppendLine("     , tbl.ChildNum");
                     sb.AppendLine("     , tbl.PaymentId");
-                    sb.AppendLine("     , tbl.AplType");                                                                /*アプリ種別*/
+                    sb.AppendLine("     , tbl.AplName");                                                                /*アプリ種別*/
                     sb.AppendLine("     , case when tbl.PaymentType = '3' then N'即時決済'");
                     sb.AppendLine("           when tbl.PaymentType = '4' then N'払戻し'");
                     sb.AppendLine("           when tbl.PaymentType = '5' then N'取消'");
                     sb.AppendLine("           else N'決済種別不明' end as PaymentType");
                     sb.AppendLine("     , tbl.Amount");
                     sb.AppendLine("     , tbl.ReceiptNo");
+                    sb.AppendLine("     , tbl.TrsType");
                     sb.AppendLine("  from (");
                     // 即時決済データ取得
-                   // sb.AppendLine(" " + BusPayment.ToString() + "");        //旧テーブル取得
-                   // sb.AppendLine("        union all  ");
-                    //sb.AppendLine(" " + PaymentList.ToString() + "");        //新テーブル取得
+                    sb.AppendLine("           select pm.TranDate");
+                    sb.AppendLine("           ,ftm.UserId");
+                    sb.AppendLine("           ,fsm.TrsType");
+                    sb.AppendLine("           , N'売上' as Summary");
+                    sb.AppendLine("           ,fsm.TicketType");
+                    sb.AppendLine("           ,cr.Value");                        /*チケット名称(日本語)*/
+                    sb.AppendLine("           , ftm.AdultNum");                   /*大人枚数*/
+                    sb.AppendLine("           , ftm.ChildNum");                   /*子供枚数*/
+                    sb.AppendLine("           , pm.PaymentId");
+                    sb.AppendLine("           , pm.PaymentType");
+                    sb.AppendLine("           , pm.Amount");
+                    sb.AppendLine("           , pm.ReceiptNo");
+                    sb.AppendLine("           ,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           else ''");
+                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           from FreeTicketManage ftm");
+                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");/*JR九州*/
+                    sb.AppendLine("           inner join PaymentManage pm");
+                    sb.AppendLine("           on ftm.UserId = pm.UserId");
+                    sb.AppendLine("           and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("           and(pm.ServiceId = '8')");/*サービスID(JR九州:12)*/
+                    sb.AppendLine("           and pm.PaymentType = '3'");
+                    sb.AppendLine("           and pm.GmoStatus = '1'");
+                    sb.AppendLine("           and pm.GmoProcType = '2'");
+                    sb.AppendLine("           left join CharacterResource cr");
+                    sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("           and Language ='ja'");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+                    sb.AppendLine("           union all");
+                    sb.AppendLine("           select pm.TranDate");
+                    sb.AppendLine("           ,ftm.UserId");
+                    sb.AppendLine("           ,fsm.TrsType");
+                    sb.AppendLine("           , N'売上' as Summary");
+                    sb.AppendLine("           ,fsm.TicketType");
+                    sb.AppendLine("           ,cr.Value");                                /*チケット名称(日本語)*/
+                    sb.AppendLine("           , ftm.AdultNum");                           /*大人枚数*/
+                    sb.AppendLine("           , ftm.ChildNum");                           /*子供枚数*/
+                    sb.AppendLine("           , pm.PaymentId");
+                    sb.AppendLine("           , pm.PaymentType");
+                    sb.AppendLine("           , pm.Amount* -1 as Amount");
+                    sb.AppendLine("           , pm.ReceiptNo");
+                    sb.AppendLine("           ,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           else ''");
+                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           from FreeTicketManage ftm");
+                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");     /*JR九州*/
+                    sb.AppendLine("           inner join PaymentManage pm");
+                    sb.AppendLine("           on ftm.UserId = pm.UserId");
+                    sb.AppendLine("           and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("           and(pm.ServiceId = '12')");/*サービスID(JR九州:12)*/
+                    sb.AppendLine("           and pm.PaymentType = '5'");
+                    sb.AppendLine("           and pm.GmoStatus = '1'");
+                    sb.AppendLine("           and pm.GmoProcType = '3'");
+                    sb.AppendLine("           left join CharacterResource cr");
+                    sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("           and Language ='ja'");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+                    sb.AppendLine("           union all");
+                    sb.AppendLine("           select pm.TranDate");
+                    sb.AppendLine("           ,ftm.UserId");
+                    sb.AppendLine("           ,fsm.TrsType");
+                    sb.AppendLine("           , N'払戻し' as Summary");
+                    sb.AppendLine("           ,fsm.TicketType");
+                    sb.AppendLine("           ,cr.Value");                        /*チケット名称*/
+                    sb.AppendLine("           , ftm.AdultNum");                   /*大人枚数*/
+                    sb.AppendLine("           , ftm.ChildNum");                   /*子供枚数*/
+                    sb.AppendLine("           , pm.PaymentId");
+                    sb.AppendLine("           , pm.PaymentType");
+                    sb.AppendLine("           , pm.Amount");
+                    sb.AppendLine("           , pm.ReceiptNo");
+                    sb.AppendLine("           ,fsm.BizCompanyCd");
+                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("         ,fsm.TicketGroup");
+                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           else ''");
+                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           from FreeTicketManage ftm");
+                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
+                    sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");     /*JR九州*/
+                    sb.AppendLine("           inner join PaymentManage pm");
+                    sb.AppendLine("           on ftm.UserId = pm.UserId");
+                    sb.AppendLine("           and ftm.PaymentId = pm.PaymentId");
+                    sb.AppendLine("           and(pm.ServiceId = '12')");/*サービスID(JR九州:12)*/
+                    sb.AppendLine("           and pm.PaymentType = '4'");
+                    sb.AppendLine("           and pm.GmoStatus = '1'");
+                    sb.AppendLine("           and pm.GmoProcType = '2'");
+                    sb.AppendLine("           left join CharacterResource cr");
+                    sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
+                    sb.AppendLine("           and Language ='ja'");
+                    sb.AppendLine("          left join UserInfoOid uio");
+                    sb.AppendLine("          on ftm.UserId=uio.UserId");
+
                     sb.AppendLine("      ) tbl");
                     // 決済エラー分は含めない
                     sb.AppendLine("  where not exists(");
@@ -225,7 +325,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("         where pe.UserId = tbl.UserId");
                     sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
                     sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
-                    sb.AppendLine("        	and(pe.ServiceId = '2' or pe.ServiceId = '4' or pe.ServiceId = '5' or pe.ServiceId = '6')");/*サービスID(西鉄バス(福岡):2,鉄道:4,西鉄バス(北九州):5,にしてつグループ:6)*/
+                    sb.AppendLine("        	and(pe.ServiceId = '12')");/*サービスID(JR九州:12)*/
                     sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
                     sb.AppendLine("     )");
                     sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
@@ -300,7 +400,7 @@ namespace AppSigmaAdmin.Models
                     }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        JRKyushuSb.AppendLine("   and tbl.AplType = @AplType");
+                        JRKyushuSb.AppendLine("   and tbl.AplName = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                     }
 
@@ -393,13 +493,13 @@ namespace AppSigmaAdmin.Models
                         Jsb.AppendLine("   and cm.CouponId = @TicketId  ");
                         cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = model.CouponId;
                     }
-                    if (model.FacilityId != "-")
+                    if (false == string.IsNullOrEmpty(model.FacilityName)) 
                     {
                         //検索条件に決済種別：決済種別不明指定
-                        Jsb.AppendLine("   and sm.FacilityId = @FacilityId  ");
-                        cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
+                        Jsb.AppendLine("   and sm.FacilityName = @FacilityId  ");
+                        cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityName;
                     }
-                    else if (model.ShopCode != "-")
+                    else if (false == string.IsNullOrEmpty(model.ShopCode)) 
                     {
                         //検索条件に決済種別指定
                         Jsb.AppendLine("   and cs.ShopCode = @ShopCode ");
@@ -409,7 +509,7 @@ namespace AppSigmaAdmin.Models
                     Jsb.AppendLine("  ) as MA");
 
                     // 検索条件
-                    Jsb.AppendLine("WHERE 1 = 1");
+                    Jsb.AppendLine("  WHERE 1 = 1");
                     cmd.CommandText = Jsb.ToString();
 
                     cmd.Parameters.Add("@StartDatatTime", SqlDbType.NVarChar).Value = model.TargetDateBegin;
@@ -459,7 +559,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       left join UserInfoOid uio");
                     sb.AppendLine("       on cm.UserId = uio.UserId");
                     sb.AppendLine("       where cm.UsageStatus='3'");
+                    sb.AppendLine("       and cma.BizCompanyCd='JRK'");           /*JR九州固定*/
                     sb.AppendLine("       and cm.UsageDateTime between @StartDatatTime and @EndDatatTime ");
+
                     return sb.ToString();
                 }
             }
@@ -479,6 +581,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       fclM.FacilityId");
                     sb.AppendLine("FROM FacilityMaster fclM");
                     sb.AppendLine("Where fclM.Language = @lng");
+                    sb.AppendLine("and fclm.BizCompanyCd='JRK'");           /*JR九州固定*/
 
                     cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                     cmd.CommandText = sb.ToString();

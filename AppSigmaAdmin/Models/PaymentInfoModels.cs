@@ -423,6 +423,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'マルチ'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKUM' then N'鉄道(北九州モノレール)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKB' then N'西鉄バス北九州'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKCER' then N'鉄道(北九州)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKKK' then N'船'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
                     sb.AppendLine("     , tbl.TicketId");
@@ -608,7 +612,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK' or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -642,7 +646,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK' or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -676,7 +680,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK'　or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -933,7 +937,7 @@ namespace AppSigmaAdmin.Models
                         {
                             info.TicketName = info.TicketName + "[au]";
                         }
-						if (info.TransportType != "NIS"&info.TransportType!= "NISK"& info.TransportType != "NNR" & info.TransportType != "NISG") { continue; }//西鉄以外のものをリストに含めない
+						if (info.TransportType != "NIS"&info.TransportType!= "NISK"& info.TransportType != "NNR" & info.TransportType != "NISG" & info.TransportType != "NKUM" & info.TransportType != "NKCER" & info.TransportType != "NKKK" & info.TransportType != "NKB") { continue; }//西鉄以外のものをリストに含めない
                         result.Add(info);
                     }
                     return result;

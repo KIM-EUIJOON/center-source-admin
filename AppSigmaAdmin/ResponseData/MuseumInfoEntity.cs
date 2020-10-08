@@ -170,12 +170,12 @@ namespace AppSigmaAdmin.ResponseData
     public class MuseumPaymentInfo : MuseumInfo
     {
         /// <summary>
-        /// 横浜決済リスト
+        /// 施設決済リスト
         /// </summary>
         public List<MuseumPaymentInfo> MuseumPaymentInfoList { get; set; }
 
         /// <summary>
-        /// 横浜決済リスト一覧
+        /// 施設決済リスト一覧
         /// </summary>
         public List<MuseumPaymentInfo> MuseumPaymentInfoListAll { get; set; }
 
@@ -202,7 +202,7 @@ namespace AppSigmaAdmin.ResponseData
         /// <summary>
         /// 利用金額
         /// </summary>
-        public int Amount { get; set; }
+        public string Amount { get; set; }
 
         /// <summary>
         /// 決済ID
@@ -263,7 +263,10 @@ namespace AppSigmaAdmin.ResponseData
             this.Denomination = source.Denomination;
             this.AdultNum = source.AdultNum;
             this.ChildNum = source.ChildNum;
+            this.infantNum = source.infantNum;
+            this.Amount = source.Amount;
             this.Apltype = source.Apltype;
+            this.TicketID = source.TicketID;
             MuseumPaymentInfoList = new List<MuseumPaymentInfo>();
             MuseumPaymentInfoListAll = new List<MuseumPaymentInfo>(source.MuseumPaymentInfoListAll);
             this.Language = source.Language;

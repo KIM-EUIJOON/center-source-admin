@@ -83,7 +83,7 @@ namespace AppSigmaAdmin.Controllers
                 foreach (var TicketList in MuseumTicket)
                 {
                     string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                    string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID/事業者ID
+                    string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID/事業者ID
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
                 }
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
@@ -141,7 +141,7 @@ namespace AppSigmaAdmin.Controllers
             foreach (var TicketList in MuseumTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID/交通手段
+                string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID/交通手段
 
 
                 if (TicketInfo != ListTicketType)
@@ -288,23 +288,23 @@ namespace AppSigmaAdmin.Controllers
                 int Tpt = model.TicketInfo.Length - (num + 1);
                 TransePortCheck = model.TicketInfo.Substring(num + 1, Tpt).ToString();  //交通種別分離
 
-                if (model.BizCompanyCd == "-")
+                if (model.TicketInfo == "-")
                 {
                     TransportType = TransePortCheck;
                 }
                 else
                 {
-                    TransportType = model.BizCompanyCd;
+                    TransportType = model.Denomination;
                 }
             }
             else if (model.TicketInfo == null)
             {
                 TransportType = "-";
-                model.BizCompanyCd = TransportType;
+                model.Denomination = TransportType;
             }
             else
             {
-                TransportType = model.BizCompanyCd;
+                TransportType = model.Denomination;
             }
 
 
@@ -326,7 +326,7 @@ namespace AppSigmaAdmin.Controllers
             foreach (var TicketList in MiyakohTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string TicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID+/+交通手段
+                string TicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID+/+交通手段
 
                 if (model.TicketInfo != TicketType)
                 {
@@ -466,20 +466,20 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
-            //チケットIDとバス/鉄道選択肢が一致するか確認(どちらかが未選択の場合は確認対象外)
+            //チケットIDとカテゴリ選択肢が一致するか確認(どちらかが未選択の場合は確認対象外)
             if (TransePortCheck != "-" && TransportType != "-")
             {
                 if (TransePortCheck != TransportType)
                 {
-                    ModelState.AddModelError("", "商品種別とバス/鉄道の種別が一致しません。再選択してください。");
+                    ModelState.AddModelError("", "商品種別とカテゴリーの種別が一致しません。再選択してください。");
                     return View(model);
                 }
             }
             //検索条件に一致する全リスト件数取得
-            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, PageName);
+            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType, PageName);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType,PageName);
+            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType,PageName);
 
             MuseumPaymentInfo info = new MuseumPaymentInfo();
 
@@ -519,6 +519,8 @@ namespace AppSigmaAdmin.Controllers
             //アプリ種別
             info.Apltype = AplType;
 
+            info.Denomination = model.Denomination;
+
             //取得したリスト件数が0以上
             if (SelectMuseumPaymentDateList.Count > 0)
             {
@@ -541,6 +543,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TicketNumType", model.TicketNumType);
             searchKey.Add("ListNum", ListNum.ToString());
             searchKey.Add("TicketId", TicketId);
+            searchKey.Add("Denomination", model.Denomination);
             searchKey.Add("AplType", model.Apltype);
             Session.Add(SESSION_SEARCH_FukuokaMuseumPayment, searchKey);
 
@@ -741,14 +744,14 @@ namespace AppSigmaAdmin.Controllers
                 UserId = model.UserId;
             }
 
-            if (TransePortCheck != "-" && TransportType != "-")
+           /* if (TransePortCheck != "-" && TransportType != "-")
             {
                 if (TransePortCheck != TransportType)
                 {
                     ModelState.AddModelError("", "商品種別とバス/鉄道の種別が一致しません。再選択してください。");
                     return View("~/Views/MPA0801/Index.cshtml", model);
                 }
-            }
+            }*/
             //検索条件に一致する全リスト件数取得
             MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, PageName);
 

@@ -56,11 +56,11 @@
                             </div>
                             <div class="GridTableCell">
                                 @{
-                                    //バス/鉄道ドロップリスト項目作成
+                                    //交通種別カテゴリードロップリスト項目作成
                                     List<SelectListItem> TranseTypeList = new List<SelectListItem>();
                                     TranseTypeList = @ViewBag.TranseList;
                                 }
-                                バス/鉄道：
+                                カテゴリー：
                                 @Html.DropDownListFor(Model => Model.TransportType, TranseTypeList, new { Class = "DropList" })
                             </div>
                             <div class="GridTableCell">
@@ -178,11 +178,11 @@
                 @{
                     if (Model != null)
                     {
-                        if (Model.NishitetsuPaymentInfoList != null)
+                        if (Model.MiyakohPaymentInfoList != null)
                         {
                             @*表示件数：10件*@
                             var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
-                            grid.Bind(source: Model.NishitetsuPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                            grid.Bind(source: Model.MiyakohPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
                             <div class="grid-table">
                                 @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
                                                                             columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),

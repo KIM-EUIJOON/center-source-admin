@@ -33,6 +33,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   ,fsm.BizCompanyCd");
                     sb.AppendLine("   ,fsm.TicketId");
                     sb.AppendLine("   ,fsm.TicketGroup");
+                    sb.AppendLine("   ,fsm.TrsType");
                     sb.AppendLine("   from FreeTicketSalesMaster fsm");
                     sb.AppendLine("   left join CharacterResource cr");
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
@@ -106,13 +107,13 @@ namespace AppSigmaAdmin.Models
                     {
                         //検索条件に枚数種別：大人
                         Miyakohsb.AppendLine("   and tbl.ChildNum = '0' ");
-                        Miyakohsb.AppendLine("   and tbl.discountNum = '0' ");
+                        Miyakohsb.AppendLine("   and tbl.discountNum is null or tbl.discountNum in ('0') ");
                     }
                     else if (TicketNumType == "子供")
                     {
                         //検索条件に枚数種別：子供
                         Miyakohsb.AppendLine("   and tbl.AdultNum = '0' ");
-                        Miyakohsb.AppendLine("   and tbl.discountNum = '0' ");
+                        Miyakohsb.AppendLine("   and tbl.discountNum is null or tbl.discountNum in ('0') ");
                     }
                     else if (TicketNumType == "学割")
                     {
@@ -129,7 +130,7 @@ namespace AppSigmaAdmin.Models
                     if (AplType != "-")//au用Role番号判定
                     {
                         Miyakohsb.AppendLine("   and tbl.AplType = @AplType");
-                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
+                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = '1';
                     }
 
                     Miyakohsb.AppendLine("  ) as MA  where MA.RecNo between @PageNum and @ListEnd");
@@ -160,6 +161,14 @@ namespace AppSigmaAdmin.Models
                             ReceiptNo = row["ReceiptNo"].ToString(),
                             Apltype = row["AplType"].ToString()
                         };
+                        if (false == string.IsNullOrEmpty((row["discountNum"].ToString())))
+                        {
+                            infoN.discountNum = row["discountNum"].ToString();
+                        }
+                        else
+                        {
+                            infoN.discountNum = "-";
+                        }
                         if (row["TicketGroup"].ToString() == "1")
                         {
                             infoN.TicketName = infoN.TicketName + "[au]";
