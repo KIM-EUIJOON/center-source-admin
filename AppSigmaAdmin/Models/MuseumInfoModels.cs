@@ -85,19 +85,48 @@ namespace AppSigmaAdmin.Models
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder Jsb = new StringBuilder();
-                string MuseumPaymentInfo = GetALLMuseumPaymentDateQuery(stDate, edDate);
-                Jsb.AppendLine("select * from (" + MuseumPaymentInfo.ToString() + "");
+                
 
                 //呼び出し画面から事業者を指定する
                 if (PageName =="MPA0801")
                 {
+                    string MuseumPaymentInfo_FOC = GetALLFOCMuseumPaymentDateQuery(stDate, edDate);
+                    Jsb.AppendLine("select * from (" + MuseumPaymentInfo_FOC.ToString() + "");
                     Jsb.AppendLine("   and tbl.BizCompanyCd = 'FOC'");
-                    //cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "FOC";
+                    if (TicketNumType == "大人")
+                    {
+                        //検索条件に枚数種別：大人
+                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
+                    else if (TicketNumType == "学割")
+                    {
+                        //検索条件に枚数種別：学割
+                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
+                    }
                 }
                 else if (PageName == "MPA1101")
                 {
+                    string MuseumPaymentInfo = GetALLMuseumPaymentDateQuery(stDate, edDate);
+                    Jsb.AppendLine("select * from (" + MuseumPaymentInfo.ToString() + "");
                     Jsb.AppendLine("   and tbl.BizCompanyCd = 'MYZ'");
-                    //cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "MYZ";
+                    if (TicketNumType == "大人")
+                    {
+                        //検索条件に枚数種別：大人
+                        Jsb.AppendLine("   and tbl.ChildNum = '0' ");
+                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
+                    else if (TicketNumType == "中学生")
+                    {
+                        //検索条件に枚数種別：学割
+                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
+                        Jsb.AppendLine("   and tbl.ChildNum = '0' ");
+                    }
+                    else if (TicketNumType == "小児")
+                    {
+                        //検索条件に枚数種別：学割
+                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
+                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
                 }
                 if (MyrouteNo != "")
                 {
@@ -115,7 +144,7 @@ namespace AppSigmaAdmin.Models
                 {
                     //検索条件に決済種別：決済種別不明指定
                     Jsb.AppendLine("   and tbl.GmoStatus not in ('1','3','5')");
-                    cmd.Parameters.Add("@GmoStatus", SqlDbType.NVarChar).Value = PaymentType;
+                    //cmd.Parameters.Add("@GmoStatus", SqlDbType.NVarChar).Value = PaymentType;
                 }
                 else if (PaymentType != "-")
                 {
@@ -123,30 +152,7 @@ namespace AppSigmaAdmin.Models
                     Jsb.AppendLine("   and tbl.GmoStatus = @GmoStatus ");
                     cmd.Parameters.Add("@GmoStatus", SqlDbType.NVarChar).Value = PaymentType;
                 }
-                if (TicketNumType == "大人")
-                {
-                    //検索条件に枚数種別：大人
-                    Jsb.AppendLine("   and tbl.ChildNum = '0' ");
-                    Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
-                }
-                else if (TicketNumType == "学割")
-                {
-                    //検索条件に枚数種別：学割
-                    Jsb.AppendLine("   and tbl.AdultNum = '0' ");
-                    Jsb.AppendLine("   and tbl.ChildNum = '0' ");
-                }
-                else if (TicketNumType == "中学生")
-                {
-                    //検索条件に枚数種別：学割
-                    Jsb.AppendLine("   and tbl.AdultNum = '0' ");
-                    Jsb.AppendLine("   and tbl.ChildNum = '0' ");
-                }
-                else if (TicketNumType == "小児")
-                {
-                    //検索条件に枚数種別：学割
-                    Jsb.AppendLine("   and tbl.AdultNum = '0' ");
-                    Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
-                }
+                
 
                 if (TicketId != "-")
                 {
@@ -156,7 +162,7 @@ namespace AppSigmaAdmin.Models
                 }
                 if (AplType != "-")//au用Role番号判定
                 {
-                    Jsb.AppendLine("   and tbl.AplType = @AplType");
+                    Jsb.AppendLine("   and tbl.AplName = @AplType");
                     cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                 }
 
@@ -264,7 +270,7 @@ namespace AppSigmaAdmin.Models
                 /*枚数*/
                 sb.AppendLine("         ,ftup.PaymentId");
                 sb.AppendLine("         ,ftup.GmoStatus");
-                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Child.sumChildPrice)as Amount");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Refund.sumRefundPrice+Child.sumChildPrice)as Amount");
                 sb.AppendLine("         ,ftdd.Denomination");
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
@@ -276,6 +282,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
                 sb.AppendLine("         left join FTicketPublishInformation ftpi");
                 sb.AppendLine("         on ftpi.ID = ftup.ID");
                 sb.AppendLine("         left join CharacterResource cr");
@@ -283,22 +290,30 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         and Language = 'ja'");
                 sb.AppendLine("    left join(");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumAdultPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumAdultPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='1'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Adult ");
                 sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumDiscountPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumDiscountPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='2'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
                 sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
                 sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(Price),0) as sumRefundPrice");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumChildPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumChildPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='3'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
@@ -307,11 +322,11 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
-                sb.AppendLine("         and ftup.GmoStatus = '1'");
                 sb.AppendLine("         left join UserInfoOid uio");
                 sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("         where ftup.GmoStatus = '1'");
                 sb.AppendLine("     union all");
                 sb.AppendLine("     select ftup.PurchaseDatetime");
                 sb.AppendLine("         ,ftup.UserId");
@@ -325,7 +340,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         /*枚数*/");
                 sb.AppendLine("         ,ftup.PaymentId");
                 sb.AppendLine("         ,ftup.GmoStatus");
-                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Child.sumChildPrice) * - 1 as Amount");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Refund.sumRefundPrice+Child.sumChildPrice) * - 1 as Amount");
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 sb.AppendLine("         ,ftdd.Denomination");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
@@ -337,6 +352,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
                 sb.AppendLine("         left join FTicketPublishInformation ftpi");
                 sb.AppendLine("         on ftpi.ID = ftup.ID");
                 sb.AppendLine("         left join CharacterResource cr");
@@ -344,22 +360,30 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("          and Language = 'ja'");
                 sb.AppendLine("        left join(");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumAdultPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumAdultPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='1'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Adult");
                 sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumDiscountPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumDiscountPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='2'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
                 sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
                 sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(Price),0) as sumRefundPrice");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(Price) as sumChildPrice");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumChildPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='3'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
@@ -368,11 +392,11 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
-                sb.AppendLine("         and ftup.GmoStatus = '3'");
                 sb.AppendLine("         left join UserInfoOid uio");
                 sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("         where ftup.GmoStatus = '3'");
                 sb.AppendLine("     union all");
                 sb.AppendLine("     select ftup.PurchaseDatetime");
                 sb.AppendLine("         ,ftup.UserId");
@@ -389,7 +413,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("                    /*枚数*/");
                 sb.AppendLine("         ,ftup.PaymentId");
                 sb.AppendLine("         ,ftup.GmoStatus");
-                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountRefundFee+Child.sumChildPrice) as Amount");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountRefundFee+sumRefundRefundFee+Child.sumChildPrice) as Amount");
                 sb.AppendLine("         ,ftdd.Denomination");
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
@@ -401,6 +425,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
                 sb.AppendLine("         left join FTicketPublishInformation ftpi");
                 sb.AppendLine("         on ftpi.ID = ftup.ID");
                 sb.AppendLine("         left join CharacterResource cr");
@@ -408,22 +433,30 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("          and Language = 'ja'");
                 sb.AppendLine("        left join(");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(RefundFee) as sumAdultPrice");
+                sb.AppendLine("    ISNULL(sum(RefundFee),0) as sumAdultPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='1'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Adult");
                 sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(RefundFee) as sumDiscountRefundFee");
+                sb.AppendLine("    ISNULL(sum(RefundFee),0) as sumDiscountRefundFee");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='2'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
                 sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
                 sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
                 sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(RefundFee),0) as sumRefundRefundFee");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("    left join");
                 sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
-                sb.AppendLine("    sum(RefundFee) as sumChildPrice");
+                sb.AppendLine("    ISNULL(sum(RefundFee),0) as sumChildPrice");
                 sb.AppendLine("    from FTicketUsersPrices");
                 sb.AppendLine("    where PriceNo='3'");
                 sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
@@ -432,11 +465,252 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("      ");
-                sb.AppendLine("    and ftup.GmoStatus = '5'");
                 sb.AppendLine("         left join UserInfoOid uio");
                 sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("    where ftup.GmoStatus = '5'");
+                sb.AppendLine("     ) tbl");
+                /* 決済エラー分は含めない*/
+                sb.AppendLine("         where not exists(");
+                sb.AppendLine("         select 1");
+                sb.AppendLine("         from FTicketUsersPurchased ftup");
+                sb.AppendLine("         where ftup.IsPaymentError = 1");
+                sb.AppendLine("     )");
+                /*運用未処置*/
+                sb.AppendLine("     and tbl.PurchaseDatetime between @StartDatatTime and @EndDatatTime");
+
+
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 施設取得情報一覧
+        /// </summary>
+        /// <param name="stDate"></param>
+        /// <param name="edDate"></param>
+        /// <returns></returns>
+        private string GetALLFOCMuseumPaymentDateQuery(DateTime stDate, DateTime edDate)
+        {
+            using (SqlDbInterface MiyakohdbInterface = new SqlDbInterface())
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine("    select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId) as RecNo");
+                /*決済IDと決済種別でソートする*/
+                sb.AppendLine("    ,tbl.UserId");
+                sb.AppendLine("    ,tbl.PurchaseDatetime");
+                sb.AppendLine("    ,tbl.BizCompanyCd");
+                /*チケット種別(交通手段)*/
+                sb.AppendLine("         ,tbl.ID");
+                sb.AppendLine("         ,tbl.Value");
+                /*チケット名称*/
+                sb.AppendLine("         ,tbl.AdultNum");
+                sb.AppendLine("     ,tbl.DiscountNum");
+                
+                sb.AppendLine("         ,tbl.PaymentId");
+                sb.AppendLine("         ,tbl.Denomination");
+                sb.AppendLine("         ,tbl.AplName");
+                /*アプリ種別*/
+                sb.AppendLine("         ,case when tbl.GmoStatus = '1' then N'即時決済'");
+                sb.AppendLine("         when tbl.GmoStatus = '5' then N'払戻し'");
+                sb.AppendLine("         when tbl.GmoStatus = '3' then N'取消'");
+                sb.AppendLine("         else N'決済種別不明'");
+                sb.AppendLine("         end as GmoStatus");
+                sb.AppendLine("         ,tbl.Amount");
+                sb.AppendLine("    /*, tbl.ReceiptNo*/");
+                sb.AppendLine("         from (");
+                sb.AppendLine("     select ftup.PurchaseDatetime");
+                sb.AppendLine("         ,ftup.UserId");
+
+                sb.AppendLine("         ,ftpd.BizCompanyCd");
+                sb.AppendLine("         ,N'売上' as Summary");
+                sb.AppendLine("         ,cr.Value");
+                /*チケット名称(日本語)*/
+                sb.AppendLine("         ,Adult.Num as AdultNum");
+                sb.AppendLine("     ,Discount.Num as DiscountNum");
+                /*枚数*/
+                sb.AppendLine("         ,ftup.PaymentId");
+                sb.AppendLine("         ,ftup.GmoStatus");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Refund.sumRefundPrice)as Amount");
+                sb.AppendLine("         ,ftdd.Denomination");
+                sb.AppendLine("         /*, pm.ReceiptNo*/");
+                /*ReceiptTypeは存在しているが、領収書番号は不明*/
+                sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else ''");
+                sb.AppendLine("         end as AplName");
+                sb.AppendLine("         from FTicketUsersPurchased ftup");
+                sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
+                sb.AppendLine("         left join FTicketPublishInformation ftpi");
+                sb.AppendLine("         on ftpi.ID = ftup.ID");
+                sb.AppendLine("         left join CharacterResource cr");
+                sb.AppendLine("         on ftpi.Name = cr.ResourceId");
+                sb.AppendLine("         and Language = 'ja'");
+                sb.AppendLine("    left join(");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumAdultPrice");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='1'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Adult ");
+                sb.AppendLine("    left join");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumDiscountPrice");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='2'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
+                sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
+                sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(Price),0) as sumRefundPrice");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("   ) on ftup.PurchasedNo= Adult.PurchasedNo");
+                sb.AppendLine("    and Adult.UserId=ftup.UserId");
+                sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
+                sb.AppendLine("         left join FTicketPublishDefinition ftpd");
+                sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("         where ftup.GmoStatus = '1'");
+                sb.AppendLine("     union all");
+                sb.AppendLine("     select ftup.PurchaseDatetime");
+                sb.AppendLine("         ,ftup.UserId");
+                sb.AppendLine("         ,ftpd.BizCompanyCd");
+                sb.AppendLine("         ,N'売上' as Summary");
+                sb.AppendLine("         ,cr.Value");
+                /*チケット名称(日本語)*/
+                sb.AppendLine("         ,Adult.Num as AdultNum");
+                sb.AppendLine("     ,Discount.Num as DiscountNum");
+                sb.AppendLine("         /*枚数*/");
+                sb.AppendLine("         ,ftup.PaymentId");
+                sb.AppendLine("         ,ftup.GmoStatus");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountPrice+Refund.sumRefundPrice) * - 1 as Amount");
+                sb.AppendLine("         /*, pm.ReceiptNo*/");
+                sb.AppendLine("         ,ftdd.Denomination");
+                /*ReceiptTypeは存在しているが、領収書番号は不明*/
+                sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else ''");
+                sb.AppendLine("         end as AplName");
+                sb.AppendLine("         from FTicketUsersPurchased ftup");
+                sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
+                sb.AppendLine("         left join FTicketPublishInformation ftpi");
+                sb.AppendLine("         on ftpi.ID = ftup.ID");
+                sb.AppendLine("         left join CharacterResource cr");
+                sb.AppendLine("         on ftpi.Name = cr.ResourceId");
+                sb.AppendLine("          and Language = 'ja'");
+                sb.AppendLine("        left join(");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumAdultPrice");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='1'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Adult");
+                sb.AppendLine("    left join");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(Price),0) as sumDiscountPrice");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='2'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
+                sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
+                sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(Price),0) as sumRefundPrice");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("    )");
+                sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
+                sb.AppendLine("    and Adult.UserId=ftup.UserId");
+                sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
+                sb.AppendLine("         left join FTicketPublishDefinition ftpd");
+                sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("         where ftup.GmoStatus = '3'");
+                sb.AppendLine("     union all");
+                sb.AppendLine("     select ftup.PurchaseDatetime");
+                sb.AppendLine("         ,ftup.UserId");
+                sb.AppendLine("         ,ftpd.BizCompanyCd");
+                sb.AppendLine("         ,N'払戻し' as Summary");
+                sb.AppendLine("         ,cr.Value");
+                /*チケット名称(日本語)*/
+                sb.AppendLine("        /* ,ftupr.PriceNo*/");
+
+                /*チケット種別判定条件(1:大人,2:学生)*/
+                sb.AppendLine("         ,Adult.Num as AdultNum");
+                sb.AppendLine("     ,Discount.Num as DiscountNum");
+                
+                sb.AppendLine("                    /*枚数*/");
+                sb.AppendLine("         ,ftup.PaymentId");
+                sb.AppendLine("         ,ftup.GmoStatus");
+                sb.AppendLine("         ,(Adult.sumAdultPrice+Discount.sumDiscountRefundFee+sumRefundRefundFee) as Amount");
+                sb.AppendLine("         ,ftdd.Denomination");
+                sb.AppendLine("         /*, pm.ReceiptNo*/");
+                /*ReceiptTypeは存在しているが、領収書番号は不明*/
+                sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else ''");
+                sb.AppendLine("         end as AplName");
+                sb.AppendLine("         from FTicketUsersPurchased ftup");
+                sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("         on ftdd.ID = ftup.ID");
+                sb.AppendLine("         and ftdd.DistributedNo='1'");
+                sb.AppendLine("         left join FTicketPublishInformation ftpi");
+                sb.AppendLine("         on ftpi.ID = ftup.ID");
+                sb.AppendLine("         left join CharacterResource cr");
+                sb.AppendLine("         on ftpi.Name = cr.ResourceId");
+                sb.AppendLine("          and Language = 'ja'");
+                sb.AppendLine("        left join(");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(RefundFee),0) as sumAdultPrice");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='1'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Adult");
+                sb.AppendLine("    left join");
+                sb.AppendLine("    (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("    ISNULL(sum(RefundFee),0) as sumDiscountRefundFee");
+                sb.AppendLine("    from FTicketUsersPrices");
+                sb.AppendLine("    where PriceNo='2'");
+                sb.AppendLine("    group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("    )Discount on Adult.UserId=Discount.UserId");
+                sb.AppendLine("    and Adult.PurchasedNo =Discount.PurchasedNo");
+                sb.AppendLine("    left join");
+                sb.AppendLine("        (select UserId,ID,Num,PriceNo,PurchasedNo,");
+                sb.AppendLine("        ISNULL(sum(RefundFee),0) as sumRefundRefundFee");
+                sb.AppendLine("        from FTicketUsersPrices");
+                sb.AppendLine("        where PriceNo='-1'");
+                sb.AppendLine("        group by PriceNo,UserId,ID,Num,PurchasedNo");
+                sb.AppendLine("        )Refund on Adult.UserId=Refund.UserId");
+                sb.AppendLine("        and Adult.PurchasedNo =Refund.PurchasedNo");
+                sb.AppendLine("    )");
+                sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
+                sb.AppendLine("    and Adult.UserId=ftup.UserId");
+                sb.AppendLine("      ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
+                sb.AppendLine("         left join FTicketPublishDefinition ftpd");
+                sb.AppendLine("         on ftup.ID = ftpd.ID");
+                sb.AppendLine("    where ftup.GmoStatus = '5'");
                 sb.AppendLine("     ) tbl");
                 /* 決済エラー分は含めない*/
                 sb.AppendLine("         where not exists(");
@@ -480,11 +754,39 @@ namespace AppSigmaAdmin.Models
                 {
                     MuseumSb.AppendLine("   and tbl.BizCompanyCd = @PageName");
                     cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "FOC";
+                    if (TicketNumType == "大人")
+                    {
+                        //検索条件に枚数種別：大人
+                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
+                    else if (TicketNumType == "学割")
+                    {
+                        //検索条件に枚数種別：学割
+                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
+                    }
                 }
                 else if (PageName == "MPA1101")
                 {
                     MuseumSb.AppendLine("   and tbl.BizCompanyCd = @PageName");
                     cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "MYZ";
+                    if (TicketNumType == "大人")
+                    {
+                        //検索条件に枚数種別：大人
+                        MuseumSb.AppendLine("   and tbl.ChildNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
+                    else if (TicketNumType == "中学生")
+                    {
+                        //検索条件に枚数種別：学割
+                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.ChildNum = '0' ");
+                    }
+                    else if (TicketNumType == "小児")
+                    {
+                        //検索条件に枚数種別：学割
+                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                    }
                 }
                 if (MyrouteNo != "")
                 {
@@ -501,8 +803,8 @@ namespace AppSigmaAdmin.Models
                 if (PaymentType == "決済種別不明")
                 {
                     //検索条件に決済種別：決済種別不明指定
-                    MuseumSb.AppendLine("   and tbl.PaymentType not in ('3','4','5')");
-                    cmd.Parameters.Add("@PaymentType", SqlDbType.NVarChar).Value = PaymentType;
+                    MuseumSb.AppendLine("   and tbl.GmoStatus not in ('1','3','5')");
+                  //  cmd.Parameters.Add("@PaymentType", SqlDbType.NVarChar).Value = PaymentType;
                 }
                 else if (PaymentType != "-")
                 {
@@ -510,26 +812,7 @@ namespace AppSigmaAdmin.Models
                     MuseumSb.AppendLine("   and tbl.GmoStatus = @PaymentType ");
                     cmd.Parameters.Add("@PaymentType", SqlDbType.NVarChar).Value = PaymentType;
                 }
-                if (TicketNumType == "大人")
-                {
-                    //検索条件に枚数種別：大人
-                    MuseumSb.AppendLine("   and tbl.PriceNo = '1' ");
-                }
-                else if (TicketNumType == "学割")
-                {
-                    //検索条件に枚数種別：学割
-                    MuseumSb.AppendLine("   and tbl.PriceNo = '2' ");
-                }
-                else if (TicketNumType == "中学生")
-                {
-                    //検索条件に枚数種別：学割
-                    MuseumSb.AppendLine("   and tbl.PriceNo = '2' ");
-                }
-                else if (TicketNumType == "小児")
-                {
-                    //検索条件に枚数種別：学割
-                    MuseumSb.AppendLine("   and tbl.PriceNo = '3' ");
-                }
+                
                 if (TicketId != "-")
                 {
                     //検索条件に券種指定
@@ -538,8 +821,8 @@ namespace AppSigmaAdmin.Models
                 }
                 if (AplType != "-")//au用Role番号判定
                 {
-                    MuseumSb.AppendLine("   and tbl.AplType = @AplType");
-                    cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
+                    MuseumSb.AppendLine("   and tbl.AplName = @AplName");
+                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = AplType;
                 }
 
 
@@ -590,17 +873,22 @@ namespace AppSigmaAdmin.Models
                     Jsb.AppendLine("    AND AplType = @AplName ");
                     cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
                 }
-                if (model.FacilityId != "-")
+                if (false == string.IsNullOrEmpty(model.FacilityId))
                 {
                     //施設名
                     Jsb.AppendLine("   and ftud.FacilityId = @FacilityId  ");
                     cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
                 }
-                if (model.TenantID != "-")
+                if (false == string.IsNullOrEmpty(model.ShopType))
                 {
+                    string SearchOb = "/"; //「/」判定用
+                    int num = model.ShopType.IndexOf(SearchOb);
+                    string ShopId = model.ShopType.Substring(0, num);       //チケットID分離
+                    int Tpt = model.ShopType.Length - (num + 1);
+                    string TransePortCheck = model.ShopType.Substring(num + 1, Tpt).ToString();  //交通種別分離
                     //入場イベント名
                     Jsb.AppendLine("   and ftud.ServiceResourceId = @TenantID ");
-                    cmd.Parameters.Add("@TenantID", SqlDbType.NVarChar).Value = model.TenantID;
+                    cmd.Parameters.Add("@TenantID", SqlDbType.NVarChar).Value = TransePortCheck;
                 }
 
                 Jsb.AppendLine("  ) as MA");
@@ -626,7 +914,7 @@ namespace AppSigmaAdmin.Models
             using (SqlCommand cmd = new SqlCommand())
             {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("select ftup.UserId/*myrouteID*/");             /*myrouteID*/
+                sb.AppendLine("select ftup.UserId");             /*myrouteID*/
                 sb.AppendLine("    , ftup.PurchasedNo");                      /*購入番号*/
                 sb.AppendLine("    , ftup.ID");                               /*入場券ID*/
                 sb.AppendLine("    , ftud.UsageStartDatetime");               /*利用開始時間*/
@@ -725,7 +1013,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("                    left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("                    on ftdd.ID = ftdas.ID");
                 sb.AppendLine("                    Where cr.Language = @lng");
-                sb.AppendLine("                    and  ftdd.BizCompanyCd ='FOC'/*福岡施設固定*/");
+                sb.AppendLine("                    and  ftdd.BizCompanyCd ='FOC'");                     /*福岡施設固定*/
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                 cmd.CommandText = sb.ToString();

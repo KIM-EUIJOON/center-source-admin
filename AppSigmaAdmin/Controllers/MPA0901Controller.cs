@@ -121,7 +121,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (0 == sessiondata.ListMaxCount)
             {
-                ModelState.AddModelError("", "一致する決済情報がありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.CouponInfoList = null;
                 return View(info);
             }
@@ -176,7 +176,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
-                ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.CouponInfoList = null;
                 return View(info);
             }
@@ -253,7 +253,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
-                ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.CouponInfoList = null;
                 return View(info);
             }

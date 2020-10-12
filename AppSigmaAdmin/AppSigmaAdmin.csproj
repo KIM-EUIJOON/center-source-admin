@@ -213,7 +213,6 @@
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
-    <Compile Include="Models\ValuesController1.cs" />
     <Compile Include="ResponseData\MuseumInfoEntity.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
     <Compile Include="Utility\BundleHtmlTag.cs" />

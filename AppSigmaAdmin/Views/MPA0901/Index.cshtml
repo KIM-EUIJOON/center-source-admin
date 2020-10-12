@@ -5,7 +5,7 @@
 @using AppSigmaAdmin.Library
 
 @{
-    ViewBag.Title = "横浜チケット決済情報（横浜フリー乗車券）";
+    ViewBag.Title = "クーポン利用実績(JR九州様)";
 }
 
 @Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery/MPA0901")
@@ -20,7 +20,7 @@
 
 @section funcTitle {
     <div class="funcTitleBer">
-        決済データ検索及びダウンロード(横浜チケット)
+        クーポン利用実績(JR九州様)
     </div>
 }
 
@@ -66,6 +66,16 @@
                             アプリ種別：
                             @Html.DropDownListFor(Model => Model.AplType, AplList, new { Class = "DropList" })
                         </div>
+                        <div class="GridTableCell">
+                            @{
+                                // 商品種別ドロップリスト項目作成
+                                List<SelectListItem> TicketList = new List<SelectListItem>();
+                                TicketList = @ViewBag.TicketList;
+                            }
+                            クーポン名：
+                            @Html.DropDownListFor(Model => Model.CouponId, TicketList, new { Class = "DropList", id = "ticketlist" })
+
+                        </div>
                     </div>
                     <div class="GridTableCell">
                     </div>
@@ -76,16 +86,7 @@
                 <div class="GridTableRow">
                     <div class="GridTableCell">
                         <div class="GridTableCol">
-                            <div class="GridTableCell">
-                                @{
-                                    // 商品種別ドロップリスト項目作成
-                                    List<SelectListItem> TicketList = new List<SelectListItem>();
-                                    TicketList = @ViewBag.TicketList;
-                                }
-                                クーポン名：
-                                @Html.DropDownListFor(Model => Model.CouponId, TicketList, new { Class = "DropList", id = "ticketlist" })
-
-                            </div>
+                            
                             <div class="GridTableCell">
                                 @{
                                     // 決済種別ドロップリスト項目作成

@@ -90,8 +90,8 @@ namespace AppSigmaAdmin.Models
 
                 sb.AppendLine("SELECT fclM.FacilityName,");
                 sb.AppendLine("       fclM.FacilityId");
-                sb.AppendLine("FROM FacilityMaster fclM");
-                sb.AppendLine("Where fclM.Language = @lng");
+                sb.AppendLine("       FROM FacilityMaster fclM");
+                sb.AppendLine("       Where fclM.Language = @lng");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                 cmd.CommandText = sb.ToString();

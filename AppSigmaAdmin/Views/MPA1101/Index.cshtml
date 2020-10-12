@@ -56,6 +56,15 @@
                             </div>
                             <div class="GridTableCell">
                                 @{
+                                    //カテゴリドロップリスト項目作成
+                                    List<SelectListItem> TranseTypeList = new List<SelectListItem>();
+                                    TranseTypeList = @ViewBag.TranseList;
+                                }
+                                カテゴリー：
+                                @Html.DropDownListFor(Model => Model.Denomination, TranseTypeList, new { Class = "DropList" })
+                            </div>
+                            <div class="GridTableCell">
+                                @{
                                     //アプリ種別ドロップリスト項目作成
                                     List<SelectListItem> AplTypeList = new List<SelectListItem>();
                                     AplTypeList = @ViewBag.AplList;
@@ -92,17 +101,17 @@
                                     PaymentTypeList.Add(new SelectListItem
                                     {
                                         Text = "即時決済",
-                                        Value = "3"
+                                        Value = "1"
                                     });
                                     PaymentTypeList.Add(new SelectListItem
                                     {
                                         Text = "払戻し",
-                                        Value = "4"
+                                        Value = "5"
                                     });
                                     PaymentTypeList.Add(new SelectListItem
                                     {
                                         Text = "取消",
-                                        Value = "5"
+                                        Value = "3"
                                     });
                                     PaymentTypeList.Add(new SelectListItem
                                     {
@@ -167,9 +176,9 @@
             </div>
             <div>
                 @{
-                    if (Model != null)
+                    if (Model.MuseumPaymentInfoList != null)
                     {
-                        if (Model.MuseumPaymentInfoList != null)
+                        if (Model.MuseumPaymentInfoList.Count != 0)
                         {
                             @*表示件数：10件*@
                             var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
@@ -178,10 +187,11 @@
                                 @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
                                                                                     columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
                                                                                     grid.Column("TranDatetime", header: "決済日時", style: "gridbody18"),
-                                                                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TransportType", header: "カテゴリー", style: "gridbody5"),
+                                                                                    grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("Denomination", header: "カテゴリー", style: "gridbody5"),
                                                                                     grid.Column("TicketName", header: "商品", style: "gridbody18"), grid.Column("AdultNum", header: "大人枚数", style: "gridbody8")
-                                                                                    , grid.Column("ChildNum", header: "高大生枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
-                                                                                    grid.Column("Amount", header: "金額", style: "gridbody6"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")
+                                                                                    , grid.Column("ChildNum", header: "中学生枚数", style: "gridbody8")
+                                                                                    , grid.Column("infantNum", header: "小児枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                                                                    grid.Column("Amount", header: "金額", style: "gridbody6")/*, grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")*/
                                                                                     , grid.Column("Apltype", header: "アプリ種別", style: "gridbody8")
                                                                                     )).ToHtmlString().Replace("{0}", "<br/>"))
                                 )

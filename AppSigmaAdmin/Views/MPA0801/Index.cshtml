@@ -106,12 +106,12 @@
                                     PaymentTypeList.Add(new SelectListItem
                                     {
                                         Text = "払戻し",
-                                        Value = "3"
+                                        Value = "5"
                                     });
                                     PaymentTypeList.Add(new SelectListItem
                                     {
                                         Text = "取消",
-                                        Value = "5"
+                                        Value = "3"
                                     });
                                     PaymentTypeList.Add(new SelectListItem
                                     {
@@ -150,7 +150,7 @@
                                         Selected = true
                                     });
                                 }
-                                大人/子供：
+                                カテゴリー：
                                 @Html.DropDownListFor(Model => Model.TicketNumType, TicketNumTypeList, new { Class = "DropList" })
                             </div>
                         </div>
@@ -185,7 +185,7 @@
                                                                             grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("Denomination", header: "カテゴリー", style: "gridbody5"),
                                                                             grid.Column("TicketName", header: "商品", style: "gridbody18"), grid.Column("AdultNum", header: "大人枚数", style: "gridbody8")
                                                                             , grid.Column("ChildNum", header: "高大生枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
-                                                                            grid.Column("Amount", header: "金額", style: "gridbody6"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")
+                                                                            grid.Column("Amount", header: "金額", style: "gridbody6")/*, grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")*/
                                                                             , grid.Column("Apltype", header: "アプリ種別", style: "gridbody8")
                                                                             )).ToHtmlString().Replace("{0}", "<br/>"))
                                 )

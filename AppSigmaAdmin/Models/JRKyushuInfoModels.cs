@@ -123,7 +123,7 @@ namespace AppSigmaAdmin.Models
                     }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        Jsb.AppendLine("   and tbl.AplType = @AplType");
+                        Jsb.AppendLine("   and tbl.AplName = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                     }
 
@@ -147,7 +147,7 @@ namespace AppSigmaAdmin.Models
                             PaymentId = row["PaymentId"].ToString(),
                             TicketName = row["Value"].ToString(),
                             TicketId = row["TicketId"].ToString(),
-                            TransportType = row["TrsType"].ToString(),
+                            
                             AdultNum = row["AdultNum"].ToString(),
                             ChildNum = row["ChildNum"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
@@ -159,6 +159,15 @@ namespace AppSigmaAdmin.Models
                         {
                             infoN.TicketName = infoN.TicketName + "[au]";
                         }
+                        if (row["TrsType"].ToString() == "10")
+                        {
+                            infoN.TransportType = "鉄道";
+                        }
+                        else if (row["TrsType"].ToString() == "99")
+                        {
+                            infoN.TransportType = "マルチ";
+                        }
+                        else { infoN.TransportType = "-"; } /*NULL対策*/
                         if (row["AplName"].ToString() == "1")
                         {
                             infoN.Apltype = "au";

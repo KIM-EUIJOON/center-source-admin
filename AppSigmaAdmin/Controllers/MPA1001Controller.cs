@@ -91,7 +91,7 @@ namespace AppSigmaAdmin.Controllers
             SelectTicketTypeList(sessiondata.Language, sessiondata.FacilityId);
             InitAplTypeList(sessiondata.Apltype); // アプリ種別情報
             InitFacilityNameList(sessiondata.Language, sessiondata.FacilityId);
-            InitShopNameList(sessiondata.Language, sessiondata.FacilityId);
+            InitShopNameList(sessiondata.Language, sessiondata.ShopType);
             info.UserId = sessiondata.UserId;
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
@@ -122,7 +122,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (0 == sessiondata.ListMaxCount)
             {
-                ModelState.AddModelError("", "一致する決済情報がありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.MuseumUseInfoList = null;
                 return View(info);
             }
@@ -177,7 +177,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
-                ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.MuseumUseInfoList = null;
                 return View(info);
             }
@@ -188,10 +188,10 @@ namespace AppSigmaAdmin.Controllers
                 info.MuseumUseInfoListAll.Add(new MuseumUseInfo()
                 {
                     UserId = row["UserId"].ToString(),
-                    UseDatetime = (DateTime.Parse(row["UsageDateTime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
-                    FacilityName = row["FacilityName"].ToString(),
-                    TenantName = row["TenantName"].ToString(),
-                    TenantID = row["TenantID"].ToString(),
+                    UseDatetime = (DateTime.Parse(row["UsageStartDatetime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
+                    FacilityName = row["MuseumName"].ToString(),
+                    TenantName = row["ServiceName"].ToString(),
+                    TenantID = row["ServiceResourceId"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
                     Denomination = row["Denomination"].ToString(),/*業種(仮)*/
                     Apltype = row["AplName"].ToString(),
@@ -253,7 +253,7 @@ namespace AppSigmaAdmin.Controllers
             // 取得したリスト件数が0以上
             if (maxListCount == 0)
             {
-                ModelState.AddModelError("", "一致する決済データがありませんでした。");
+                ModelState.AddModelError("", "一致する利用履歴がありませんでした。");
                 info.MuseumUseInfoList = null;
                 return View(info);
             }
@@ -303,9 +303,8 @@ namespace AppSigmaAdmin.Controllers
             // string TicetType = model.TicketType;
 
             // プルダウン初期化
-            this.InitFacilityNameList(model.Language, UserRole); // チケット種別情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
-            this.InitFacilityNameList(UserRole, model.FacilityId);
+            this.InitFacilityNameList(model.Language, model.FacilityId);// チケット種別情報
             this.InitShopNameList(model.Language,model.ShopType);
 
         }
@@ -318,7 +317,8 @@ namespace AppSigmaAdmin.Controllers
         [HttpGet]
         public ActionResult SelectTicketTypeList(string language, string id)
         {
-            var itemList = InitFacilityNameList(language, id);
+
+            var itemList = InitShopNameList(language, id);
             return Json(itemList, JsonRequestBehavior.AllowGet);
         }
 
@@ -330,7 +330,7 @@ namespace AppSigmaAdmin.Controllers
         private List<SelectListItem> InitFacilityNameList(string language, string id)
         {
             // 施設名リストを取得
-            DataTable db = new CouponInfoModel().GetFacilityNames(language);
+            DataTable db = new MuseumInfoModels().GetFacilityNames(language);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
@@ -401,7 +401,10 @@ namespace AppSigmaAdmin.Controllers
                     });
                 }
             }
-            if (id != null) { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty }); }
+            if (id != null)
+            {
+                itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty });
+            }
             else { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true }); }
 
             ViewBag.ShopList = itemList;
@@ -476,6 +479,19 @@ namespace AppSigmaAdmin.Controllers
             {
                 ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
                 return false;
+            }
+            if (model.FacilityId != "-" && model.ShopType!=null)
+            {
+                //開催イベント名選択肢から施設IDを分離する
+                string SearchOb = "/"; //「/」判定用
+                int num = model.ShopType.IndexOf(SearchOb);
+                string ShopId = model.ShopType.Substring(0, num);       //チケットID分離
+                
+                if (ShopId != model.FacilityId)
+                {
+                    ModelState.AddModelError("", "施設種別とテナント名の種別が一致しません。再選択してください。");
+                    return false;
+                }
             }
             return true;
         }

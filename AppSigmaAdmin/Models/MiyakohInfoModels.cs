@@ -107,13 +107,13 @@ namespace AppSigmaAdmin.Models
                     {
                         //検索条件に枚数種別：大人
                         Miyakohsb.AppendLine("   and tbl.ChildNum = '0' ");
-                        Miyakohsb.AppendLine("   and tbl.discountNum is null or tbl.discountNum in ('0') ");
+                        Miyakohsb.AppendLine("   and (tbl.discountNum='0' or tbl.discountNum is NULL) ");
                     }
                     else if (TicketNumType == "子供")
                     {
                         //検索条件に枚数種別：子供
                         Miyakohsb.AppendLine("   and tbl.AdultNum = '0' ");
-                        Miyakohsb.AppendLine("   and tbl.discountNum is null or tbl.discountNum in ('0') ");
+                        Miyakohsb.AppendLine("   and (tbl.discountNum='0' or tbl.discountNum is NULL) ");
                     }
                     else if (TicketNumType == "学割")
                     {
@@ -378,7 +378,7 @@ namespace AppSigmaAdmin.Models
                     if (TransportType != "-")
                     {
                         //検索条件に券種指定
-                        MiyakohSb.AppendLine("   and tbl.BizCompanyCd = @TransportType ");
+                        MiyakohSb.AppendLine("   and tbl.TrsType = @TransportType ");
                         cmd.Parameters.Add("@TransportType", SqlDbType.NVarChar).Value = TransportType;
                     }
                     if (PaymentType == "決済種別不明")

@@ -82,7 +82,7 @@ namespace AppSigmaAdmin.Controllers
                 foreach (var TicketList in MuseumTicket)
                 {
                     string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                    string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID/事業者ID
+                    string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID/事業者ID
                     TicketTypeList.Add(new SelectListItem { Text = TicketName, Value = ListTicketType });
                 }
                 TicketTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
@@ -140,7 +140,7 @@ namespace AppSigmaAdmin.Controllers
             foreach (var TicketList in MuseumTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID/交通手段
+                string ListTicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID/交通手段
 
 
                 if (TicketInfo != ListTicketType)
@@ -293,17 +293,17 @@ namespace AppSigmaAdmin.Controllers
                 }
                 else
                 {
-                    TransportType = model.BizCompanyCd;
+                    TransportType = model.Denomination;
                 }
             }
             else if (model.TicketInfo == null)
             {
                 TransportType = "-";
-                model.BizCompanyCd = TransportType;
+                model.Denomination = TransportType;
             }
             else
             {
-                TransportType = model.BizCompanyCd;
+                TransportType = model.Denomination;
             }
 
 
@@ -325,7 +325,7 @@ namespace AppSigmaAdmin.Controllers
             foreach (var TicketList in MiyakohTicket)
             {
                 string TicketName = TicketList.TicketName.ToString(); //商品種別名称
-                string TicketType = TicketList.TicketID.ToString() + "/" + TicketList.BizCompanyCd.ToString(); //チケットID+/+交通手段
+                string TicketType = TicketList.TicketID.ToString() + "/" + TicketList.Denomination.ToString(); //チケットID+/+交通手段
 
                 if (model.TicketInfo != TicketType)
                 {
@@ -537,6 +537,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TransportType", TransportType);
             searchKey.Add("TicketInfo", model.TicketInfo);
             searchKey.Add("PaymentType", model.PaymentType);
+            searchKey.Add("Denomination", model.Denomination);
             searchKey.Add("TicketNumType", model.TicketNumType);
             searchKey.Add("ListNum", ListNum.ToString());
             searchKey.Add("TicketId", TicketId);
@@ -806,8 +807,8 @@ namespace AppSigmaAdmin.Controllers
             Miyazakitourhsw.Write(',');
             Miyazakitourhsw.Write("\"金額\"");
             Miyazakitourhsw.Write(',');
-            Miyazakitourhsw.Write("\"領収書番号\"");
-            Miyazakitourhsw.Write(',');
+           /* Miyazakitourhsw.Write("\"領収書番号\"");
+            Miyazakitourhsw.Write(',');*/
             Miyazakitourhsw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.MuseumPaymentInfoList)
@@ -833,8 +834,8 @@ namespace AppSigmaAdmin.Controllers
                 Miyazakitourhsw.Write(',');
                 Miyazakitourhsw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 Miyazakitourhsw.Write(',');
-                Miyazakitourhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
-                Miyazakitourhsw.Write(',');
+              /*  Miyazakitourhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
+                Miyazakitourhsw.Write(',');*/
                 Miyazakitourhsw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
             }
             Miyazakitourhsw.Close();

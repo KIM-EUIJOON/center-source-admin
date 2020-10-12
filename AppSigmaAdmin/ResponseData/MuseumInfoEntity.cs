@@ -234,7 +234,7 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public string BizCompanyCd { get; set; }
 
-        public string TicketNumType { get; internal set; }
+        public string TicketNumType { get; set; }
 
         ///<summary>
         ///横浜表示用リスト

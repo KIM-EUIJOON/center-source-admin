@@ -807,8 +807,8 @@ namespace AppSigmaAdmin.Controllers
             Museumhsw.Write(',');
             Museumhsw.Write("\"金額\"");
             Museumhsw.Write(',');
-            Museumhsw.Write("\"領収書番号\"");
-            Museumhsw.Write(',');
+            /*Museumhsw.Write("\"領収書番号\"");
+            Museumhsw.Write(',');*/
             Museumhsw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.MuseumPaymentInfoList)
@@ -832,8 +832,8 @@ namespace AppSigmaAdmin.Controllers
                 Museumhsw.Write(',');
                 Museumhsw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 Museumhsw.Write(',');
-                Museumhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
-                Museumhsw.Write(',');
+               /* Museumhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
+                Museumhsw.Write(',');*/
                 Museumhsw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
             }
             Museumhsw.Close();
