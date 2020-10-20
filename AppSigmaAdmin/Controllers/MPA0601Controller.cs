@@ -220,7 +220,7 @@ namespace AppSigmaAdmin.Controllers
             List<NishitetsuPaymentInfo> SelectJRKyushuPaymentDateList = null;
 
             //表示情報を取得
-            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType);
+            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             int ListCount = int.Parse(maxListCount);
 
@@ -476,10 +476,10 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            JRKyushuPaymentDateListMaxCount = new JRKyushuPaymentModel().JRKyushuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            JRKyushuPaymentDateListMaxCount = new JRKyushuPaymentModel().JRKyushuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             NishitetsuPaymentInfoListEntity info = new NishitetsuPaymentInfoListEntity();
 
@@ -748,13 +748,13 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            JRKyushuPaymentDateListMaxCount = new JRKyushuPaymentModel().JRKyushuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            JRKyushuPaymentDateListMaxCount = new JRKyushuPaymentModel().JRKyushuPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             //表示リストの総数
             int maxListCount = JRKyushuPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            SelectJRKyushuPaymentDateList = new JRKyushuPaymentModel().GetJRKyushuPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
 
             //開始日時

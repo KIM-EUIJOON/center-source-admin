@@ -16,11 +16,21 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         public class JRKyushuPaymentModel
         {
+            /// <summary>対象チケットテーブル</summary>   // 本来はDBで持つべき
+            private Dictionary<string, List<string>> tblTargetFreeTickets = new Dictionary<string, List<string>>()
+            {
+                // JR九州様
+                {"16", new List<string>(){ "50001", "50002", "50006", "60001", "60002", "60006" } },
+                // 宮崎交通様：交通
+                {"17", new List<string>(){ "50001", "50002", "60001", "60002" } },
+            };
+
             /// <summary>
             /// JR九州販売チケット一覧取得
             /// </summary>
+            /// <param name="UserRole">ロールID</param>
             /// <returns></returns>
-            public List<NishitetsuPaymentInfo> JRKyushuPassportList(string UserId)
+            public List<NishitetsuPaymentInfo> JRKyushuPassportList(string UserRole)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
                 using (SqlDbInterface NTdbInterface = new SqlDbInterface())
@@ -39,6 +49,18 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("   and Language = 'ja'");
                     sb.AppendLine("   where fsm.BizCompanyCd='JRK'");//JR九州のコード不明
+                    if (tblTargetFreeTickets.ContainsKey(UserRole))
+                    {
+                        List<string> lst = new List<string>();
+                        for (int idx = 0; idx < tblTargetFreeTickets[UserRole].Count; idx++)
+                        {
+                            string wTicketId = string.Format("@TicketId{0}", idx);
+                            cmd.Parameters.Add(wTicketId, SqlDbType.NVarChar).Value = tblTargetFreeTickets[UserRole][idx];
+                            lst.Add(wTicketId);
+                        }
+                        sb.AppendLine(string.Format("   AND fsm.TicketId IN ({0})", string.Join(",", lst)));
+                    }
+                    sb.AppendLine("   ORDER BY fsm.TicketGroup, fsm.TicketId");
 
                     cmd.CommandText = sb.ToString();
 
@@ -63,14 +85,22 @@ namespace AppSigmaAdmin.Models
                 }
             }
 
-
             /// <summary>
             /// JR九州の決済情報リスト取得
             /// </summary>
             /// <param name="stDate">抽出範囲開始日</param>
             /// <param name="edDate">抽出範囲終了日</param>
+            /// <param name="pageNo">ページNo</param>
+            /// <param name="ListNoEnd"></param>
+            /// <param name="MyrouteNo"></param>
+            /// <param name="PaymentType"></param>
+            /// <param name="TicketNumType"></param>
+            /// <param name="TransportType"></param>
+            /// <param name="TicketId"></param>
+            /// <param name="AplType"></param>
+            /// <param name="UserRole"></param>
             /// <returns>JR九州決済情報</returns>
-            public List<NishitetsuPaymentInfo> GetJRKyushuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType)
+            public List<NishitetsuPaymentInfo> GetJRKyushuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType, string UserRole)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
 
@@ -121,9 +151,23 @@ namespace AppSigmaAdmin.Models
                         Jsb.AppendLine("   and tbl.TicketId = @TicketId ");
                         cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
                     }
+                    else
+                    {
+                        if (tblTargetFreeTickets.ContainsKey(UserRole))
+                        {
+                            List<string> lst = new List<string>();
+                            for (int idx = 0; idx < tblTargetFreeTickets[UserRole].Count; idx++)
+                            {
+                                string wTicketId = string.Format("@TicketId{0}", idx);
+                                cmd.Parameters.Add(wTicketId, SqlDbType.NVarChar).Value = tblTargetFreeTickets[UserRole][idx];
+                                lst.Add(wTicketId);
+                            }
+                            Jsb.AppendLine(string.Format("   AND tbl.TicketId IN ({0})", string.Join(",", lst)));
+                        }
+                    }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        Jsb.AppendLine("   and tbl.AplName = @AplType");
+                        Jsb.AppendLine("   and tbl.TicketGroup = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                     }
 
@@ -168,11 +212,7 @@ namespace AppSigmaAdmin.Models
                             infoN.TransportType = "マルチ";
                         }
                         else { infoN.TransportType = "-"; } /*NULL対策*/
-                        if (row["AplName"].ToString() == "1")
-                        {
-                            infoN.Apltype = "au";
-                        }
-                        else
+                        if (string.IsNullOrEmpty(row["AplName"].ToString()))
                         {
                             infoN.Apltype = "-";
                         }
@@ -236,7 +276,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
                     sb.AppendLine("           else ''");
                     sb.AppendLine("           end as AplName");
                     sb.AppendLine("           from FreeTicketManage ftm");
@@ -253,8 +293,6 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           left join CharacterResource cr");
                     sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("           and Language ='ja'");
-                    sb.AppendLine("          left join UserInfoOid uio");
-                    sb.AppendLine("          on ftm.UserId=uio.UserId");
                     sb.AppendLine("           union all");
                     sb.AppendLine("           select pm.TranDate");
                     sb.AppendLine("           ,ftm.UserId");
@@ -271,7 +309,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
                     sb.AppendLine("           else ''");
                     sb.AppendLine("           end as AplName");
                     sb.AppendLine("           from FreeTicketManage ftm");
@@ -288,8 +326,6 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           left join CharacterResource cr");
                     sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("           and Language ='ja'");
-                    sb.AppendLine("          left join UserInfoOid uio");
-                    sb.AppendLine("          on ftm.UserId=uio.UserId");
                     sb.AppendLine("           union all");
                     sb.AppendLine("           select pm.TranDate");
                     sb.AppendLine("           ,ftm.UserId");
@@ -306,7 +342,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
+                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
                     sb.AppendLine("           else ''");
                     sb.AppendLine("           end as AplName");
                     sb.AppendLine("           from FreeTicketManage ftm");
@@ -323,8 +359,6 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           left join CharacterResource cr");
                     sb.AppendLine("           on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("           and Language ='ja'");
-                    sb.AppendLine("          left join UserInfoOid uio");
-                    sb.AppendLine("          on ftm.UserId=uio.UserId");
 
                     sb.AppendLine("      ) tbl");
                     // 決済エラー分は含めない
@@ -349,12 +383,14 @@ namespace AppSigmaAdmin.Models
             /// <param name="stDate"></param>
             /// <param name="edDate"></param>
             /// <param name="MyrouteNo"></param>
-            /// <param name="TicketType"></param>
             /// <param name="PaymentType"></param>
             /// <param name="TicketNumType"></param>
             /// <param name="TransportType"></param>
+            /// <param name="TicketId"></param>
+            /// <param name="AplType"></param>
+            /// <param name="UserRole"></param>
             /// <returns></returns>
-            public List<NishitetsuPaymentInfo> JRKyushuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType)
+            public List<NishitetsuPaymentInfo> JRKyushuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType, string UserRole)
             {
                 List<NishitetsuPaymentInfo> result = new List<NishitetsuPaymentInfo>();
                 //現在表示されているリストの通し番号
@@ -376,7 +412,7 @@ namespace AppSigmaAdmin.Models
                     if (TransportType != "-")
                     {
                         //検索条件に券種指定
-                        JRKyushuSb.AppendLine("   and tbl.BizCompanyCd = @TransportType ");
+                        JRKyushuSb.AppendLine("   and tbl.TrsType = @TransportType ");
                         cmd.Parameters.Add("@TransportType", SqlDbType.NVarChar).Value = TransportType;
                     }
                     if (PaymentType == "決済種別不明")
@@ -407,9 +443,23 @@ namespace AppSigmaAdmin.Models
                         JRKyushuSb.AppendLine("   and tbl.TicketId = @TicketId ");
                         cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
                     }
+                    else
+                    {
+                        if (tblTargetFreeTickets.ContainsKey(UserRole))
+                        {
+                            List<string> lst = new List<string>();
+                            for (int idx = 0; idx < tblTargetFreeTickets[UserRole].Count; idx++)
+                            {
+                                string wTicketId = string.Format("@TicketId{0}", idx);
+                                cmd.Parameters.Add(wTicketId, SqlDbType.NVarChar).Value = tblTargetFreeTickets[UserRole][idx];
+                                lst.Add(wTicketId);
+                            }
+                            JRKyushuSb.AppendLine(string.Format("   AND tbl.TicketId IN ({0})", string.Join(",", lst)));
+                        }
+                    }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        JRKyushuSb.AppendLine("   and tbl.AplName = @AplType");
+                        JRKyushuSb.AppendLine("   and tbl.TicketGroup = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                     }
 
