@@ -19,8 +19,6 @@ namespace AppSigmaAdmin.Models
             /// <summary>対象チケットテーブル</summary>   // 本来はDBで持つべき
             private Dictionary<string, List<string>> tblTargetFreeTickets = new Dictionary<string, List<string>>()
             {
-                // JR九州様
-                {"16", new List<string>(){ "50001", "50002", "50006", "60001", "60002", "60006" } },
                 // 宮崎交通様：交通
                 {"17", new List<string>(){ "50001", "50002", "60001", "60002" } },
             };
@@ -197,11 +195,15 @@ namespace AppSigmaAdmin.Models
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString(),
-                            Apltype = row["AplName"].ToString()
                         };
                         if (row["TicketGroup"].ToString() == "1")
                         {
                             infoN.TicketName = infoN.TicketName + "[au]";
+                            infoN.Apltype = "au";
+                        }
+                        else
+                        {
+                            infoN.Apltype = "-";
                         }
                         if (row["TrsType"].ToString() == "10")
                         {
@@ -212,10 +214,6 @@ namespace AppSigmaAdmin.Models
                             infoN.TransportType = "マルチ";
                         }
                         else { infoN.TransportType = "-"; } /*NULL対策*/
-                        if (string.IsNullOrEmpty(row["AplName"].ToString()))
-                        {
-                            infoN.Apltype = "-";
-                        }
 
                         result.Add(infoN);
                     }
@@ -251,7 +249,6 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.AdultNum");
                     sb.AppendLine("     , tbl.ChildNum");
                     sb.AppendLine("     , tbl.PaymentId");
-                    sb.AppendLine("     , tbl.AplName");                                                                /*アプリ種別*/
                     sb.AppendLine("     , case when tbl.PaymentType = '3' then N'即時決済'");
                     sb.AppendLine("           when tbl.PaymentType = '4' then N'払戻し'");
                     sb.AppendLine("           when tbl.PaymentType = '5' then N'取消'");
@@ -274,13 +271,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.Amount");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
-                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
-                    sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
-                    sb.AppendLine("           else ''");
-                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("           ,fsm.TicketGroup");
                     sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           inner join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");/*JR九州*/
                     sb.AppendLine("           inner join PaymentManage pm");
@@ -307,13 +301,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.Amount* -1 as Amount");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
-                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
-                    sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
-                    sb.AppendLine("           else ''");
-                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("           ,fsm.TicketGroup");
                     sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           inner join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");     /*JR九州*/
                     sb.AppendLine("           inner join PaymentManage pm");
@@ -340,13 +331,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.Amount");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
-                    sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
-                    sb.AppendLine("         ,fsm.TicketGroup");
-                    sb.AppendLine("           ,case when fsm.TicketGroup = 1 then 'au'");
-                    sb.AppendLine("           else ''");
-                    sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
+                    sb.AppendLine("           ,fsm.TicketGroup");
                     sb.AppendLine("           from FreeTicketManage ftm");
-                    sb.AppendLine("           left join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("           inner join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("           and (fsm.BizCompanyCd='JRK')");     /*JR九州*/
                     sb.AppendLine("           inner join PaymentManage pm");
@@ -598,7 +586,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,sm.ShopName");
                     sb.AppendLine("       ,fm.FacilityName");
                     sb.AppendLine("       ,im.IndustryName");
-                    sb.AppendLine("       ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/
+                    sb.AppendLine("       ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/  //【TODO】クーポン画面を修正する時に必ず直すこと：神
                     sb.AppendLine("       else ''");
                     sb.AppendLine("       end as AplName");
                     sb.AppendLine("       from CouponManage cm");
