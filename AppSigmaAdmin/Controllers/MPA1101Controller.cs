@@ -555,7 +555,7 @@ namespace AppSigmaAdmin.Controllers
         /// <returns></returns>
         [HttpPost]
         [SessionCheck(WindowName = "JR九州決済データ画面")]
-        public ActionResult NishitetsuOutPutDate(MuseumPaymentInfo model)
+        public ActionResult CsvOutPutDate(MuseumPaymentInfo model)
         {
 
             ViewData["message"] = "";
