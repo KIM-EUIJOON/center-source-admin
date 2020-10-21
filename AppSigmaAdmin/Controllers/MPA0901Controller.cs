@@ -30,7 +30,10 @@ namespace AppSigmaAdmin.Controllers
             "テナント名",
             "利用件数",
             "業種",
-            "アプリ種別"
+            "アプリ種別",
+            "大人枚数",
+            "学割枚数",
+            "子供枚数",
         };
 
         /// <summary>
@@ -76,8 +79,16 @@ namespace AppSigmaAdmin.Controllers
         {
             JRKyushuCouponInfoEntity info = new JRKyushuCouponInfoEntity();
 
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             // 検索条件初期化
-            this.InitSearchList(info);
+            this.InitSearchList(info, UserRole);
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
@@ -144,8 +155,16 @@ namespace AppSigmaAdmin.Controllers
         {
             ViewData["message"] = "";
 
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             // 検索条件初期化
-            this.InitSearchList(model);
+            this.InitSearchList(model, UserRole);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
@@ -154,7 +173,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new JRKyushuCouponModel().GetCouponDateList(model);
+            DataTable GetData = new JRKyushuCouponModel().GetCouponDateList(model, UserRole);
             JRKyushuCouponInfoEntity info = new JRKyushuCouponInfoEntity();
 
             // 表示リストの総数
@@ -194,8 +213,10 @@ namespace AppSigmaAdmin.Controllers
                     FacilityName = row["FacilityName"].ToString(),
                     IndustryName = row["IndustryName"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
-                    AplType = row["AplName"].ToString(),
-
+                    AplType = row["TicketGroup"].ToString() == "1" ? "au" : "-",
+                    AdultNum = !string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-",
+                    DiscountNum = !string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-",
+                    ChildNum = !string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-",
                 });
             }
 
@@ -219,8 +240,16 @@ namespace AppSigmaAdmin.Controllers
         {
             ViewData["message"] = "";
 
+            //RoleIDによる振り分け
+            UserInfoAdminEntity UserInfo = null;
+            //セッションに保存されているユーザー情報を取得する
+            UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = "-";
+            UserRole = UserInfo.Role.ToString();
+
             // 検索条件初期化
-            this.InitSearchList(model);
+            this.InitSearchList(model, UserRole);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
@@ -229,7 +258,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new JRKyushuCouponModel().GetCouponDateList(model);
+            DataTable GetData = new JRKyushuCouponModel().GetCouponDateList(model, UserRole);
             JRKyushuCouponInfoEntity info = new JRKyushuCouponInfoEntity();
 
             // 表示リストの総数
@@ -283,7 +312,10 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["TicketGroup"].ToString() == "1" ? "au" : "-"));
+                    strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-"));
+                    strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-"));
+                    strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-"));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
@@ -296,16 +328,13 @@ namespace AppSigmaAdmin.Controllers
         /// 検索条件リスト作成
         /// </summary>
         /// <param name="model"></param>
-        private void InitSearchList(JRKyushuCouponInfoEntity model)
+        /// <param name="UserRole"></param>
+        private void InitSearchList(JRKyushuCouponInfoEntity model, string UserRole)
         {
-            //検索条件のUserRole取得
-            string UserRole = model.AplType;
-           // string TicetType = model.TicketType;
-
             // プルダウン初期化
-            this.InitShopNameList(model.Language, model.ShopCode); // チケット種別情報
+            this.InitShopNameList(model.Language, model.ShopCode, UserRole); // チケット種別情報
             this.InitAplTypeList(UserRole); // アプリ種別情報
-            this.InitTicketTypeList(UserRole,model.CouponId);
+            this.InitTicketTypeList(model.Language, model.CouponId);
             this.InitFacilityNameList(model.FacilityId);
 
         }
@@ -411,11 +440,13 @@ namespace AppSigmaAdmin.Controllers
         /// テナント名ドロップダウンリスト初期化
         /// </summary>
         /// <param name="language">言語</param>
-        /// <returns>券種リスト取得結果</returns>
-        private List<SelectListItem> InitShopNameList(string language, string id)
+        /// <param name="id"></param>
+        /// <param name="UserRole"></param>
+        /// <returns>テナント名ドロップダウンリスト</returns>
+        private List<SelectListItem> InitShopNameList(string language, string id, string UserRole)
         {
             // チケットリストを取得
-            DataTable db = new JRKyushuCouponModel().GetShopName(language);
+            DataTable db = new JRKyushuCouponModel().GetShopName(language, UserRole);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
@@ -442,8 +473,20 @@ namespace AppSigmaAdmin.Controllers
                     });
                 }
             }
-            if (id != null) { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty }); }
-            else { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true }); }
+
+            // アミュプラザ様
+            if (UserRole == "21")
+            {
+                if (itemList.Count > 0)
+                {
+                    itemList.First().Selected = true;
+                }
+            }
+            else
+            {
+                if (id != null) { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty }); }
+                else { itemList.Add(new SelectListItem { Text = "種別未選択", Value = String.Empty, Selected = true }); }
+            }
 
             ViewBag.ShopList = itemList;
             return itemList;
@@ -456,14 +499,6 @@ namespace AppSigmaAdmin.Controllers
         private void InitAplTypeList(string userRole)
         {
             List<SelectListItem> itemList = new List<SelectListItem>();
-
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
-            //auチェック
-            if (UserInfo.Role == "13")
-            {
-                userRole = UserInfo.Role;
-            }
 
             //アプリ種別ドロップダウンリスト作成
             if (userRole == "13")

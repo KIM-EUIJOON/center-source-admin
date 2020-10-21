@@ -513,8 +513,9 @@ namespace AppSigmaAdmin.Models
             /// JR九州クーポン情報取得
             /// </summary>
             /// <param name="model"></param>
+            /// <param name="UserRole"></param>
             /// <returns></returns>
-            public DataTable GetCouponDateList(JRKyushuCouponInfoEntity model)
+            public DataTable GetCouponDateList(JRKyushuCouponInfoEntity model, string UserRole)
             {
                 using (SqlDbInterface dbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
@@ -532,8 +533,8 @@ namespace AppSigmaAdmin.Models
                     }
                     if (false == string.IsNullOrEmpty(model.AplType))
                     {
-                        Jsb.AppendLine("    AND AplType = @AplName ");
-                        cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
+                        Jsb.AppendLine("    AND TicketGroup = @AplType ");
+                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = model.AplType;
                     }
                     if (false == string.IsNullOrEmpty(model.CouponId))
                     {
@@ -552,7 +553,23 @@ namespace AppSigmaAdmin.Models
                         Jsb.AppendLine("   and cs.ShopCode = @ShopCode ");
                         cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
                     }
-                    
+
+                    // JR九州様
+                    if (UserRole == "16")
+                    {
+                        Jsb.AppendLine("   and ftsm.BizCompanyCd = @TicketBizCompanyCd");
+                        cmd.Parameters.Add("@TicketBizCompanyCd", SqlDbType.NVarChar).Value = "JRK";
+                    }
+                    // 宮崎交通様：交通
+                    else if (UserRole == "17")
+                    {
+                        Jsb.AppendLine("   and ftsm.BizCompanyCd IN (@TicketBizCompanyCd0, @TicketBizCompanyCd1)");
+                        cmd.Parameters.Add("@TicketBizCompanyCd0", SqlDbType.NVarChar).Value = "JRK";
+                        cmd.Parameters.Add("@TicketBizCompanyCd1", SqlDbType.NVarChar).Value = "MYZ";
+                    }
+
+                    Jsb.AppendLine("   and sm.Language = @lang");
+
                     Jsb.AppendLine("  ) as MA");
 
                     // 検索条件
@@ -584,23 +601,34 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,cr.Value");
                     sb.AppendLine("       ,cs.ShopCode");
                     sb.AppendLine("       ,sm.ShopName");
+                    sb.AppendLine("       ,sm.Language");
                     sb.AppendLine("       ,fm.FacilityName");
                     sb.AppendLine("       ,im.IndustryName");
-                    sb.AppendLine("       ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/  //【TODO】クーポン画面を修正する時に必ず直すこと：神
-                    sb.AppendLine("       else ''");
-                    sb.AppendLine("       end as AplName");
+                    sb.AppendLine("       ,ftsm.TicketGroup");
+                    sb.AppendLine("       ,ftm.AdultNum");
+                    sb.AppendLine("       ,ftm.ChildNum");
+                    sb.AppendLine("       ,ftm.DiscountNum");
+                    sb.AppendLine("       ,ftsm.BizCompanyCd AS TicketBizCompanyCd");
+
                     sb.AppendLine("       from CouponManage cm");
-                    sb.AppendLine("       left join CouponMaster cma");
+                    sb.AppendLine("       inner join CouponMaster cma");
                     sb.AppendLine("       on cm.CouponId=cma.CouponId");
                     sb.AppendLine("       left join CharacterResource cr");
                     sb.AppendLine("       on cma.CouponName = cr.ResourceId");
                     sb.AppendLine("       and cr.Language='ja'");
+                    sb.AppendLine("       inner join FreeTicketSalesMaster ftsm");
+                    sb.AppendLine("       on cm.TicketId=ftsm.TicketId");
+                    sb.AppendLine("       inner join FreeTicketManage ftm");
+                    sb.AppendLine("       on cm.TicketId=ftm.TicketId");
+                    sb.AppendLine("       and cm.TicketSetNo=ftm.SetNo");
+
                     sb.AppendLine("       left join CouponShop cs");
                     sb.AppendLine("       on cm.CouponId = cs.CouponId");
                     sb.AppendLine("       left join ShopMaster sm");
                     sb.AppendLine("       on cs.ShopCode = sm.ShopCode");
                     sb.AppendLine("       left join FacilityMaster fm");
                     sb.AppendLine("       on sm.FacilityId = fm.FacilityId");
+                    sb.AppendLine("       and sm.Language = fm.Language");
                     sb.AppendLine("       left join IndustryMaster im");
                     sb.AppendLine("       on sm.IndustryCode = im.IndustryCode");
                     sb.AppendLine("       left join UserInfoOid uio");
@@ -641,7 +669,7 @@ namespace AppSigmaAdmin.Models
             /// テナント名マスタ取得
             /// </summary>
             /// <returns>SQL実行結果</returns>
-            public DataTable GetShopName(string language)
+            public DataTable GetShopName(string language, string UserRole)
             {
                 using (SqlDbInterface NTdbInterface = new SqlDbInterface())
                 using (SqlCommand cmd = new SqlCommand())
@@ -655,8 +683,16 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("FROM ShopMaster sm");
                     sb.AppendLine("inner join FacilityMaster fm");
                     sb.AppendLine("on sm.FacilityId=fm.FacilityId");
+                    sb.AppendLine("and sm.Language=fm.Language");
                     sb.AppendLine("Where sm.Language = @lng");
                     sb.AppendLine("and fm.BizCompanyCd='JRK'");/*JR九州固定*/
+
+                    // アミュプラザ様
+                    if (UserRole == "21")
+                    {
+                        // "アミュプラザみやざき"固定
+                        sb.AppendLine("and sm.ShopCode='0010100205'");
+                    }
 
                     cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
                     cmd.CommandText = sb.ToString();

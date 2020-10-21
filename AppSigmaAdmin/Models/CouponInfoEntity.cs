@@ -155,9 +155,10 @@ namespace AppSigmaAdmin.Models
 
         public string BizCompanyCd { get; set; }
 
-        //public string ShopName { get; set; }
+        public string AdultNum { get; set; }
+        public string DiscountNum { get; set; }
+        public string ChildNum { get; set; }
 
-        //public string ShopCode { get; set; }
         /// <summary>
         /// コンストラクタ
         /// </summary>
@@ -189,6 +190,9 @@ namespace AppSigmaAdmin.Models
             CouponInfoList = new List<CouponInfoEntity>();
             CouponInfoListAll = new List<CouponInfoEntity>(source.CouponInfoListAll);
             this.Language = source.Language;
+            this.AdultNum = source.AdultNum;
+            this.ChildNum = source.ChildNum;
+            this.DiscountNum = source.DiscountNum;
         }
     }
 }
