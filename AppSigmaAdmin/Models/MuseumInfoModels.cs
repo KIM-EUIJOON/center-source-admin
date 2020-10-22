@@ -44,7 +44,8 @@ namespace AppSigmaAdmin.Models
                 {
                     sb.AppendLine("   where ftpd.BizCompanyCd='MYZ'");//宮交観光チケット画面の場合
                 }
-                
+                sb.AppendLine(string.Format("and ftpd.ID NOT IN ({0})", AbolishedFacilityTickets));
+
 
                 cmd.CommandText = sb.ToString();
 
@@ -928,6 +929,9 @@ namespace AppSigmaAdmin.Models
             }
         }
 
+        /// <summary>廃止チケット（福岡市博物館）</summary>
+        private const string AbolishedFacilityTickets = "'FA02', 'FA02a'";
+
         /// <summary>
         /// 施設マスタ取得
         /// </summary>
@@ -952,8 +956,9 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("on ftdd.ID = ftdas.ID");
                 sb.AppendLine("inner join FTicketPublishDefinition ftpd");
                 sb.AppendLine("on ftpd.ID = ftdas.ID");
-                sb.AppendLine("where ftdd.BizCompanyCd =@biz");
-                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz)");
+                sb.AppendLine("where (ftdd.BizCompanyCd =@biz");
+                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz))");
+                sb.AppendLine(string.Format("and ftdas.ID NOT IN ({0})", AbolishedFacilityTickets));
                 sb.AppendLine("order by ffd.FacilityId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
@@ -988,8 +993,9 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("on ftdd.ID = ftdas.ID");
                 sb.AppendLine("inner join FTicketPublishDefinition ftpd");
                 sb.AppendLine("on ftpd.ID = ftdas.ID");
-                sb.AppendLine("Where ftdd.BizCompanyCd = @biz");
-                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz)");
+                sb.AppendLine("Where (ftdd.BizCompanyCd = @biz");
+                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz))");
+                sb.AppendLine(string.Format("and ftdas.ID NOT IN ({0})", AbolishedFacilityTickets));
                 sb.AppendLine("order by ftsrd.FacilityId, ftsrd.ServiceResourceId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
