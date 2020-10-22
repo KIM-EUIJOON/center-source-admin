@@ -787,13 +787,13 @@ namespace AppSigmaAdmin.Models
                 }
                 if (AplType != "-")//au用Role番号判定
                 {
-                    MuseumSb.AppendLine("   and tbl.ID LIKE @AplName");
+                    MuseumSb.AppendLine("   and tbl.ID LIKE @AplType");
                     // au
                     if (AplType == "1")
                     {
                         AplType = "%a";
                     }
-                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = AplType;
+                    cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                 }
 
 
@@ -841,8 +841,12 @@ namespace AppSigmaAdmin.Models
                 }
                 if (false == string.IsNullOrEmpty(model.Apltype))
                 {
-                    Jsb.AppendLine("    AND AplType = @AplName ");
-                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
+                    // au
+                    if (model.Apltype == "1")
+                    {
+                        Jsb.AppendLine("   and ftup.ID LIKE @AplType");
+                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = "%a";
+                    }
                 }
                 if (false == string.IsNullOrEmpty(model.FacilityId))
                 {
@@ -894,20 +898,17 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    , ftsrdName.Value as ServiceName");        /*サービス名*/
                 sb.AppendLine("    , ftfdName.Value as MuseumName");          /*施設名*/
                 sb.AppendLine("    , ftdd.Denomination");                     /*業種(クーポンか入場券かはわかるが業種はないかも)*/
-                sb.AppendLine("    ,case when uio.AplType =1 then 'au'");     /*アプリ種別*/ // 【TODO】あとで忘れず直す
-                sb.AppendLine("    else ''");
-                sb.AppendLine("    end as AplName");
                 sb.AppendLine("    , ftdd.BizCompanyCd");
                 sb.AppendLine("    , ftud.UsageEndDatetime");
                 sb.AppendLine("    from FTicketUsersDistributed ftud");
-                sb.AppendLine("    left join FTicketUsersPurchased ftup");
+                sb.AppendLine("    inner join FTicketUsersPurchased ftup");
                 sb.AppendLine("    on ftup.UserId =ftud.UserId");
                 sb.AppendLine("    and ftup.PurchasedNo=ftud.PurchasedNo");
                 sb.AppendLine("    and ftup.ID=ftud.ID");
-                sb.AppendLine("    left join FTicketServiceResouceDefinition ftsrd");
+                sb.AppendLine("    inner join FTicketServiceResouceDefinition ftsrd");
                 sb.AppendLine("    on ftud.FacilityId =ftsrd.FacilityId");
                 sb.AppendLine("    and ftud.ServiceResourceId =ftsrd.ServiceResourceId");
-                sb.AppendLine("    left join FTicketFacilityDefinition ftfd");
+                sb.AppendLine("    inner join FTicketFacilityDefinition ftfd");
                 sb.AppendLine("    on ftud.FacilityId=ftfd.FacilityId");
                 sb.AppendLine("    left join CharacterResource ftsrdName");
                 sb.AppendLine("    on ftsrd.Name=ftsrdName.ResourceId");
@@ -915,12 +916,12 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    left join CharacterResource ftfdName");
                 sb.AppendLine("    on ftfd.Name=ftfdName.ResourceId");
                 sb.AppendLine("    and ftfdName.Language ='ja'");
-                sb.AppendLine("    left join UserInfoOid uio");
-                sb.AppendLine("    on ftup.UserId = uio.UserId");
-                sb.AppendLine("    left join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("    inner join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("    on ftud.ID =ftdd.ID");
                 sb.AppendLine("    and ftud.DistributedNo = ftdd.DistributedNo");
-                sb.AppendLine("    where ftdd.BizCompanyCd ='FOC'");
+                sb.AppendLine("    inner join FTicketPublishDefinition ftpd");
+                sb.AppendLine("    on ftpd.ID = ftup.ID");
+                sb.AppendLine("    where (ftdd.BizCompanyCd = 'FOC' or (ftdd.BizCompanyCd is null and ftpd.BizCompanyCd ='FOC'))");
                 sb.AppendLine("    and ftud.UsageEndDatetime IS NOT NULL");
                 sb.AppendLine("       and ftud.UsageStartDatetime between @StartDatatTime and @EndDatatTime ");
                 return sb.ToString();
@@ -939,21 +940,24 @@ namespace AppSigmaAdmin.Models
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine("select distinct cr.Value");
-                sb.AppendLine("    , ffd.FacilityId");
-                sb.AppendLine("    , ftdas.ID");
-                sb.AppendLine("    , ftdd.BizCompanyCd");
-                sb.AppendLine("    from FTicketFacilityDefinition ffd");
-                sb.AppendLine("    left join CharacterResource cr");
-                sb.AppendLine("    on cr.ResourceId = ffd.Name");
-                sb.AppendLine("    left join FTicketDistributedAppliedService ftdas");
-                sb.AppendLine("    on ftdas.FacilityId = ffd.FacilityId");
-                sb.AppendLine("    left join FTicketDistributedDefinition ftdd");
-                sb.AppendLine("    on ftdd.ID = ftdas.ID");
-                sb.AppendLine("    where cr.Language= @lng");
-                sb.AppendLine("    and  ftdd.BizCompanyCd ='FOC'");
-
+                sb.AppendLine(", ffd.FacilityId");
+                sb.AppendLine(", ftdd.BizCompanyCd");
+                sb.AppendLine(", ftpd.BizCompanyCd");
+                sb.AppendLine("from FTicketFacilityDefinition ffd");
+                sb.AppendLine("left join CharacterResource cr");
+                sb.AppendLine("on cr.ResourceId = ffd.Name and cr.Language= @lng");
+                sb.AppendLine("inner join FTicketDistributedAppliedService ftdas");
+                sb.AppendLine("on ftdas.FacilityId = ffd.FacilityId");
+                sb.AppendLine("inner join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("on ftdd.ID = ftdas.ID");
+                sb.AppendLine("inner join FTicketPublishDefinition ftpd");
+                sb.AppendLine("on ftpd.ID = ftdas.ID");
+                sb.AppendLine("where ftdd.BizCompanyCd =@biz");
+                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz)");
+                sb.AppendLine("order by ffd.FacilityId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
+                cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);
@@ -972,21 +976,24 @@ namespace AppSigmaAdmin.Models
                 StringBuilder sb = new StringBuilder();
 
                 sb.AppendLine("select distinct cr.Value");
-                sb.AppendLine("                    , ftsrd.FacilityId");
-                sb.AppendLine("                    , ftdas.ID");
-                sb.AppendLine("                    , ftdd.BizCompanyCd");
-                sb.AppendLine("                   , ftsrd.ServiceResourceId");
-                sb.AppendLine("                    from FTicketServiceResouceDefinition ftsrd");
-                sb.AppendLine("                    left join CharacterResource cr");
-                sb.AppendLine("                    on cr.ResourceId = ftsrd.Name");
-                sb.AppendLine("                    left join FTicketDistributedAppliedService ftdas");
-                sb.AppendLine("                    on ftdas.FacilityId = ftsrd.FacilityId");
-                sb.AppendLine("                    left join FTicketDistributedDefinition ftdd");
-                sb.AppendLine("                    on ftdd.ID = ftdas.ID");
-                sb.AppendLine("                    Where cr.Language = @lng");
-                sb.AppendLine("                    and  ftdd.BizCompanyCd ='FOC'");                     /*福岡施設固定*/
+                sb.AppendLine(", ftsrd.FacilityId");
+                sb.AppendLine(", ftdd.BizCompanyCd");
+                sb.AppendLine(", ftsrd.ServiceResourceId");
+                sb.AppendLine("from FTicketServiceResouceDefinition ftsrd");
+                sb.AppendLine("left join CharacterResource cr");
+                sb.AppendLine("on cr.ResourceId = ftsrd.Name and cr.Language = @lng");
+                sb.AppendLine("inner join FTicketDistributedAppliedService ftdas");
+                sb.AppendLine("on ftdas.FacilityId = ftsrd.FacilityId");
+                sb.AppendLine("inner join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("on ftdd.ID = ftdas.ID");
+                sb.AppendLine("inner join FTicketPublishDefinition ftpd");
+                sb.AppendLine("on ftpd.ID = ftdas.ID");
+                sb.AppendLine("Where ftdd.BizCompanyCd = @biz");
+                sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz)");
+                sb.AppendLine("order by ftsrd.FacilityId, ftsrd.ServiceResourceId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
+                cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";   /*福岡施設固定*/
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);

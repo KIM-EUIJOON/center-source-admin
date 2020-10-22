@@ -76,9 +76,13 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index(string page)
         {
             MuseumUseInfo info = new MuseumUseInfo();
+            //セッションに保存されているユーザー情報を取得する
+            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = UserInfo.Role.ToString();
 
             // 検索条件初期化
-            this.InitSearchList(info);
+            this.InitSearchList(info, UserRole);
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
@@ -117,7 +121,7 @@ namespace AppSigmaAdmin.Controllers
             int index = (pageNo - 1) * sessiondata.rowsPerPage;
             int count = (pageNo == sessiondata.PageCount) ? sessiondata.ListMaxCount - index : sessiondata.rowsPerPage;
             //現在のページ位置
-            sessiondata.PageCount = pageNo;
+            sessiondata.ListPageNo = pageNo;
 
             // 取得したリスト件数が0以上
             if (0 == sessiondata.ListMaxCount)
@@ -144,9 +148,13 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult Index(MuseumUseInfo model)
         {
             ViewData["message"] = "";
+            //セッションに保存されているユーザー情報を取得する
+            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = UserInfo.Role.ToString();
 
             // 検索条件初期化
-            this.InitSearchList(model);
+            this.InitSearchList(model, UserRole);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
@@ -194,8 +202,7 @@ namespace AppSigmaAdmin.Controllers
                     TenantID = row["ServiceResourceId"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
                     Denomination = row["Denomination"].ToString(),/*業種(仮)*/
-                    Apltype = row["AplName"].ToString(),
-
+                    Apltype = row["ID"].ToString().EndsWith("a") ? "au" : "-",
                 });
             }
 
@@ -218,9 +225,13 @@ namespace AppSigmaAdmin.Controllers
         public ActionResult JRKyushuCoupomOutPutDate(MuseumUseInfo model)
         {
             ViewData["message"] = "";
+            //セッションに保存されているユーザー情報を取得する
+            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            string UserRole = UserInfo.Role.ToString();
 
             // 検索条件初期化
-            this.InitSearchList(model);
+            this.InitSearchList(model, UserRole);
 
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
@@ -283,7 +294,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["ID"].ToString().EndsWith("a") ? "au" : "-"));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
@@ -296,12 +307,9 @@ namespace AppSigmaAdmin.Controllers
         /// 検索条件リスト作成
         /// </summary>
         /// <param name="model"></param>
-        private void InitSearchList(MuseumUseInfo model)
+        /// <param name="UserRole"></param>
+        private void InitSearchList(MuseumUseInfo model, string UserRole)
         {
-            //検索条件のUserRole取得
-            string UserRole = model.Apltype;
-            // string TicetType = model.TicketType;
-
             // プルダウン初期化
             this.InitAplTypeList(UserRole); // アプリ種別情報
             this.InitFacilityNameList(model.Language, model.FacilityId);// チケット種別情報
@@ -418,14 +426,6 @@ namespace AppSigmaAdmin.Controllers
         private void InitAplTypeList(string userRole)
         {
             List<SelectListItem> itemList = new List<SelectListItem>();
-
-            // セッションに保存されているユーザー情報を取得する
-            UserInfoAdminEntity UserInfo = (UserInfoAdminEntity)Session[SystemConst.SESSION_USER_INFO_ADMIN];
-            //auチェック
-            if (UserInfo.Role == "13")
-            {
-                userRole = UserInfo.Role;
-            }
 
             //アプリ種別ドロップダウンリスト作成
             if (userRole == "13")
