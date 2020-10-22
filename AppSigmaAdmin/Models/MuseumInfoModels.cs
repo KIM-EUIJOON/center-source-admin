@@ -42,7 +42,7 @@ namespace AppSigmaAdmin.Models
                 }
                 else if(PageName == "MPA1101")
                 {
-                    sb.AppendLine("   where ftpd.BizCompanyCd='MYZ'");//宮交観光チケット画面の場合
+                    sb.AppendLine("   where ftpd.BizCompanyCd='MYF'");//宮交観光チケット画面の場合
                 }
                 sb.AppendLine(string.Format("and ftpd.ID NOT IN ({0})", AbolishedFacilityTickets));
 
@@ -109,7 +109,7 @@ namespace AppSigmaAdmin.Models
                 {
                     string MuseumPaymentInfo = GetALLMuseumPaymentDateQuery(stDate, edDate);
                     Jsb.AppendLine("select * from (" + MuseumPaymentInfo.ToString() + "");
-                    Jsb.AppendLine("   and tbl.BizCompanyCd = 'MYZ'");
+                    Jsb.AppendLine("   and tbl.BizCompanyCd = 'MYF'");
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
@@ -717,8 +717,8 @@ namespace AppSigmaAdmin.Models
                 {
                     string Miyakohinfo = GetALLFOCMuseumPaymentDateQuery(stDate, edDate);
                     MuseumSb.AppendLine(Miyakohinfo.ToString());
-                    MuseumSb.AppendLine("   and tbl.BizCompanyCd = @PageName");
-                    cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "FOC";
+                    MuseumSb.AppendLine("   and tbl.BizCompanyCd = @BizCd");
+                    cmd.Parameters.Add("@BizCd", SqlDbType.NVarChar).Value = "FOC";
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
@@ -734,8 +734,8 @@ namespace AppSigmaAdmin.Models
                 {
                     string Miyakohinfo = GetALLMuseumPaymentDateQuery(stDate, edDate);
                     MuseumSb.AppendLine(Miyakohinfo.ToString());
-                    MuseumSb.AppendLine("   and tbl.BizCompanyCd = @PageName");
-                    cmd.Parameters.Add("@PageName", SqlDbType.NVarChar).Value = "MYZ";
+                    MuseumSb.AppendLine("   and tbl.BizCompanyCd = @BizCd");
+                    cmd.Parameters.Add("@BizCd", SqlDbType.NVarChar).Value = "MYF";
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
