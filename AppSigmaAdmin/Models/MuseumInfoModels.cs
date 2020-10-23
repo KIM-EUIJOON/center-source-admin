@@ -46,7 +46,6 @@ namespace AppSigmaAdmin.Models
                 }
                 sb.AppendLine(string.Format("and ftpd.ID NOT IN ({0})", AbolishedFacilityTickets));
 
-
                 cmd.CommandText = sb.ToString();
 
                 DataTable dt = NTdbInterface.ExecuteReader(cmd);
@@ -163,12 +162,7 @@ namespace AppSigmaAdmin.Models
                 }
                 if (AplType != "-")//au用Role番号判定
                 {
-                    Jsb.AppendLine("   and tbl.ID LIKE @AplType");
-                    // au
-                    if (AplType == "1")
-                    {
-                        AplType = "%a";
-                    }
+                    Jsb.AppendLine("   and tbl.AplName = @AplType");
                     cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                 }
 
@@ -195,6 +189,7 @@ namespace AppSigmaAdmin.Models
                         Denomination = row["Denomination"].ToString(),
                         AdultNum = row["AdultNum"].ToString(),
                         ChildNum = row["DiscountNum"].ToString(),
+                        Apltype = row["AplName"].ToString(),
                         PaymentType = row["GmoStatus"].ToString(),
                         Amount = row["Amount"].ToString()
                     };
@@ -202,6 +197,9 @@ namespace AppSigmaAdmin.Models
                     if (infoN.TicketID.EndsWith("a"))
                     {
                         infoN.TicketName = infoN.TicketName + "[au]";
+                    }
+                    if (row["AplName"].ToString() == "1")
+                    {
                         infoN.Apltype = "au";
                     }
                     else
@@ -253,6 +251,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("     ,tbl.ChildNum");
                 sb.AppendLine("         ,tbl.PaymentId");
                 sb.AppendLine("         ,tbl.Denomination");
+                sb.AppendLine("         ,tbl.AplName");
+                /*アプリ種別*/
                 sb.AppendLine("         ,case when tbl.GmoStatus = '1' then N'即時決済'");
                 sb.AppendLine("         when tbl.GmoStatus = '5' then N'払戻し'");
                 sb.AppendLine("         when tbl.GmoStatus = '3' then N'取消'");
@@ -279,6 +279,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -322,6 +326,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("         where ftup.GmoStatus = '1'");
@@ -343,6 +349,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         ,ftdd.Denomination");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -386,6 +396,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("         where ftup.GmoStatus = '3'");
@@ -410,6 +422,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -453,6 +469,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("      ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("    where ftup.GmoStatus = '5'");
@@ -498,6 +516,8 @@ namespace AppSigmaAdmin.Models
                 
                 sb.AppendLine("         ,tbl.PaymentId");
                 sb.AppendLine("         ,tbl.Denomination");
+                sb.AppendLine("         ,tbl.AplName");
+                /*アプリ種別*/
                 sb.AppendLine("         ,case when tbl.GmoStatus = '1' then N'即時決済'");
                 sb.AppendLine("         when tbl.GmoStatus = '5' then N'払戻し'");
                 sb.AppendLine("         when tbl.GmoStatus = '3' then N'取消'");
@@ -523,6 +543,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -558,6 +582,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("   ) on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("         where ftup.GmoStatus = '1'");
@@ -578,6 +604,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         ,ftdd.Denomination");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -614,6 +644,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("    ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("         where ftup.GmoStatus = '3'");
@@ -638,6 +670,10 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("         /*, pm.ReceiptNo*/");
                 /*ReceiptTypeは存在しているが、領収書番号は不明*/
                 sb.AppendLine("         ,ftup.ID");
+                /*チケット種別(au,au以外)*/
+                sb.AppendLine("         ,case when uio.AplType = 1 then 'au'");
+                sb.AppendLine("         else '-'");
+                sb.AppendLine("         end as AplName");
                 sb.AppendLine("         from FTicketUsersPurchased ftup");
                 sb.AppendLine("         left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("         on ftdd.ID = ftup.ID");
@@ -674,6 +710,8 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    on ftup.PurchasedNo= Adult.PurchasedNo");
                 sb.AppendLine("    and Adult.UserId=ftup.UserId");
                 sb.AppendLine("      ");
+                sb.AppendLine("         left join UserInfoOid uio");
+                sb.AppendLine("         on ftup.UserId = uio.UserId");
                 sb.AppendLine("         left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("         on ftup.ID = ftpd.ID");
                 sb.AppendLine("    where ftup.GmoStatus = '5'");
@@ -788,13 +826,8 @@ namespace AppSigmaAdmin.Models
                 }
                 if (AplType != "-")//au用Role番号判定
                 {
-                    MuseumSb.AppendLine("   and tbl.ID LIKE @AplType");
-                    // au
-                    if (AplType == "1")
-                    {
-                        AplType = "%a";
-                    }
-                    cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
+                    MuseumSb.AppendLine("   and tbl.AplName = @AplName");
+                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
                 }
 
 
@@ -842,12 +875,8 @@ namespace AppSigmaAdmin.Models
                 }
                 if (false == string.IsNullOrEmpty(model.Apltype))
                 {
-                    // au
-                    if (model.Apltype == "1")
-                    {
-                        Jsb.AppendLine("   and ftup.ID LIKE @AplType");
-                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = "%a";
-                    }
+                    Jsb.AppendLine("    AND AplType = @AplName ");
+                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
                 }
                 if (false == string.IsNullOrEmpty(model.FacilityId))
                 {
@@ -899,17 +928,20 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    , ftsrdName.Value as ServiceName");        /*サービス名*/
                 sb.AppendLine("    , ftfdName.Value as MuseumName");          /*施設名*/
                 sb.AppendLine("    , ftdd.Denomination");                     /*業種(クーポンか入場券かはわかるが業種はないかも)*/
+                sb.AppendLine("    ,case when uio.AplType =1 then 'au'");     /*アプリ種別*/
+                sb.AppendLine("    else '-'");
+                sb.AppendLine("    end as AplName");
                 sb.AppendLine("    , ftdd.BizCompanyCd");
                 sb.AppendLine("    , ftud.UsageEndDatetime");
                 sb.AppendLine("    from FTicketUsersDistributed ftud");
-                sb.AppendLine("    inner join FTicketUsersPurchased ftup");
+                sb.AppendLine("    left join FTicketUsersPurchased ftup");
                 sb.AppendLine("    on ftup.UserId =ftud.UserId");
                 sb.AppendLine("    and ftup.PurchasedNo=ftud.PurchasedNo");
                 sb.AppendLine("    and ftup.ID=ftud.ID");
-                sb.AppendLine("    inner join FTicketServiceResouceDefinition ftsrd");
+                sb.AppendLine("    left join FTicketServiceResouceDefinition ftsrd");
                 sb.AppendLine("    on ftud.FacilityId =ftsrd.FacilityId");
                 sb.AppendLine("    and ftud.ServiceResourceId =ftsrd.ServiceResourceId");
-                sb.AppendLine("    inner join FTicketFacilityDefinition ftfd");
+                sb.AppendLine("    left join FTicketFacilityDefinition ftfd");
                 sb.AppendLine("    on ftud.FacilityId=ftfd.FacilityId");
                 sb.AppendLine("    left join CharacterResource ftsrdName");
                 sb.AppendLine("    on ftsrd.Name=ftsrdName.ResourceId");
@@ -917,10 +949,12 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    left join CharacterResource ftfdName");
                 sb.AppendLine("    on ftfd.Name=ftfdName.ResourceId");
                 sb.AppendLine("    and ftfdName.Language ='ja'");
-                sb.AppendLine("    inner join FTicketDistributedDefinition ftdd");
+                sb.AppendLine("    left join UserInfoOid uio");
+                sb.AppendLine("    on ftup.UserId = uio.UserId");
+                sb.AppendLine("    left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("    on ftud.ID =ftdd.ID");
                 sb.AppendLine("    and ftud.DistributedNo = ftdd.DistributedNo");
-                sb.AppendLine("    inner join FTicketPublishDefinition ftpd");
+                sb.AppendLine("    left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("    on ftpd.ID = ftup.ID");
                 sb.AppendLine("    where (ftdd.BizCompanyCd = 'FOC' or (ftdd.BizCompanyCd is null and ftpd.BizCompanyCd ='FOC'))");
                 sb.AppendLine("    and ftud.UsageEndDatetime IS NOT NULL");

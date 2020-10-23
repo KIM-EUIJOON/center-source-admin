@@ -202,7 +202,7 @@ namespace AppSigmaAdmin.Controllers
                     TenantID = row["ServiceResourceId"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
                     Denomination = row["Denomination"].ToString(),/*業種(仮)*/
-                    Apltype = row["ID"].ToString().EndsWith("a") ? "au" : "-",
+                    Apltype = row["AplName"].ToString(),
                 });
             }
 
@@ -294,7 +294,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ID"].ToString().EndsWith("a") ? "au" : "-"));
+                    strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
