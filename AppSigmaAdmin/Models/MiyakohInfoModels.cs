@@ -130,7 +130,7 @@ namespace AppSigmaAdmin.Models
                     }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        Miyakohsb.AppendLine("   and tbl.TicketGroup = @AplType");
+                        Miyakohsb.AppendLine("   and tbl.AplType = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = '1';
                     }
 
@@ -160,6 +160,7 @@ namespace AppSigmaAdmin.Models
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString(),
+                            Apltype = row["AplType"].ToString()
                         };
                         if (false == string.IsNullOrEmpty((row["discountNum"].ToString())))
                         {
@@ -172,6 +173,9 @@ namespace AppSigmaAdmin.Models
                         if (row["TicketGroup"].ToString() == "1")
                         {
                             infoN.TicketName = infoN.TicketName + "[au]";
+                        }
+                        if (row["AplType"].ToString() == "1")
+                        {
                             infoN.Apltype = "au";
                         }
                         else
@@ -214,6 +218,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.discountNum");                                                            /*現在未反映項目(学割)のため仮置き(2020/9/28)*/
                     sb.AppendLine("     , tbl.ChildNum");
                     sb.AppendLine("     , tbl.PaymentId");
+                    sb.AppendLine("     , tbl.AplType");                                                                /*アプリ種別*/
                     sb.AppendLine("     , case when tbl.PaymentType = '3' then N'即時決済'");
                     sb.AppendLine("           when tbl.PaymentType = '4' then N'払戻し'");
                     sb.AppendLine("           when tbl.PaymentType = '5' then N'取消'");
@@ -238,8 +243,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	,fsm.BizCompanyCd");
                     sb.AppendLine("	 ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
                     sb.AppendLine("	 ,fsm.TicketGroup");
+                    sb.AppendLine("	 ,uio.AplType");                       /*アプリ種別*/
                     sb.AppendLine("	from FreeTicketManage ftm");
-                    sb.AppendLine("	inner join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("	on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("	and (fsm.BizCompanyCd='MYZ')");
                     sb.AppendLine("	inner join PaymentManage pm");
@@ -252,6 +258,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	left join CharacterResource cr");
                     sb.AppendLine("	on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("	and Language ='ja'");
+                    sb.AppendLine("	  left join UserInfoOid uio");
+                    sb.AppendLine("	  on ftm.UserId=uio.UserId");
                     sb.AppendLine("	union all");
                     /*払戻し返金データ取得*/
                     sb.AppendLine("	select pm.TranDate");
@@ -270,8 +278,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	,fsm.BizCompanyCd");
                     sb.AppendLine("	 ,fsm.TicketId");                      /*チケットID*/
                     sb.AppendLine("	 ,fsm.TicketGroup");
+                    sb.AppendLine("	 ,uio.AplType");                       /*アプリ種別*/
                     sb.AppendLine("	from FreeTicketManage ftm");
-                    sb.AppendLine("	inner join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("	on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("	and fsm.BizCompanyCd='MYZ'");
                     sb.AppendLine("	inner join PaymentManage pm");
@@ -284,6 +293,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	left join CharacterResource cr");
                     sb.AppendLine("	on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("	and Language ='ja'");
+                    sb.AppendLine("	  left join UserInfoOid uio");
+                    sb.AppendLine("	  on ftm.UserId=uio.UserId");
                     sb.AppendLine("	union all");
                     /*払戻し手数料取得*/
                     sb.AppendLine("	select pm.TranDate");
@@ -302,8 +313,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	,fsm.BizCompanyCd");
                     sb.AppendLine("	 ,fsm.TicketId");                      /*チケットID*/
                     sb.AppendLine("	 ,fsm.TicketGroup");
+                    sb.AppendLine("	 ,uio.AplType");                       /*アプリ種別*/
                     sb.AppendLine("	from FreeTicketManage ftm");
-                    sb.AppendLine("	inner join FreeTicketSalesMaster fsm");
+                    sb.AppendLine("	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("	on ftm.TicketId = fsm.TicketId");
                     sb.AppendLine("	and (fsm.BizCompanyCd='MYZ')");
                     sb.AppendLine("	inner join PaymentManage pm");
@@ -316,7 +328,9 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("	left join CharacterResource cr");
                     sb.AppendLine("	on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("	and Language ='ja'");
-                    sb.AppendLine(") tbl");
+                    sb.AppendLine("	  left join UserInfoOid uio");
+                    sb.AppendLine("	  on ftm.UserId=uio.UserId");
+                    sb.AppendLine("      ) tbl");
                     // 決済エラー分は含めない
                     sb.AppendLine("  where not exists(");
                     sb.AppendLine("        select 1");
@@ -406,7 +420,7 @@ namespace AppSigmaAdmin.Models
                     }
                     if (AplType != "-")//au用Role番号判定
                     {
-                        MiyakohSb.AppendLine("   and tbl.TicketGroup = @AplType");
+                        MiyakohSb.AppendLine("   and tbl.AplType = @AplType");
                         cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = AplType;
                     }
 
