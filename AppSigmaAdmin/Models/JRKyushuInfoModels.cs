@@ -545,8 +545,8 @@ namespace AppSigmaAdmin.Models
                     }
                     if (false == string.IsNullOrEmpty(model.AplType))
                     {
-                        Jsb.AppendLine("    AND TicketGroup = @AplType ");
-                        cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = model.AplType;
+                        Jsb.AppendLine("    AND AplType = @AplName ");
+                        cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
                     }
                     if (false == string.IsNullOrEmpty(model.CouponId))
                     {
@@ -613,9 +613,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,cr.Value");
                     sb.AppendLine("       ,cs.ShopCode");
                     sb.AppendLine("       ,sm.ShopName");
-                    sb.AppendLine("       ,sm.Language");
                     sb.AppendLine("       ,fm.FacilityName");
                     sb.AppendLine("       ,im.IndustryName");
+                    sb.AppendLine("       ,case when uio.AplType =1 then 'au' ");   /*アプリタイプ*/
+                    sb.AppendLine("       else '-'");
+                    sb.AppendLine("       end as AplName");
                     sb.AppendLine("       ,ftsm.TicketGroup");
                     sb.AppendLine("       ,ftm.AdultNum");
                     sb.AppendLine("       ,ftm.ChildNum");
@@ -623,7 +625,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,ftsm.BizCompanyCd AS TicketBizCompanyCd");
 
                     sb.AppendLine("       from CouponManage cm");
-                    sb.AppendLine("       inner join CouponMaster cma");
+                    sb.AppendLine("       left join CouponMaster cma");
                     sb.AppendLine("       on cm.CouponId=cma.CouponId");
                     sb.AppendLine("       left join CharacterResource cr");
                     sb.AppendLine("       on cma.CouponName = cr.ResourceId");

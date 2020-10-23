@@ -213,7 +213,7 @@ namespace AppSigmaAdmin.Controllers
                     FacilityName = row["FacilityName"].ToString(),
                     IndustryName = row["IndustryName"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
-                    AplType = row["TicketGroup"].ToString() == "1" ? "au" : "-",
+                    AplType = row["AplName"].ToString(),
                     AdultNum = !string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-",
                     DiscountNum = !string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-",
                     ChildNum = !string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-",
@@ -312,7 +312,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["TicketGroup"].ToString() == "1" ? "au" : "-"));
+                    strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-"));
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-"));
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-"));
