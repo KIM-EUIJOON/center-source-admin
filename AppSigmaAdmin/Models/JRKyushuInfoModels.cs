@@ -280,7 +280,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           inner join PaymentManage pm");
                     sb.AppendLine("           on ftm.UserId = pm.UserId");
                     sb.AppendLine("           and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("           and(pm.ServiceId = '8')");/*サービスID(JR九州:12)*/
+                    sb.AppendLine("           and(pm.ServiceId = '12')");/*サービスID(JR九州:12)*/
                     sb.AppendLine("           and pm.PaymentType = '3'");
                     sb.AppendLine("           and pm.GmoStatus = '1'");
                     sb.AppendLine("           and pm.GmoProcType = '2'");

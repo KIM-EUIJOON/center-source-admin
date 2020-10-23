@@ -222,7 +222,7 @@ namespace AppSigmaAdmin.Controllers
         /// <returns>CSVファイル出力</returns>
         [HttpPost]
         [SessionCheck(WindowName = "横浜ダウンロード処理")]
-        public ActionResult JRKyushuCoupomOutPutDate(MuseumUseInfo model)
+        public ActionResult MuseumOutPutDate(MuseumUseInfo model)
         {
             ViewData["message"] = "";
             //セッションに保存されているユーザー情報を取得する
@@ -286,14 +286,13 @@ namespace AppSigmaAdmin.Controllers
                 foreach (DataRow row in GetData.Rows)
                 {
                     strings.Clear();
-                    strings.Add(EncloseDbQuotes(row["UsageDateTime"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["UsageStartDatetime"].ToString()));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["FacilityName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["Value"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ShopCode"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ShopName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["MuseumName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["ServiceResourceId"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["ServiceName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
-                    strings.Add(EncloseDbQuotes(row["IndustryName"].ToString()));
+                    strings.Add(EncloseDbQuotes(row["Denomination"].ToString()));
                     strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }
