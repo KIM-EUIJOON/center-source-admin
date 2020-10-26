@@ -96,12 +96,12 @@ namespace AppSigmaAdmin.Models
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
-                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        Jsb.AppendLine("   and tbl.AdultNum > 0 ");
                     }
                     else if (TicketNumType == "学割")
                     {
                         //検索条件に枚数種別：学割
-                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
+                        Jsb.AppendLine("   and tbl.DiscountNum > 0 ");
                     }
                 }
                 else if (PageName == "MPA1101")
@@ -112,20 +112,17 @@ namespace AppSigmaAdmin.Models
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
-                        Jsb.AppendLine("   and tbl.ChildNum = '0' ");
-                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        Jsb.AppendLine("   and tbl.AdultNum > 0 ");
                     }
                     else if (TicketNumType == "中学生")
                     {
                         //検索条件に枚数種別：学割
-                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
-                        Jsb.AppendLine("   and tbl.ChildNum = '0' ");
+                        Jsb.AppendLine("   and tbl.DiscountNum > 0 ");
                     }
                     else if (TicketNumType == "小児")
                     {
                         //検索条件に枚数種別：学割
-                        Jsb.AppendLine("   and tbl.AdultNum = '0' ");
-                        Jsb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        Jsb.AppendLine("   and tbl.ChildNum > 0 ");
                     }
                 }
                 if (MyrouteNo != "")
@@ -760,12 +757,12 @@ namespace AppSigmaAdmin.Models
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
-                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.AdultNum > 0 ");
                     }
                     else if (TicketNumType == "学割")
                     {
                         //検索条件に枚数種別：学割
-                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.DiscountNum > 0 ");
                     }
                 }
                 else if (PageName == "MPA1101")
@@ -777,20 +774,17 @@ namespace AppSigmaAdmin.Models
                     if (TicketNumType == "大人")
                     {
                         //検索条件に枚数種別：大人
-                        MuseumSb.AppendLine("   and tbl.ChildNum = '0' ");
-                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.AdultNum > 0 ");
                     }
                     else if (TicketNumType == "中学生")
                     {
                         //検索条件に枚数種別：学割
-                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
-                        MuseumSb.AppendLine("   and tbl.ChildNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.DiscountNum > 0 ");
                     }
                     else if (TicketNumType == "小児")
                     {
                         //検索条件に枚数種別：学割
-                        MuseumSb.AppendLine("   and tbl.AdultNum = '0' ");
-                        MuseumSb.AppendLine("   and tbl.DiscountNum = '0' ");
+                        MuseumSb.AppendLine("   and tbl.ChildNum > 0 ");
                     }
                 }
                 if (MyrouteNo != "")
