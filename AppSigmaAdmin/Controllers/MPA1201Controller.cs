@@ -15,9 +15,9 @@ using static AppSigmaAdmin.Models.MiyakohInfoModels;
 
 namespace AppSigmaAdmin.Controllers
 {
-    public class MPA1001Controller : Controller
+    public class MPA1201Controller : Controller
     {
-        // GET: MPA1001
+        // GET: MPA1201
         //ファイル出力関連
         private string FILE_CONTENTTYPE = "text/comma-separated-values";
         private string FILE_EXTENSION = ".csv";
@@ -27,14 +27,14 @@ namespace AppSigmaAdmin.Controllers
             "利用日時",
             "myroute会員ID",
             "施設名",
-            "テナントコード",
-            "テナント名",
+            //"テナントコード",
+            //"テナント名",
             "利用件数",
             "業種",
             "アプリ種別"
         };
 
-        private const string PAGE_NAME = "MPA1001";
+        private const string PAGE_NAME = "MPA1201";
 
         /// <summary>
         ///入力日付チェック関数
@@ -161,7 +161,7 @@ namespace AppSigmaAdmin.Controllers
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
             {
-                return View("~/Views/MPA1001/Index.cshtml", model);
+                return View("~/Views/MPA1201/Index.cshtml", model);
             }
 
             // 検索条件に一致する全リスト件数取得
@@ -200,8 +200,8 @@ namespace AppSigmaAdmin.Controllers
                     UserId = row["UserId"].ToString(),
                     UseDatetime = (DateTime.Parse(row["UsageStartDatetime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
                     FacilityName = row["MuseumName"].ToString(),
-                    TenantName = row["ServiceName"].ToString(),
-                    TenantID = row["ServiceResourceId"].ToString(),
+                    //TenantName = row["ServiceName"].ToString(),
+                    //TenantID = row["ServiceResourceId"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
                     Denomination = row["Denomination"].ToString(),/*業種(仮)*/
                     Apltype = row["AplName"].ToString(),
@@ -218,13 +218,13 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
-        /// 横浜決済一覧ダウンロード処理
+        /// CSVダウンロード処理
         /// </summary>
         /// <param name="model">検索情報</param>
         /// <returns>CSVファイル出力</returns>
         [HttpPost]
         [SessionCheck(WindowName = "横浜ダウンロード処理")]
-        public ActionResult MuseumOutPutDate(MuseumUseInfo model)
+        public ActionResult CsvOutPutDate(MuseumUseInfo model)
         {
             ViewData["message"] = "";
             //セッションに保存されているユーザー情報を取得する
@@ -238,7 +238,7 @@ namespace AppSigmaAdmin.Controllers
             //検索条件:エラー判定
             if (false == this.CheckSearchError(model))
             {
-                return View("~/Views/MPA1001/Index.cshtml", model);
+                return View("~/Views/MPA1201/Index.cshtml", model);
             }
 
             // 検索条件に一致する全リスト件数取得
@@ -291,8 +291,8 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(row["UsageStartDatetime"].ToString()));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
                     strings.Add(EncloseDbQuotes(row["MuseumName"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ServiceResourceId"].ToString()));
-                    strings.Add(EncloseDbQuotes(row["ServiceName"].ToString()));
+                    //strings.Add(EncloseDbQuotes(row["ServiceResourceId"].ToString()));
+                    //strings.Add(EncloseDbQuotes(row["ServiceName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
                     strings.Add(EncloseDbQuotes(row["Denomination"].ToString()));
                     strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
@@ -300,7 +300,7 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //ファイル名を「Nishitetsu_Coupon_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-            return File(ms.ToArray(), FILE_CONTENTTYPE, "FukuokaMuseumUse_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateEnd).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
+            return File(ms.ToArray(), FILE_CONTENTTYPE, "MiyazakitourticketUse_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateEnd).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
         }
 
 

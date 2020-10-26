@@ -180,6 +180,7 @@
     <Compile Include="Controllers\MPA0701Controller.cs" />
     <Compile Include="Controllers\MPA0801Controller.cs" />
     <Compile Include="Controllers\MPA0901Controller.cs" />
+    <Compile Include="Controllers\MPA1201Controller.cs" />
     <Compile Include="Controllers\MPA1001Controller.cs" />
     <Compile Include="Controllers\MPA1101Controller.cs" />
     <Compile Include="Controllers\MSA0501Controller.cs" />
@@ -322,6 +323,7 @@
     <Content Include="Views\MPA0901\Index.cshtml" />
     <Content Include="Views\MPA1001\Index.cshtml" />
     <Content Include="Views\MPA1101\Index.cshtml" />
+    <Content Include="Views\MPA1201\Index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

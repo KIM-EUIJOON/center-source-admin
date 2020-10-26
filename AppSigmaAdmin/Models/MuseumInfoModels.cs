@@ -850,8 +850,9 @@ namespace AppSigmaAdmin.Models
         /// 施設利用情報取得
         /// </summary>
         /// <param name="model"></param>
+        /// <param name="pageName"></param>
         /// <returns></returns>
-        public DataTable GetMuseumUsageDateList(MuseumUseInfo model)
+        public DataTable GetMuseumUsageDateList(MuseumUseInfo model, string pageName)
         {
             using (SqlDbInterface dbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -861,6 +862,17 @@ namespace AppSigmaAdmin.Models
                 string MuseumUsageInfo = GetALLMuseumUsageDateQuery();
                 Jsb.AppendLine("select * from (" + MuseumUsageInfo.ToString() + "");
 
+
+                if (pageName == "MPA1001")
+                {
+                    // 美術館利用実績：福岡様
+                    cmd.Parameters.Add("@BizCompanyCd", SqlDbType.NVarChar).Value = "FOC";
+                }
+                else
+                {
+                    // 観光チケット利用実績：宮交様
+                    cmd.Parameters.Add("@BizCompanyCd", SqlDbType.NVarChar).Value = "MYF";
+                }
 
                 if (false == string.IsNullOrEmpty(model.UserId))
                 {
@@ -950,7 +962,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    and ftud.DistributedNo = ftdd.DistributedNo");
                 sb.AppendLine("    left join FTicketPublishDefinition ftpd");
                 sb.AppendLine("    on ftpd.ID = ftup.ID");
-                sb.AppendLine("    where (ftdd.BizCompanyCd = 'FOC' or (ftdd.BizCompanyCd is null and ftpd.BizCompanyCd ='FOC'))");
+                sb.AppendLine("    where (ftdd.BizCompanyCd = @BizCompanyCd or (ftdd.BizCompanyCd is null and ftpd.BizCompanyCd = @BizCompanyCd))");
                 sb.AppendLine("    and ftud.UsageEndDatetime IS NOT NULL");
                 sb.AppendLine("       and ftud.UsageStartDatetime between @StartDatatTime and @EndDatatTime ");
                 return sb.ToString();
@@ -963,8 +975,10 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 施設マスタ取得
         /// </summary>
+        /// <param name="language"></param>
+        /// <param name="pageName"></param>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetFacilityNames(string language)
+        public DataTable GetFacilityNames(string language, string pageName)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -990,7 +1004,17 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("order by ffd.FacilityId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
-                cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";
+                if (pageName == "MPA1001")
+                {
+                    // 美術館利用実績：福岡様
+                    cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";
+                }
+                else
+                {
+                    // 観光チケット利用実績：宮交様
+                    cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "MYF";
+                }
+
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);
@@ -1000,8 +1024,10 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// テナント名マスタ取得
         /// </summary>
+        /// <param name="language"></param>
+        /// <param name="pageName"></param>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetShopName(string language)
+        public DataTable GetShopName(string language, string pageName)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -1027,7 +1053,17 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("order by ftsrd.FacilityId, ftsrd.ServiceResourceId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
-                cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";   /*福岡施設固定*/
+                if (pageName == "MPA1001")
+                {
+                    // 美術館利用実績：福岡様
+                    cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "FOC";
+                }
+                else
+                {
+                    // 観光チケット利用実績：宮交様
+                    cmd.Parameters.Add("@biz", SqlDbType.NVarChar).Value = "MYF";
+                }
+
                 cmd.CommandText = sb.ToString();
 
                 return NTdbInterface.ExecuteReader(cmd);
