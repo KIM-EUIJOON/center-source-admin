@@ -485,7 +485,7 @@ namespace AppSigmaAdmin.Controllers
                 ModelState.AddModelError("", "myroute会員IDが数字以外で入力されました。半角英数字で再入力してください。");
                 return false;
             }
-            if (model.FacilityId != "-" && model.ShopType!=null)
+            if (!string.IsNullOrEmpty(model.FacilityId) && model.ShopType!=null)
             {
                 //開催イベント名選択肢から施設IDを分離する
                 string SearchOb = "/"; //「/」判定用
