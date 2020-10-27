@@ -14,8 +14,10 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 福岡施設販売チケット一覧取得
         /// </summary>
+        /// <param name="UserRole"></param>
+        /// <param name="PageName"></param>
         /// <returns></returns>
-        public List<MuseumPaymentInfo> MuseumPassportList(string UserId, string PageName)
+        public List<MuseumPaymentInfo> MuseumPassportList(string UserRole, string PageName)
         {
             List<MuseumPaymentInfo> result = new List<MuseumPaymentInfo>();
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
@@ -45,6 +47,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   where ftpd.BizCompanyCd='MYF'");//宮交観光チケット画面の場合
                 }
                 sb.AppendLine(string.Format("and ftpd.ID NOT IN ({0})", AbolishedFacilityTickets));
+                // 権限判定（福岡市美術館／福岡アジア美術館）
+                if (PageName == "MPA0801" && TargetFacilityTickets.ContainsKey(UserRole))
+                {
+                    sb.AppendLine(string.Format("and ftpd.ID IN ({0})", TargetFacilityTickets[UserRole]));
+                }
 
                 cmd.CommandText = sb.ToString();
 
@@ -76,8 +83,18 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         /// <param name="stDate">抽出範囲開始日</param>
         /// <param name="edDate">抽出範囲終了日</param>
+        /// <param name="pageNo"></param>
+        /// <param name="ListNoEnd"></param>
+        /// <param name="MyrouteNo"></param>
+        /// <param name="PaymentType"></param>
+        /// <param name="TicketNumType"></param>
+        /// <param name="Denomination"></param>
+        /// <param name="TicketId"></param>
+        /// <param name="AplType"></param>
+        /// <param name="PageName"></param>
+        /// <param name="UserRole"></param>
         /// <returns>福岡施設決済情報</returns>
-        public List<MuseumPaymentInfo> GetMuseumPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string PaymentType, string TicketNumType, string Denomination, string TicketId, string AplType, string PageName)
+        public List<MuseumPaymentInfo> GetMuseumPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string PaymentType, string TicketNumType, string Denomination, string TicketId, string AplType, string PageName, string UserRole = null)
         {
             List<MuseumPaymentInfo> result = new List<MuseumPaymentInfo>();
 
@@ -88,7 +105,7 @@ namespace AppSigmaAdmin.Models
                 
 
                 //呼び出し画面から事業者を指定する
-                if (PageName =="MPA0801")
+                if (PageName == "MPA0801")
                 {
                     string MuseumPaymentInfo_FOC = GetALLFOCMuseumPaymentDateQuery(stDate, edDate);
                     Jsb.AppendLine("select * from (" + MuseumPaymentInfo_FOC.ToString() + "");
@@ -102,6 +119,11 @@ namespace AppSigmaAdmin.Models
                     {
                         //検索条件に枚数種別：学割
                         Jsb.AppendLine("   and tbl.DiscountNum > 0 ");
+                    }
+                    // 権限判定（福岡市美術館／福岡アジア美術館）
+                    if (TargetFacilityTickets.ContainsKey(UserRole))
+                    {
+                        Jsb.AppendLine(string.Format("and tbl.ID IN ({0})", TargetFacilityTickets[UserRole]));
                     }
                 }
                 else if (PageName == "MPA1101")
@@ -733,12 +755,15 @@ namespace AppSigmaAdmin.Models
         /// <param name="stDate"></param>
         /// <param name="edDate"></param>
         /// <param name="MyrouteNo"></param>
-        /// <param name="TicketType"></param>
         /// <param name="PaymentType"></param>
         /// <param name="TicketNumType"></param>
         /// <param name="TransportType"></param>
+        /// <param name="TicketId"></param>
+        /// <param name="AplType"></param>
+        /// <param name="PageName"></param>
+        /// <param name="UserRole"></param>
         /// <returns></returns>
-        public List<MuseumPaymentInfo> MuseumPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType,string PageName)
+        public List<MuseumPaymentInfo> MuseumPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType, string TicketId, string AplType,string PageName, string UserRole = null)
         {
             List<MuseumPaymentInfo> result = new List<MuseumPaymentInfo>();
             //現在表示されているリストの通し番号
@@ -763,6 +788,11 @@ namespace AppSigmaAdmin.Models
                     {
                         //検索条件に枚数種別：学割
                         MuseumSb.AppendLine("   and tbl.DiscountNum > 0 ");
+                    }
+                    // 権限判定（福岡市美術館／福岡アジア美術館）
+                    if (TargetFacilityTickets.ContainsKey(UserRole))
+                    {
+                        MuseumSb.AppendLine(string.Format("and tbl.ID IN ({0})", TargetFacilityTickets[UserRole]));
                     }
                 }
                 else if (PageName == "MPA1101")
@@ -851,8 +881,9 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         /// <param name="model"></param>
         /// <param name="pageName"></param>
+        /// <param name="UserRole"></param>
         /// <returns></returns>
-        public DataTable GetMuseumUsageDateList(MuseumUseInfo model, string pageName)
+        public DataTable GetMuseumUsageDateList(MuseumUseInfo model, string pageName, string UserRole = null)
         {
             using (SqlDbInterface dbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -867,6 +898,11 @@ namespace AppSigmaAdmin.Models
                 {
                     // 美術館利用実績：福岡様
                     cmd.Parameters.Add("@BizCompanyCd", SqlDbType.NVarChar).Value = "FOC";
+                    // 権限判定（福岡市美術館／福岡アジア美術館）
+                    if (TargetFacilityTickets.ContainsKey(UserRole))
+                    {
+                        Jsb.AppendLine(string.Format("and ftup.ID IN ({0})", TargetFacilityTickets[UserRole]));
+                    }
                 }
                 else
                 {
@@ -971,14 +1007,21 @@ namespace AppSigmaAdmin.Models
 
         /// <summary>廃止チケット（福岡市博物館）</summary>
         private const string AbolishedFacilityTickets = "'FA02', 'FA02a'";
+        private Dictionary<string, string> TargetFacilityTickets = new Dictionary<string, string>(){
+            //22  福岡市美術館様(管理者)
+            {"22", "'FA01', 'FA01a'" },
+            //23  福岡市アジア美術館様(管理者)
+            {"23", "'FA03', 'FA03a'" },
+        };
 
         /// <summary>
         /// 施設マスタ取得
         /// </summary>
         /// <param name="language"></param>
         /// <param name="pageName"></param>
+        /// <param name="UserRole"></param>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetFacilityNames(string language, string pageName)
+        public DataTable GetFacilityNames(string language, string pageName, string UserRole = null)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -1001,6 +1044,11 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("where (ftdd.BizCompanyCd =@biz");
                 sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz))");
                 sb.AppendLine(string.Format("and ftdas.ID NOT IN ({0})", AbolishedFacilityTickets));
+                // 権限判定（福岡市美術館／福岡アジア美術館）
+                if (pageName == "MPA1001" && TargetFacilityTickets.ContainsKey(UserRole))
+                {
+                    sb.AppendLine(string.Format("and ftdas.ID IN ({0})", TargetFacilityTickets[UserRole]));
+                }
                 sb.AppendLine("order by ffd.FacilityId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;
@@ -1026,8 +1074,9 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         /// <param name="language"></param>
         /// <param name="pageName"></param>
+        /// <param name="UserRole"></param>
         /// <returns>SQL実行結果</returns>
-        public DataTable GetShopName(string language, string pageName)
+        public DataTable GetShopName(string language, string pageName, string UserRole = null)
         {
             using (SqlDbInterface NTdbInterface = new SqlDbInterface())
             using (SqlCommand cmd = new SqlCommand())
@@ -1050,6 +1099,11 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("Where (ftdd.BizCompanyCd = @biz");
                 sb.AppendLine("or (ftdd.BizCompanyCd IS NULL and ftpd.BizCompanyCd = @biz))");
                 sb.AppendLine(string.Format("and ftdas.ID NOT IN ({0})", AbolishedFacilityTickets));
+                // 権限判定（福岡市美術館／福岡アジア美術館）
+                if (pageName == "MPA1001" && TargetFacilityTickets.ContainsKey(UserRole))
+                {
+                    sb.AppendLine(string.Format("and ftdas.ID IN ({0})", TargetFacilityTickets[UserRole]));
+                }
                 sb.AppendLine("order by ftsrd.FacilityId, ftsrd.ServiceResourceId");
 
                 cmd.Parameters.Add("@lng", SqlDbType.NVarChar).Value = language;

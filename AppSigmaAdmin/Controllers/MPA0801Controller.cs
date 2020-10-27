@@ -220,7 +220,7 @@ namespace AppSigmaAdmin.Controllers
             List<MuseumPaymentInfo> SelectMuseumPaymentDateList = null;
 
             //表示情報を取得
-            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, Denomination, TicketId, AplType,PageName);
+            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, Denomination, TicketId, AplType,PageName, UserRole);
 
             int ListCount = int.Parse(maxListCount);
 
@@ -476,10 +476,10 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType, PageName);
+            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType, PageName, UserRole);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType,PageName);
+            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, model.Denomination, TicketId, AplType,PageName, UserRole);
 
             MuseumPaymentInfo info = new MuseumPaymentInfo();
 
@@ -753,13 +753,13 @@ namespace AppSigmaAdmin.Controllers
                 }
             }*/
             //検索条件に一致する全リスト件数取得
-            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, PageName);
+            MuseumPaymentDateListMaxCount = new MuseumInfoModels().MuseumPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, PageName, UserRole);
 
             //表示リストの総数
             int maxListCount = MuseumPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType,PageName);
+            SelectMuseumPaymentDateList = new MuseumInfoModels().GetMuseumPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType,PageName, UserRole);
 
 
             //開始日時

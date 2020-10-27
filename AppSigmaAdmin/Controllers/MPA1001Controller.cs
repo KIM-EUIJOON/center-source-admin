@@ -94,10 +94,10 @@ namespace AppSigmaAdmin.Controllers
 
             //セッション情報の取得
             MuseumUseInfo sessiondata = (MuseumUseInfo)Session[SESSION_SEARCH_MuseumUsage];
-            SelectTicketTypeList(sessiondata.Language, sessiondata.FacilityId);
+            SelectTicketTypeList(sessiondata.Language, sessiondata.FacilityId, UserRole);
             InitAplTypeList(sessiondata.Apltype); // アプリ種別情報
-            InitFacilityNameList(sessiondata.Language, sessiondata.FacilityId);
-            InitShopNameList(sessiondata.Language, sessiondata.ShopType);
+            InitFacilityNameList(sessiondata.Language, sessiondata.FacilityId, UserRole);
+            InitShopNameList(sessiondata.Language, sessiondata.ShopType, UserRole);
             info.UserId = sessiondata.UserId;
             int pageNo = 0;
             //ページ数から取得するリストの終了位置を指定(10件ずつのリスト)
@@ -165,7 +165,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model, PAGE_NAME);
+            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model, PAGE_NAME, UserRole);
             MuseumUseInfo info = new MuseumUseInfo();
 
             // 表示リストの総数
@@ -242,7 +242,7 @@ namespace AppSigmaAdmin.Controllers
             }
 
             // 検索条件に一致する全リスト件数取得
-            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model, PAGE_NAME);
+            DataTable GetData = new MuseumInfoModels().GetMuseumUsageDateList(model, PAGE_NAME, UserRole);
             MuseumUseInfo info = new MuseumUseInfo();
 
             // 表示リストの総数
@@ -313,8 +313,8 @@ namespace AppSigmaAdmin.Controllers
         {
             // プルダウン初期化
             this.InitAplTypeList(UserRole); // アプリ種別情報
-            this.InitFacilityNameList(model.Language, model.FacilityId);// チケット種別情報
-            this.InitShopNameList(model.Language,model.ShopType);
+            this.InitFacilityNameList(model.Language, model.FacilityId, UserRole);// チケット種別情報
+            this.InitShopNameList(model.Language,model.ShopType, UserRole);
 
         }
 
@@ -324,10 +324,10 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="id">チケットID</param>
         /// <returns>チケットリスト取得結果(JSON)</returns>
         [HttpGet]
-        public ActionResult SelectTicketTypeList(string language, string id)
+        public ActionResult SelectTicketTypeList(string language, string id, string UserRole)
         {
 
-            var itemList = InitShopNameList(language, id);
+            var itemList = InitShopNameList(language, id, UserRole);
             return Json(itemList, JsonRequestBehavior.AllowGet);
         }
 
@@ -335,11 +335,13 @@ namespace AppSigmaAdmin.Controllers
         /// 施設名ドロップダウンリスト初期化
         /// </summary>
         /// <param name="language">言語</param>
+        /// <param name="id"></param>
+        /// <param name="UserRole"></param>
         /// <returns>券種リスト取得結果</returns>
-        private List<SelectListItem> InitFacilityNameList(string language, string id)
+        private List<SelectListItem> InitFacilityNameList(string language, string id, string UserRole)
         {
             // 施設名リストを取得
-            DataTable db = new MuseumInfoModels().GetFacilityNames(language, PAGE_NAME);
+            DataTable db = new MuseumInfoModels().GetFacilityNames(language, PAGE_NAME, UserRole);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
@@ -373,16 +375,18 @@ namespace AppSigmaAdmin.Controllers
             return itemList;
         }
 
-       
+
         /// <summary>
         /// テナント名ドロップダウンリスト初期化
         /// </summary>
         /// <param name="language">言語</param>
+        /// <param name="id"></param>
+        /// <param name="UserRole"></param>
         /// <returns>テナント名リスト取得結果</returns>
-        private List<SelectListItem> InitShopNameList(string language, string id)
+        private List<SelectListItem> InitShopNameList(string language, string id, string UserRole)
         {
             // チケットリストを取得
-            DataTable db = new MuseumInfoModels().GetShopName(language, PAGE_NAME);
+            DataTable db = new MuseumInfoModels().GetShopName(language, PAGE_NAME, UserRole);
             List<SelectListItem> itemList = new List<SelectListItem>();
 
             // DataTable → SelectList型に変換
