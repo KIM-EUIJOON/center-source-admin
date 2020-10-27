@@ -553,15 +553,13 @@ namespace AppSigmaAdmin.Models
                         Jsb.AppendLine("   and cm.CouponId = @TicketId  ");
                         cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = model.CouponId;
                     }
-                    if (false == string.IsNullOrEmpty(model.FacilityName)) 
+                    if (false == string.IsNullOrEmpty(model.FacilityId)) 
                     {
-                        //検索条件に決済種別：決済種別不明指定
-                        Jsb.AppendLine("   and sm.FacilityName = @FacilityId  ");
-                        cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityName;
+                        Jsb.AppendLine("   and ch.UsageFacilityId = @FacilityId  ");
+                        cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = model.FacilityId;
                     }
-                    else if (false == string.IsNullOrEmpty(model.ShopCode)) 
+                    if (false == string.IsNullOrEmpty(model.ShopCode)) 
                     {
-                        //検索条件に決済種別指定
                         Jsb.AppendLine("   and cs.ShopCode = @ShopCode ");
                         cmd.Parameters.Add("@ShopCode", SqlDbType.NVarChar).Value = model.ShopCode;
                     }
@@ -579,8 +577,6 @@ namespace AppSigmaAdmin.Models
                         cmd.Parameters.Add("@TicketBizCompanyCd0", SqlDbType.NVarChar).Value = "JRK";
                         cmd.Parameters.Add("@TicketBizCompanyCd1", SqlDbType.NVarChar).Value = "MYZ";
                     }
-
-                    Jsb.AppendLine("   and sm.Language = @lang");
 
                     Jsb.AppendLine("  ) as MA");
 
@@ -605,10 +601,11 @@ namespace AppSigmaAdmin.Models
                 using (SqlCommand cmd = new SqlCommand())
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.AppendLine("select cm.UserId");
-                    sb.AppendLine("       , cm.CouponId");
-                    sb.AppendLine("       , cm.UsageDateTime");
-                    sb.AppendLine("       , cm.UsageShopCode");
+                    sb.AppendLine("select ch.UserId");
+                    sb.AppendLine("       , ch.CouponId");
+                    sb.AppendLine("       , ch.UsageDateTime");
+                    sb.AppendLine("       , ch.UsageFacilityId");
+                    sb.AppendLine("       , ch.UsageShopCode");
                     sb.AppendLine("       ,cma.BizCompanyCd");
                     sb.AppendLine("       ,cr.Value");
                     sb.AppendLine("       ,cs.ShopCode");
@@ -624,9 +621,12 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,ftm.DiscountNum");
                     sb.AppendLine("       ,ftsm.BizCompanyCd AS TicketBizCompanyCd");
 
-                    sb.AppendLine("       from CouponManage cm");
+                    sb.AppendLine("       from CouponHistory ch");
+                    sb.AppendLine("       inner join CouponManage cm");
+                    sb.AppendLine("       on cm.UserId = ch.UserId and cm.CouponId = ch.CouponId and cm.CouponSetNo = ch.CouponSetNo");
+
                     sb.AppendLine("       left join CouponMaster cma");
-                    sb.AppendLine("       on cm.CouponId=cma.CouponId");
+                    sb.AppendLine("       on ch.CouponId=cma.CouponId");
                     sb.AppendLine("       left join CharacterResource cr");
                     sb.AppendLine("       on cma.CouponName = cr.ResourceId");
                     sb.AppendLine("       and cr.Language='ja'");
@@ -637,19 +637,18 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       and cm.TicketSetNo=ftm.SetNo");
 
                     sb.AppendLine("       left join CouponShop cs");
-                    sb.AppendLine("       on cm.CouponId = cs.CouponId");
+                    sb.AppendLine("       on ch.CouponId = cs.CouponId and ch.UsageFacilityId = cs.FacilityId and ch.UsageShopCode = cs.ShopCode");
                     sb.AppendLine("       left join ShopMaster sm");
-                    sb.AppendLine("       on cs.ShopCode = sm.ShopCode");
+                    sb.AppendLine("       on cs.ShopCode = sm.ShopCode and cs.FacilityId = sm.FacilityId and sm.Language = @lang");
                     sb.AppendLine("       left join FacilityMaster fm");
-                    sb.AppendLine("       on sm.FacilityId = fm.FacilityId");
-                    sb.AppendLine("       and sm.Language = fm.Language");
+                    sb.AppendLine("       on sm.FacilityId = fm.FacilityId and fm.Language = @lang");
+
                     sb.AppendLine("       left join IndustryMaster im");
                     sb.AppendLine("       on sm.IndustryCode = im.IndustryCode");
                     sb.AppendLine("       left join UserInfoOid uio");
-                    sb.AppendLine("       on cm.UserId = uio.UserId");
-                    sb.AppendLine("       where cm.UsageStatus='3'");
-                    sb.AppendLine("       and cma.BizCompanyCd='JRK'");           /*JR九州固定*/
-                    sb.AppendLine("       and cm.UsageDateTime between @StartDatatTime and @EndDatatTime ");
+                    sb.AppendLine("       on ch.UserId = uio.UserId");
+                    sb.AppendLine("       where cma.BizCompanyCd='JRK'");           /*JR九州固定*/
+                    sb.AppendLine("       and ch.UsageDateTime between @StartDatatTime and @EndDatatTime ");
 
                     return sb.ToString();
                 }
