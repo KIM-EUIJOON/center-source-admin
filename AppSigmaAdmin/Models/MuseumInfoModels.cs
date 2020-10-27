@@ -584,8 +584,8 @@ namespace AppSigmaAdmin.Models
                 }
                 if (false == string.IsNullOrEmpty(model.Apltype))
                 {
-                    Jsb.AppendLine("    AND AplType = @AplName ");
-                    cmd.Parameters.Add("@AplName", SqlDbType.NVarChar).Value = "au";
+                    Jsb.AppendLine("    AND AplType = @AplType ");
+                    cmd.Parameters.Add("@AplType", SqlDbType.NVarChar).Value = "1";
                 }
                 if (false == string.IsNullOrEmpty(model.FacilityId))
                 {
