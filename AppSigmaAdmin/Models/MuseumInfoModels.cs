@@ -162,7 +162,7 @@ namespace AppSigmaAdmin.Models
                 if (PaymentType == "決済種別不明")
                 {
                     //検索条件に決済種別：決済種別不明指定
-                    Jsb.AppendLine("   and tbl.PaymentType not in ('3','4','5')");
+                    Jsb.AppendLine("   and (tbl.PaymentType not in ('3','4','5') or tbl.PaymentType is null)");
                 }
                 else if (PaymentType != "-")
                 {
@@ -500,7 +500,7 @@ namespace AppSigmaAdmin.Models
                 if (PaymentType == "決済種別不明")
                 {
                     //検索条件に決済種別：決済種別不明指定
-                    MuseumSb.AppendLine("   and tbl.PaymentType not in ('3','4','5')");
+                    MuseumSb.AppendLine("   and (tbl.PaymentType not in ('3','4','5') or tbl.PaymentType is null)");
                 }
                 else if (PaymentType != "-")
                 {
@@ -595,14 +595,16 @@ namespace AppSigmaAdmin.Models
                 }
                 if (false == string.IsNullOrEmpty(model.ShopType))
                 {
-                    string SearchOb = "/"; //「/」判定用
-                    int num = model.ShopType.IndexOf(SearchOb);
-                    string ShopId = model.ShopType.Substring(0, num);       //チケットID分離
-                    int Tpt = model.ShopType.Length - (num + 1);
-                    string TransePortCheck = model.ShopType.Substring(num + 1, Tpt).ToString();  //交通種別分離
+                    string[] ShopTypeItems = model.ShopType.Split('/'); // '/'の前方が施設ID、後方がショップコード
                     //入場イベント名
                     Jsb.AppendLine("   and ftud.ServiceResourceId = @TenantID ");
-                    cmd.Parameters.Add("@TenantID", SqlDbType.NVarChar).Value = TransePortCheck;
+                    cmd.Parameters.Add("@TenantID", SqlDbType.NVarChar).Value = ShopTypeItems[1];
+                    if (string.IsNullOrEmpty(model.FacilityId))
+                    {
+                        // 条件に施設が指定されていなければ施設IDも条件に加える。
+                        Jsb.AppendLine("   and ftud.FacilityId = @FacilityId  ");
+                        cmd.Parameters.Add("@FacilityId", SqlDbType.NVarChar).Value = ShopTypeItems[0];
+                    }
                 }
 
                 Jsb.AppendLine("  ) as MA");
