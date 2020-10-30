@@ -31,15 +31,14 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("select fsm.TicketType");
                     sb.AppendLine("   ,cr.Value");
                     sb.AppendLine("   ,fsm.BizCompanyCd");
-                    sb.AppendLine("   ,fsm.TicketId");
-                    sb.AppendLine("   ,fsm.TicketGroup");
                     sb.AppendLine("   ,fsm.TrsType");
+                    sb.AppendLine("   ,STRING_AGG(fsm.TicketId, ',') as TicketId");
                     sb.AppendLine("   from FreeTicketSalesMaster fsm");
                     sb.AppendLine("   left join CharacterResource cr");
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("   and Language = 'ja'");
                     sb.AppendLine("   where fsm.BizCompanyCd='MYZ'");//宮交のみに制限する
-                    sb.AppendLine("   ORDER BY fsm.TicketGroup, fsm.TicketId");
+                    sb.AppendLine("   GROUP BY fsm.TicketType, cr.Value, fsm.BizCompanyCd, fsm.TrsType");
 
                     cmd.CommandText = sb.ToString();
 
@@ -54,10 +53,6 @@ namespace AppSigmaAdmin.Models
                             TicketName = row["Value"].ToString(),
                             TicketId = row["TicketId"].ToString(),
                         };
-                        if (row["TicketGroup"].ToString() == "1")
-                        {
-                            info.TicketName = info.TicketName + "[au]";
-                        }
                         result.Add(info);
                     }
                     return result;
@@ -124,9 +119,24 @@ namespace AppSigmaAdmin.Models
                     }
                     if (TicketId != "-")
                     {
-                        //検索条件に券種指定
-                        Miyakohsb.AppendLine("   and tbl.TicketId = @TicketId ");
-                        cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
+                        string[] TicketIds = TicketId.Split(',');
+                        if (TicketIds.Length > 1)
+                        {
+                            List<string> lst = new List<string>();
+                            for (int idx = 0; idx < TicketIds.Length; idx++)
+                            {
+                                string wTicketId = string.Format("@TicketId{0}", idx);
+                                cmd.Parameters.Add(wTicketId, SqlDbType.NVarChar).Value = TicketIds[idx];
+                                lst.Add(wTicketId);
+                            }
+                            Miyakohsb.AppendLine(string.Format("   AND tbl.TicketId IN ({0})", string.Join(",", lst)));
+                        }
+                        else
+                        {
+                            //検索条件に券種指定
+                            Miyakohsb.AppendLine("   and tbl.TicketId = @TicketId ");
+                            cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
+                        }
                     }
                     if (AplType != "-")//au用Role番号判定
                     {
@@ -169,10 +179,6 @@ namespace AppSigmaAdmin.Models
                         else
                         {
                             infoN.discountNum = "-";
-                        }
-                        if (row["TicketGroup"].ToString() == "1")
-                        {
-                            infoN.TicketName = infoN.TicketName + "[au]";
                         }
                         if (row["AplType"].ToString() == "1")
                         {
@@ -414,9 +420,24 @@ namespace AppSigmaAdmin.Models
                     }
                     if (TicketId != "-")
                     {
-                        //検索条件に券種指定
-                        MiyakohSb.AppendLine("   and tbl.TicketId = @TicketId ");
-                        cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
+                        string[] TicketIds = TicketId.Split(',');
+                        if (TicketIds.Length > 1)
+                        {
+                            List<string> lst = new List<string>();
+                            for (int idx = 0; idx < TicketIds.Length; idx++)
+                            {
+                                string wTicketId = string.Format("@TicketId{0}", idx);
+                                cmd.Parameters.Add(wTicketId, SqlDbType.NVarChar).Value = TicketIds[idx];
+                                lst.Add(wTicketId);
+                            }
+                            MiyakohSb.AppendLine(string.Format("   AND tbl.TicketId IN ({0})", string.Join(",", lst)));
+                        }
+                        else
+                        {
+                            //検索条件に券種指定
+                            MiyakohSb.AppendLine("   and tbl.TicketId = @TicketId ");
+                            cmd.Parameters.Add("@TicketId", SqlDbType.NVarChar).Value = TicketId;
+                        }
                     }
                     if (AplType != "-")//au用Role番号判定
                     {

@@ -530,7 +530,7 @@ namespace AppSigmaAdmin.Controllers
             searchKey.Add("TargetDateEnd", model.TargetDateEnd);
             searchKey.Add("maxListCount", maxListCount.ToString());
             searchKey.Add("MyrouteNo", UserId);
-            searchKey.Add("TransportType", TransportType);
+            searchKey.Add("TransportType", model.TransportType);
             searchKey.Add("TicketInfo", model.TicketInfo);
             searchKey.Add("PaymentType", model.PaymentType);
             searchKey.Add("TicketNumType", model.TicketNumType);
