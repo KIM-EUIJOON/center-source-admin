@@ -123,7 +123,7 @@ section#body {
 
     section#body .userInfoBox {
         width: 90%;
-        min-width: 1000px;
+        min-width: 1050px;
         max-width: 1500px;
         margin-top: 45px;
         padding-top: 50px;
@@ -302,6 +302,9 @@ section#body {
         border-bottom: solid 1px #dddddd;
         font-weight: normal;
         text-align: center;
+        white-space: nowrap;
+        padding-left: 5px;
+        padding-right: 5px;
     }
 
         section#body .gridhead th a {
@@ -377,7 +380,7 @@ section#body {
         border-left: solid 1px #dddddd;
         border-right: solid 1px #dddddd;
         border-collapse: collapse;
-        width: 8%;
+        //width: 8%;
     }
 
     section#body .gridbody6 {

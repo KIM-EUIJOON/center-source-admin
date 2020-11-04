@@ -199,6 +199,9 @@ namespace AppSigmaAdmin.Controllers
                 {
                     UserId = row["UserId"].ToString(),
                     TranDatetime = (DateTime.Parse(row["TranDate"].ToString())).ToString("yyyy/MM/dd HH:mm:ss"),
+                    /*　F1_SYSTEM_OPERATION-201　対応時期未定のためコメントアウト
+                     * TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
+                     */
                     PaymentId = row["PaymentId"].ToString(),
                     TicketName = TicketNameValue,
                     AdultNum = row["AdultNum"].ToString(),
@@ -303,6 +306,9 @@ namespace AppSigmaAdmin.Controllers
             }
             //ファイル名を「Nishitetsu_Coupon_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
             return File(ms.ToArray(), FILE_CONTENTTYPE, "Yokohama_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
+            /*　F1_SYSTEM_OPERATION-201　対応時期未定のためコメントアウト
+            return File(ms.ToArray(), FILE_CONTENTTYPE, "Yokohama_Report_" + DateTime.Parse(model.TargetDateBegin).ToString("yyyyMMdd") + "-" + DateTime.Parse(model.TargetDateEnd).ToString("yyyyMMdd") + "_" + DateTime.Now.ToString("yyyyMMdd") + FILE_EXTENSION);
+            */
         }
 
         /// <summary>

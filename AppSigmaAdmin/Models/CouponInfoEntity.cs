@@ -147,4 +147,52 @@ namespace AppSigmaAdmin.Models
             this.Language = source.Language;
         }
     }
+    public class JRKyushuCouponInfoEntity: CouponInfoEntityList
+    {
+        public string CouponName { get; set; }
+
+        public string CouponId { get; set; }
+
+        public string BizCompanyCd { get; set; }
+
+        public string AdultNum { get; set; }
+        public string DiscountNum { get; set; }
+        public string ChildNum { get; set; }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public JRKyushuCouponInfoEntity()
+        {
+            CouponInfoList = new List<CouponInfoEntity>();
+            CouponInfoListAll = new List<CouponInfoEntity>();
+        }
+
+        /// <summary>
+        /// コピーコンストラクタ
+        /// </summary>
+        /// <param name="source">コピー元</param>
+        public JRKyushuCouponInfoEntity(JRKyushuCouponInfoEntity source)
+        {
+            this.TargetDateBegin = source.TargetDateBegin;
+            this.TargetDateEnd = source.TargetDateEnd;
+            this.ListMaxCount = source.ListMaxCount;
+            this.PageNo = source.PageNo;
+            this.rowsPerPage = source.rowsPerPage;
+            this.PageCount = source.PageCount;
+            this.UserId = source.UserId;
+            this.FacilityId = source.FacilityId;
+            this.FacilityName = source.FacilityName;
+            this.ShopCode = source.ShopCode;
+            this.ShopName = source.ShopName;
+            this.AplType = source.AplType;
+            this.IndustryName = source.IndustryName;
+            CouponInfoList = new List<CouponInfoEntity>();
+            CouponInfoListAll = new List<CouponInfoEntity>(source.CouponInfoListAll);
+            this.Language = source.Language;
+            this.AdultNum = source.AdultNum;
+            this.ChildNum = source.ChildNum;
+            this.DiscountNum = source.DiscountNum;
+        }
+    }
 }

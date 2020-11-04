@@ -417,4 +417,16 @@ namespace AppSigmaAdmin.ResponseData
             this.Language = source.Language;
         }
     }
+    public class MiyakohPaymentInfoListEntity : NishitetsuPaymentInfoListEntity
+    {
+        /// <summary>
+        /// 学割枚数
+        /// </summary>
+        public string discountNum { get; set; }
+
+        /// <summary>
+        /// 西鉄決済情報リスト
+        /// </summary>
+        public List<MiyakohPaymentInfoListEntity> MiyakohPaymentInfoList { get; set; }
+    }
 }

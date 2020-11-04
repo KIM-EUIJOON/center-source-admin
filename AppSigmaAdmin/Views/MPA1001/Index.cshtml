@@ -1,0 +1,156 @@
+﻿@model AppSigmaAdmin.ResponseData.MuseumUseInfo
+@using AppSigmaAdmin.Utility
+@using System.Data
+@using AppSigmaAdmin.Library
+
+@{
+    ViewBag.Title = "美術館利用実績(福岡市様)";
+}
+
+@Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery/MPA0102")
+
+@section style{
+    <style>
+        .GridTableCol {
+            margin-left: -25px;
+        }
+    </style>
+}
+
+
+@section funcTitle {
+    <div class="funcTitleBer">
+        美術館利用実績(福岡市様)
+    </div>
+}
+
+<input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA1001", false)" />
+<input type="hidden" id="SelectShopList" value="@Common.CreateUrl("/MPA1001/SelectTicketTypeList", false)" />
+<input type="hidden" id="language" value="@Model.Language" />
+
+<form action="@Common.CreateUrl("/MPA1001", false)" method="post">
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        期間:
+                        @Html.TextBoxFor(Model => Model.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateBegin)
+                        から
+                        @Html.TextBoxFor(Model => Model.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateEnd)
+                        まで
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA1001/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        <div class="GridTableCol">
+                            <div class="GridTableCell">
+                                myroute会員ID：
+                                @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                                @Html.ValidationMessageFor(Model => Model.UserId)
+                            </div>
+                            <div class="GridTableCell">
+                                @{
+                                    //アプリ種別ドロップリスト項目作成
+                                    List<SelectListItem> AplTypeList = new List<SelectListItem>();
+                                    AplTypeList = @ViewBag.AplList;
+
+                                }
+                                アプリ種別：
+                                @Html.DropDownListFor(Model => Model.Apltype, AplTypeList, new { Class = "DropList", id = "AplTypeSelect" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA1001/MuseumOutPutDate", false) " formmethod="post" id="JRKyushuOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        <div class="GridTableCol">
+                            <div class="GridTableCell">
+
+                            </div>
+                            <div class="GridTableCell">
+                                @{
+                                    // 施設名ドロップリスト項目作成
+                                    List<SelectListItem> FacilityList = new List<SelectListItem>();
+                                    FacilityList = @ViewBag.FacilityList;
+                                }
+                                施設名：
+                                @{
+                                    @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "layer1" });
+
+                                }
+                            </div>
+                            <div class="GridTableCell">
+                                @{
+                                    // テナントドロップリスト項目作成
+                                    List<SelectListItem> ShopList = new List<SelectListItem>();
+                                    ShopList = @ViewBag.ShopList;
+                                }
+                                テナント名：
+                                @{
+                                   @Html.DropDownListFor(Model => Model.ShopType, ShopList, new { Class = "DropList", id = "shoplist" });
+
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                    </div>
+                </div>
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
+                @Html.HiddenFor(Model => Model.Apltype, new { id = "ModelAplType" })
+
+            </div>
+            <div>
+            </div>
+            <div>
+                @{
+                    if (Model.MuseumUseInfoList != null)
+                    {
+                        if (Model.MuseumUseInfoList.Count != 0)
+                        {
+                            @*表示件数：10件*@
+                            var grid = new WebGrid(null, rowsPerPage: Model.rowsPerPage, canSort: false);
+                            grid.Bind(source: Model.MuseumUseInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                            <div class="grid-table">
+                                @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
+                                                                                            columns: grid.Columns(grid.Column("UseDatetime", header: "利用日時", style: "gridbody18"),
+                                                                                            grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                                                             grid.Column("FacilityName", header: "施設名", style: "gridbody8"),
+                                                                                            grid.Column("TenantID", header: "テナントコード", style: "gridbody5"), grid.Column("TenantName", header: "テナント名", style: "gridbody18")
+                                                                                            , grid.Column("UseCount", header: "利用件数", style: "gridbody8"), grid.Column("UseCount", header: "業種", style: "gridbody8")
+                                                                                            , grid.Column("Apltype", header: "アプリ種別", style: "gridbody8")
+                                                                                            )).ToHtmlString().Replace("{0}", "<br/>"))
+                                )
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div>
+            </div>
+        </div>
+    </div>
+</form>
+

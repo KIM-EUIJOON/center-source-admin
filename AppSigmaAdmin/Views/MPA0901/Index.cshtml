@@ -1,0 +1,157 @@
+﻿@model AppSigmaAdmin.Models.JRKyushuCouponInfoEntity
+@using AppSigmaAdmin.ResponseData
+@using AppSigmaAdmin.Utility
+@using System.Data
+@using AppSigmaAdmin.Library
+
+@{
+    ViewBag.Title = "クーポン利用実績(JR九州様＋宮交様)";
+}
+
+@section style{
+    <style>
+        .GridTableCol {
+            margin-left: -25px;
+        }
+    </style>
+}
+
+@section funcTitle {
+    <div class="funcTitleBer">
+        クーポン利用実績(JR九州様＋宮交様)
+    </div>
+}
+
+<input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA0901", false)" />
+<input type="hidden" id="SelectShopList" value="@Common.CreateUrl("/MPA0901/InitSearchList", false)" />
+<input type="hidden" id="language" value="@Model.Language" />
+
+<form action="@Common.CreateUrl("/MPA0901", false)" method="post">
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        期間:
+                        @Html.TextBoxFor(Model => Model.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateBegin)
+                        から
+                        @Html.TextBoxFor(Model => Model.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateEnd)
+                        まで
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0901/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCol">
+                        <div class="GridTableCell">
+                            myroute会員ID：
+                            @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                            @Html.ValidationMessageFor(Model => Model.UserId)
+                        </div>
+                        <div class="GridTableCell">
+                            @{
+                                // アプリ種別ドロップリスト項目作成
+                                List<SelectListItem> AplList = new List<SelectListItem>();
+                                AplList = @ViewBag.AplList;
+                            }
+                            アプリ種別：
+                            @Html.DropDownListFor(Model => Model.AplType, AplList, new { Class = "DropList" })
+                        </div>
+                        <div class="GridTableCell">
+                            @{
+                                // 商品種別ドロップリスト項目作成
+                                List<SelectListItem> TicketList = new List<SelectListItem>();
+                                TicketList = @ViewBag.TicketList;
+                            }
+                            クーポン名：
+                            @Html.DropDownListFor(Model => Model.CouponId, TicketList, new { Class = "DropList", id = "ticketlist" })
+
+                        </div>
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA0901/JRKyushuCoupomOutPutDate", false)" formmethod="post" id="YokohamaOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        <div class="GridTableCol">
+                            
+                            <div class="GridTableCell">
+                                @{
+                                    // 決済種別ドロップリスト項目作成
+                                    List<SelectListItem> ShopList = new List<SelectListItem>();
+                                    ShopList = @ViewBag.ShopList;
+                                }
+                                テナント名：
+                                @{
+                                    @Html.DropDownListFor(Model => Model.ShopCode, ShopList, new { Class = "DropList", id = "paymentlist" })
+                                }
+                            </div>
+                            <div class="GridTableCell">
+                                @{
+                                    // 施設名ドロップリスト項目作成
+                                    List<SelectListItem> FacilityList = new List<SelectListItem>();
+                                    FacilityList = @ViewBag.FacilityList;
+                                }
+                                施設名：
+                                @Html.DropDownListFor(Model => Model.FacilityId, FacilityList, new { Class = "DropList", id = "Ticetuserlist" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                    </div>
+                </div>
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
+            </div>
+            <div>
+            </div>
+            <div>
+                @{
+                    if (Model.CouponInfoList != null)
+                    {
+                        if (Model.CouponInfoList.Count != 0)
+                        {
+                            // 表示件数：10件
+                            var grid = new WebGrid(null, rowsPerPage: Model.rowsPerPage, canSort: false);
+                            grid.Bind(source: Model.CouponInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
+                            <div class="grid-table">
+                                @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead", columns: grid.Columns(
+                                                                                                                                                        grid.Column("UsageDateTime", header: "利用日時", style: "gridbody18"),
+                                                                                                                                                        grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                                                                                                                        grid.Column("FacilityName", header: "施設名", style: "gridbody6"),
+                                                                                                                                                        grid.Column("CouponName", header: "クーポン名", style: "gridbody18"),
+                                                                                                                                                        grid.Column("ShopCode", header: "テナントコード", style: "gridbody8"),
+                                                                                                                                                        grid.Column("ShopName", header: "テナント名", style: "gridbody8"),
+                                                                                                                                                        grid.Column("UseCount", header: "利用件数", style: "gridbody8"),
+                                                                                                                                                        grid.Column("IndustryName", header: "業種", style: "gridbody6"),
+                                                                                                                                                        grid.Column("AplType", header: "アプリ種別", style: "gridbody8"),
+                                                                                                                                                        grid.Column("AdultNum", header: "大人枚数", style: "gridbody8"),
+                                                                                                                                                        grid.Column("DiscountNum", header: "学割枚数", style: "gridbody8"),
+                                                                                                                                                        grid.Column("ChildNum", header: "子供枚数", style: "gridbody8")
+                                                                                                                                                        )).ToHtmlString().Replace("{0}", "<br/>")))
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div>
+            </div>
+        </div>
+    </div>
+</form>
+
+

@@ -422,7 +422,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , case when tbl.BizCompanyCd =N'NNR' then N'鉄道'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NIS' then N'バス(福岡)'");
                     sb.AppendLine("     when tbl.BizCompanyCd =N'NISK' then N'バス(北九州)'");
-                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'鉄道・バス'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NISG' then N'マルチ'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKUM' then N'鉄道(北九州モノレール)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKB' then N'西鉄バス北九州'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKCER' then N'鉄道(北九州)'");
+                    sb.AppendLine("     when tbl.BizCompanyCd =N'NKKK' then N'船'");
                     sb.AppendLine("     else N'チケット種別不明' end as BizCompanyCd");                                  /*チケット種別(交通手段)*/
                     sb.AppendLine("     , tbl.TicketType");                                                              /*チケット種別(au,au以外)*/
                     sb.AppendLine("     , tbl.TicketId");
@@ -608,7 +612,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK' or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -642,7 +646,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK' or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -676,7 +680,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG')");
+                    sb.AppendLine("        	and (fsm.BizCompanyCd='NISK' or fsm.BizCompanyCd='NIS' or fsm.BizCompanyCd='NNR' or fsm.BizCompanyCd='NISG'or fsm.BizCompanyCd='NKUM'or fsm.BizCompanyCd='NKCER'or fsm.BizCompanyCd='NKKK'　or fsm.BizCompanyCd='NKB')");
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -698,6 +702,14 @@ namespace AppSigmaAdmin.Models
             /// </summary>
             /// <param name="stDate">抽出範囲開始日</param>
             /// <param name="edDate">抽出範囲終了日</param>
+            /// <param name="pageNo"></param>
+            /// <param name="ListNoEnd"></param>
+            /// <param name="MyrouteNo"></param>
+            /// <param name="PaymentType"></param>
+            /// <param name="TicketNumType"></param>
+            /// <param name="TransportType"></param>
+            /// <param name="TicketId"></param>
+            /// <param name="AplType"></param>
             /// <returns>西鉄決済情報</returns>
             public List<NishitetsuPaymentInfo> GetNishitetsuPaymentDate(DateTime stDate, DateTime edDate, int pageNo, int ListNoEnd, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType,string TicketId, string AplType)
             {
@@ -808,10 +820,11 @@ namespace AppSigmaAdmin.Models
             /// <param name="stDate"></param>
             /// <param name="edDate"></param>
             /// <param name="MyrouteNo"></param>
-            /// <param name="TicketType"></param>
             /// <param name="PaymentType"></param>
             /// <param name="TicketNumType"></param>
             /// <param name="TransportType"></param>
+            /// <param name="TicketId"></param>
+            /// <param name="AplType"></param>
             /// <returns></returns>
             public List<NishitetsuPaymentInfo> NishitetsuPaymentDateListMaxCount(DateTime stDate, DateTime edDate, string MyrouteNo, string PaymentType, string TicketNumType, string TransportType ,string TicketId, string AplType)
             {
@@ -915,6 +928,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   left join CharacterResource cr");
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("   and Language = 'ja'");
+                    sb.AppendLine("   WHERE fsm.BizCompanyCd IN ('NKB', 'NKUM', 'NKCER', 'NKKK', 'NIS', 'NISK', 'NNR', 'NISG')");
+                    sb.AppendLine("   ORDER BY fsm.TicketGroup, fsm.TicketId");
 
                     cmd.CommandText = sb.ToString();
 
@@ -933,7 +948,6 @@ namespace AppSigmaAdmin.Models
                         {
                             info.TicketName = info.TicketName + "[au]";
                         }
-						if (info.TransportType != "NIS"&info.TransportType!= "NISK"& info.TransportType != "NNR" & info.TransportType != "NISG") { continue; }//西鉄以外のものをリストに含めない
                         result.Add(info);
                     }
                     return result;
