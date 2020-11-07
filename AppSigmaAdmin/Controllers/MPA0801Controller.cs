@@ -91,7 +91,6 @@ namespace AppSigmaAdmin.Controllers
 
                 //チケット種別プルダウン作成
                 TranseTypeList.Add(new SelectListItem { Text = "施設", Value = "admission" });
-                TranseTypeList.Add(new SelectListItem { Text = "テナント", Value = "coupon" });
                 TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
                 ViewBag.TranseList = TranseTypeList;
 
@@ -167,7 +166,6 @@ namespace AppSigmaAdmin.Controllers
             ViewBag.TicketList = TicketTypeList;
 
             TranseTypeList.Add(new SelectListItem { Text = "施設", Value = "admission" });
-            TranseTypeList.Add(new SelectListItem { Text = "テナント", Value = "coupon" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
             ViewBag.TranseList = TranseTypeList;
 
@@ -357,7 +355,6 @@ namespace AppSigmaAdmin.Controllers
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
 
             TranseTypeList.Add(new SelectListItem { Text = "施設", Value = "admission" });
-            TranseTypeList.Add(new SelectListItem { Text = "テナント", Value = "coupon" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-" });
 
             //チケット種別ドロップダウンリストを保存
@@ -643,7 +640,6 @@ namespace AppSigmaAdmin.Controllers
             //チケット種別プルダウンリスト作成
             List<SelectListItem> TranseTypeList = new List<SelectListItem>();
             TranseTypeList.Add(new SelectListItem { Text = "施設", Value = "admission" });
-            TranseTypeList.Add(new SelectListItem { Text = "テナント", Value = "coupon" });
             TranseTypeList.Add(new SelectListItem { Text = "種別未選択", Value = "-", Selected = true });
 
 

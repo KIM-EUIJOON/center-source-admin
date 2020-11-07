@@ -654,8 +654,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       inner join FreeTicketSalesMaster ftsm");
                     sb.AppendLine("       on cm.TicketId=ftsm.TicketId");
                     sb.AppendLine("       inner join FreeTicketManage ftm");
-                    sb.AppendLine("       on cm.TicketId=ftm.TicketId");
-                    sb.AppendLine("       and cm.TicketSetNo=ftm.SetNo");
+                    sb.AppendLine("       on cm.UserId = ftm.UserId and cm.TicketId=ftm.TicketId and cm.TicketSetNo=ftm.SetNo");
 
                     sb.AppendLine("       left join CouponShop cs");
                     sb.AppendLine("       on ch.CouponId = cs.CouponId and ch.UsageFacilityId = cs.FacilityId and ch.UsageShopCode = cs.ShopCode");
