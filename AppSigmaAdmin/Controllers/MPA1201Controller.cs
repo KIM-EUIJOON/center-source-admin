@@ -203,7 +203,7 @@ namespace AppSigmaAdmin.Controllers
                     //TenantName = row["ServiceName"].ToString(),
                     //TenantID = row["ServiceResourceId"].ToString(),
                     UseCount = 1, // 利用件数=1(暫定)
-                    Denomination = row["Denomination"].ToString(),/*業種(仮)*/
+                    Denomination = "",/*業種：暫定的にブランクを設定（F1_SYSTEM_OPERATION-224）*/
                     Apltype = row["AplName"].ToString(),
                 });
             }
@@ -288,13 +288,13 @@ namespace AppSigmaAdmin.Controllers
                 foreach (DataRow row in GetData.Rows)
                 {
                     strings.Clear();
-                    strings.Add(EncloseDbQuotes(row["UsageStartDatetime"].ToString()));
+                    strings.Add(EncloseDbQuotes((DateTime.Parse(row["UsageStartDatetime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss")));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
                     strings.Add(EncloseDbQuotes(row["MuseumName"].ToString()));
                     //strings.Add(EncloseDbQuotes(row["ServiceResourceId"].ToString()));
                     //strings.Add(EncloseDbQuotes(row["ServiceName"].ToString()));
                     strings.Add(EncloseDbQuotes("1")); // 利用件数=1(暫定)
-                    strings.Add(EncloseDbQuotes(row["Denomination"].ToString()));
+                    strings.Add(EncloseDbQuotes("")); /*業種：暫定的にブランクを設定（F1_SYSTEM_OPERATION-224）*/
                     strings.Add(EncloseDbQuotes(row["AplName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }

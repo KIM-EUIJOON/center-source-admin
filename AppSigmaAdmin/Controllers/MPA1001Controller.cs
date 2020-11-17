@@ -288,7 +288,7 @@ namespace AppSigmaAdmin.Controllers
                 foreach (DataRow row in GetData.Rows)
                 {
                     strings.Clear();
-                    strings.Add(EncloseDbQuotes(row["UsageStartDatetime"].ToString()));
+                    strings.Add(EncloseDbQuotes((DateTime.Parse(row["UsageStartDatetime"].ToString())).ToString("yyyy/MM/dd HH:mm:ss")));
                     strings.Add(EncloseDbQuotes(row["UserId"].ToString()));
                     strings.Add(EncloseDbQuotes(row["MuseumName"].ToString()));
                     strings.Add(EncloseDbQuotes(row["ServiceResourceId"].ToString()));
