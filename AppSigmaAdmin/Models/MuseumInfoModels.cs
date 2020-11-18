@@ -220,7 +220,8 @@ namespace AppSigmaAdmin.Models
                         ChildNum = row["DiscountNum"].ToString(),
                         Apltype = row["AplName"].ToString(),
                         PaymentType = row["GmoStatus"].ToString(),
-                        Amount = row["Amount"].ToString()
+                        Amount = row["Amount"].ToString(),
+                        ReceiptNo = row["ReceiptNo"].ToString(),
                     };
 
                     if (row["Denomination"].ToString()== "admission")
@@ -270,6 +271,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    ,tbl.GmoStatus");
                 sb.AppendLine("    ,tbl.PaymentType");
                 sb.AppendLine("    ,tbl.Amount");
+                sb.AppendLine("    ,tbl.ReceiptNo");
                 sb.AppendLine("    from (");
 
                 sb.AppendLine("      select ftup.PurchaseDatetime");
@@ -295,6 +297,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("      ,ftdd.Denomination");
                 sb.AppendLine("      ,ftup.ID");
                 sb.AppendLine("      ,case when uio.AplType = 1 then 'au' else '-' end as AplName");
+                sb.AppendLine("      ,pm.ReceiptNo");
                 sb.AppendLine("      from FTicketUsersPurchased ftup");
                 sb.AppendLine("      left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("       on ftdd.ID = ftup.ID and ftdd.DistributedNo='1'");
@@ -361,6 +364,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("    ,tbl.GmoStatus");
                 sb.AppendLine("    ,tbl.Amount");
                 sb.AppendLine("    ,tbl.PaymentType");
+                sb.AppendLine("    ,tbl.ReceiptNo");
                 sb.AppendLine("    from (");
 
                 sb.AppendLine("      select ftup.PurchaseDatetime");
@@ -386,6 +390,7 @@ namespace AppSigmaAdmin.Models
                 sb.AppendLine("      ,ftdd.Denomination");
                 sb.AppendLine("      ,ftup.ID");
                 sb.AppendLine("      ,case when uio.AplType = 1 then 'au' else '-' end as AplName");
+                sb.AppendLine("      ,pm.ReceiptNo");
                 sb.AppendLine("      from FTicketUsersPurchased ftup");
                 sb.AppendLine("      left join FTicketDistributedDefinition ftdd");
                 sb.AppendLine("       on ftdd.ID = ftup.ID and ftdd.DistributedNo='1'");
