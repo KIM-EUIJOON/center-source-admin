@@ -807,8 +807,8 @@ namespace AppSigmaAdmin.Controllers
             Miyazakitourhsw.Write(',');
             Miyazakitourhsw.Write("\"金額\"");
             Miyazakitourhsw.Write(',');
-           /* Miyazakitourhsw.Write("\"領収書番号\"");
-            Miyazakitourhsw.Write(',');*/
+            Miyazakitourhsw.Write("\"領収書番号\"");
+            Miyazakitourhsw.Write(',');
             Miyazakitourhsw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.MuseumPaymentInfoList)
@@ -834,8 +834,8 @@ namespace AppSigmaAdmin.Controllers
                 Miyazakitourhsw.Write(',');
                 Miyazakitourhsw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 Miyazakitourhsw.Write(',');
-              /*  Miyazakitourhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
-                Miyazakitourhsw.Write(',');*/
+                Miyazakitourhsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
+                Miyazakitourhsw.Write(',');
                 Miyazakitourhsw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
             }
             Miyazakitourhsw.Close();
