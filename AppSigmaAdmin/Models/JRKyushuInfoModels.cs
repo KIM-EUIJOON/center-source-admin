@@ -21,6 +21,8 @@ namespace AppSigmaAdmin.Models
             {
                 // 宮崎交通様：交通
                 {"17", new List<string>(){ "50001", "50002", "60001", "60002" } },
+                // アミュプラザ様
+                {"21", new List<string>(){ "50001", "60001" } },
             };
 
             /// <summary>
@@ -205,7 +207,8 @@ namespace AppSigmaAdmin.Models
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString(),
-                            Apltype = row["AplName"].ToString()
+                            Apltype = row["AplName"].ToString(),
+                            PaymentDetailName = row["PaymentDetailName"].ToString(),
                         };
                         if (row["TrsType"].ToString() == "10")
                         {
@@ -259,6 +262,12 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.Amount");
                     sb.AppendLine("     , tbl.ReceiptNo");
                     sb.AppendLine("     , tbl.TrsType");
+                    sb.AppendLine("     , tbl.PaymentMeansCode");
+                    sb.AppendLine("     , tbl.PaymentDetailCode");
+                    sb.AppendLine("     , CASE WHEN tbl.PaymentMeansCode = '1' AND tbl.PaymentDetailCode IS NULL THEN N'クレジットカード'");
+                    sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '00' THEN N'TW残高'");
+                    sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '02' THEN N'TSpay'");
+                    sb.AppendLine("       END AS PaymentDetailName");
                     sb.AppendLine("  from (");
                     // 即時決済データ取得
                     sb.AppendLine("           select pm.TranDate");
@@ -279,6 +288,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
                     sb.AppendLine("           else '-'");
                     sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           , pm.PaymentMeansCode");
+                    sb.AppendLine("           , pm.PaymentDetailCode");
                     sb.AppendLine("           from FreeTicketManage ftm");
                     sb.AppendLine("           left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
@@ -314,6 +325,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
                     sb.AppendLine("           else '-'");
                     sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           , pm.PaymentMeansCode");
+                    sb.AppendLine("           , pm.PaymentDetailCode");
                     sb.AppendLine("           from FreeTicketManage ftm");
                     sb.AppendLine("           left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
@@ -349,6 +362,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           ,case when uio.AplType =1 then 'au'");
                     sb.AppendLine("           else '-'");
                     sb.AppendLine("           end as AplName");
+                    sb.AppendLine("           , pm.PaymentMeansCode");
+                    sb.AppendLine("           , pm.PaymentDetailCode");
                     sb.AppendLine("           from FreeTicketManage ftm");
                     sb.AppendLine("           left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("           on ftm.TicketId = fsm.TicketId");
@@ -641,6 +656,8 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       ,ftm.ChildNum");
                     sb.AppendLine("       ,ftm.DiscountNum");
                     sb.AppendLine("       ,ftsm.BizCompanyCd AS TicketBizCompanyCd");
+                    sb.AppendLine("       ,ftsm.TicketId");
+                    sb.AppendLine("       ,crFtsm.Value AS TicketName");
 
                     sb.AppendLine("       from CouponHistory ch");
                     sb.AppendLine("       inner join CouponManage cm");
@@ -667,6 +684,10 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("       on sm.IndustryCode = im.IndustryCode");
                     sb.AppendLine("       left join UserInfoOid uio");
                     sb.AppendLine("       on ch.UserId = uio.UserId");
+
+                    sb.AppendLine("       left join CharacterResource crFtsm");
+                    sb.AppendLine("       on ftsm.TicketName = crFtsm.ResourceId and crFtsm.Language = @lang");
+
                     sb.AppendLine("       where cma.BizCompanyCd='JRK'");           /*JR九州固定*/
                     sb.AppendLine("       and ch.UsageDateTime between @StartDatatTime and @EndDatatTime ");
 

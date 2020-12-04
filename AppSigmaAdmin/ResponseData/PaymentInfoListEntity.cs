@@ -55,6 +55,10 @@ namespace AppSigmaAdmin.ResponseData
         ///</summary>
         public string Apltype { get; set; }
 
+        ///<summary>
+        ///支払い方法
+        ///</summary>
+        public string PaymentDetailName { get; set; }
     }
 
     /// <summary>
