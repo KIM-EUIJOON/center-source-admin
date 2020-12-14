@@ -150,5 +150,45 @@ namespace AppSigmaAdmin.Repository.Database.Query.AbstractLayer
         {
             return value.HasValue ? value.Value : defValue;
         }
+
+        /// <summary>
+        /// Nullable -> string 変換
+        /// </summary>
+        /// <typeparam name="T">データ型(struct)</typeparam>
+        /// <param name="value">値</param>
+        /// <returns></returns>
+        protected static string Option<T>(T? value)
+            where T : struct => Option(value, v => v);
+
+        /// <summary>
+        /// Nullable -> string 変換
+        /// </summary>
+        /// <typeparam name="T">データ型(struct)</typeparam>
+        /// <param name="value">値</param>
+        /// <param name="shaper">整形関数</param>
+        /// <returns></returns>
+        protected static string Option<T>(T? value, Func<T, T> shaper)
+            where T : struct => Option(value, shaper, v => v.ToString());
+
+        /// <summary>
+        /// Nullable -> string 変換
+        /// </summary>
+        /// <typeparam name="T">データ型(struct)</typeparam>
+        /// <param name="value">値</param>
+        /// <param name="parser">型変換関数</param>
+        /// <returns></returns>
+        protected static string Option<T>(T? value, Func<T, string> parser)
+            where T : struct => Option(value, v => v, parser);
+
+        /// <summary>
+        /// Nullable -> string 変換
+        /// </summary>
+        /// <typeparam name="T">データ型(struct)</typeparam>
+        /// <param name="value">値</param>
+        /// <param name="shaper">整形関数</param>
+        /// <param name="parser">型変換関数</param>
+        /// <returns></returns>
+        protected static string Option<T>(T? value, Func<T, T> shaper, Func<T, string> parser)
+            where T : struct => value.HasValue ? parser(shaper(value.Value)) : null;
     }
 }

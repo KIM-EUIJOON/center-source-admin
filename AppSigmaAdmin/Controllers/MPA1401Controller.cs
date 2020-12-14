@@ -7,12 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static AppSigmaAdmin.Models.JTXPaymentModel;
-using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
-using AppSigmaAdmin.ResponseData;
 using AppSigmaAdmin.Exceptions;
-using AppSigmaAdmin.Repository.Database.Query.Showabus;
+using AppSigmaAdmin.Repository.Showabus;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -87,7 +84,7 @@ namespace AppSigmaAdmin.Controllers
             var listNo = GetListRowNum(pageNo);
 
             //表示情報を取得
-            var usageList = new InsuranceTicketRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, listNo.Begin, listNo.End);
+            var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, listNo.Begin, listNo.End);
 
 
 
@@ -144,10 +141,10 @@ namespace AppSigmaAdmin.Controllers
 
 
                 //表示リストの総数
-                var maxListCount = new InsuranceTicketRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
+                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
 
                 //検索条件に一致したリストから表示件数分取得
-                var usageList = new InsuranceTicketRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, listNo.End);
+                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, listNo.End);
 
                 var info = new MPA1401Context()
                 {
@@ -215,10 +212,10 @@ namespace AppSigmaAdmin.Controllers
                 var listNo = GetListRowNum(model.ListPageNo + 1);
 
                 //表示リストの総数
-                var maxListCount = new InsuranceTicketRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
+                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
 
                 //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-                var usageList = new InsuranceTicketRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, maxListCount);
+                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, maxListCount);
 
 
 

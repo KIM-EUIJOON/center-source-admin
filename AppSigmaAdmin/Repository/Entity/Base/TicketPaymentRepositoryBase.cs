@@ -1,5 +1,6 @@
-﻿using AppSigmaAdmin.Models;
-using AppSigmaAdmin.Repository.Database.Connection;
+﻿using AppSigmaAdmin.Repository.Database.Connection;
+using AppSigmaAdmin.Repository.Entity.Base.Models;
+using AppSigmaAdmin.Repository.Entity.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,13 +9,24 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace AppSigmaAdmin.Repository.Database.Query.Showabus
+namespace AppSigmaAdmin.Repository.Database.Entity.Base
 {
     /// <summary>
-    /// 保険付き乗車券決済データ
+    /// チケット決済情報基底クラス
     /// </summary>
-    public class TicketPaymentRepository : AbstractShowabusBase
+    /// <typeparam name="TEntity"></typeparam>
+    public abstract class TicketPaymentRepositoryBase<TEntity> : BizCompanyRepositoryBase
     {
+
+        protected TicketPaymentRepositoryBase(params Company[] companies) : base(companies) { }
+
+        /// <summary>
+        /// DBデータ変換
+        /// </summary>
+        /// <param name="raw">決済情報クエリデータ</param>
+        /// <returns></returns>
+        protected abstract TEntity Parse(TicketPaymentQueryRaw raw);
+
         /// <summary>
         /// 決済情報リスト取得
         /// </summary>
@@ -29,17 +41,34 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
         /// <param name="pageNo"></param>
         /// <param name="listNoEnd"></param>
         /// <returns>西鉄決済情報</returns>
-        public IEnumerable<ShowabusPaymentInfo> GetPayments(DateTime stDate, DateTime edDate, string userId, string paymentType, string ticketNumType, string transportType, string ticketId, string aplType,
+        public IEnumerable<TEntity> GetPayments(DateTime stDate, DateTime edDate, string userId, string paymentType, string ticketNumType, string transportType, string ticketId, string aplType,
             int? pageNo, int? listNoEnd)
         {
+
             using (var dbInterface = SqlDbInterfaceWrapper.Create())
             using (var cmd = new SqlCommand())
             {
                 var sb = new StringBuilder();
 
-                sb.AppendLine("select *");
-                sb.AppendLine("  from (");
+                sb.AppendLine("select MA.RecNo");
+                sb.AppendLine("      ,MA.UserId");
+                sb.AppendLine("      ,MA.TranDate");
+                sb.AppendLine("      ,MA.BizCompanyCd");
+                sb.AppendLine("      ,MA.TicketType");
+                sb.AppendLine("      ,MA.TicketId");
+                sb.AppendLine("      ,MA.TicketGroup");
+                sb.AppendLine("      ,MA.SetNo");
+                sb.AppendLine("      ,MA.Value");
+                sb.AppendLine("      ,MA.AdultNum");
+                sb.AppendLine("      ,MA.ChildNum");
+                sb.AppendLine("      ,MA.PaymentId");
+                sb.AppendLine("      ,MA.AplType");
+                sb.AppendLine("      ,MA.PaymentType");
+                sb.AppendLine("      ,MA.Amount");
+                sb.AppendLine("      ,MA.ReceiptNo");
+                sb.AppendLine("      ,MA.InquiryId");
 
+                sb.AppendLine("  from (");
                 sb.AppendLine("select ROW_NUMBER() OVER(ORDER BY tbl.PaymentId, tbl.PaymentType) as RecNo");    //決済IDと決済種別でソートする
                 sb.AppendLine("     , tbl.UserId");
                 sb.AppendLine("     , tbl.TranDate");
@@ -86,11 +115,11 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
                 sb.AppendLine("        	from FreeTicketManage ftm");
                 sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                 sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                sb.AppendLine($"         and fsm.BizCompanyCd in ({string.Join(", ", _Companies.Select(c => $"'{c.Code}'"))})");
+                sb.AppendLine($"         and fsm.BizCompanyCd in ({BizCompanyCodes})");
                 sb.AppendLine("        	inner join PaymentManage pm");
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                sb.AppendLine($"         and pm.ServiceId in ({string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)).Select(c => $"'{c.ServiceId}'"))})");
+                sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
                 sb.AppendLine("        	and pm.PaymentType = '3'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -122,11 +151,11 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
                 sb.AppendLine("        	from FreeTicketManage ftm");
                 sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                 sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                sb.AppendLine($"         and fsm.BizCompanyCd in ({string.Join(", ", _Companies.Select(c => $"'{c.Code}'"))})");
+                sb.AppendLine($"         and fsm.BizCompanyCd in ({BizCompanyCodes})");
                 sb.AppendLine("        	inner join PaymentManage pm");
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                sb.AppendLine($"         and pm.ServiceId in ({string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)).Select(c => $"'{c.ServiceId}'"))})");
+                sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
                 sb.AppendLine("        	and pm.PaymentType = '5'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '3'");
@@ -158,11 +187,11 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
                 sb.AppendLine("        	from FreeTicketManage ftm");
                 sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                 sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                sb.AppendLine($"         and fsm.BizCompanyCd in ({string.Join(", ", _Companies.Select(c => $"'{c.Code}'"))})");
+                sb.AppendLine($"         and fsm.BizCompanyCd in ({BizCompanyCodes})");
                 sb.AppendLine("        	inner join PaymentManage pm");
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                sb.AppendLine($"         and pm.ServiceId in ({string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)).Select(c => $"'{c.ServiceId}'"))})");
+                sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
                 sb.AppendLine("        	and pm.PaymentType = '4'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -201,7 +230,7 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
                     .AppendLine(" where pe.UserId = tbl.UserId")
                     .AppendLine("   and pe.PaymentId = tbl.PaymentId")
                     .AppendLine("   and pe.PaymentType = tbl.PaymentType")
-                    .AppendLine($"   and pe.ServiceId in ({string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)).Select(c => $"'{c.ServiceId}'"))})")
+                    .AppendLine($"   and pe.ServiceId in ({ServiceIds})")
                     .AppendLine("   and pe.IsTreat = 0") // 運用未処置
                     .AppendLine(")")
                     .ToString()
@@ -281,42 +310,27 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
 
                 using (var dt = dbInterface.ExecuteReader(cmd))
                     foreach (DataRow row in dt.Rows)
-                    {
-                        var infoN = new ShowabusPaymentInfo
+                        yield return Parse(new TicketPaymentQueryRaw()
                         {
-                            UserId = row["UserId"].ToString(),
-                            TranDatetime = ((DateTime)row["TranDate"]).ToString("yyyy/MM/dd HH:mm:ss"),
-                            PaymentId = row["PaymentId"].ToString(),
-                            TicketName = row["Value"].ToString(),
-                            TicketId = row["TicketId"].ToString(),
-                            TransportType = row["BizCompanyCd"].ToString(),
-                            AdultNum = row["AdultNum"].ToString(),
-                            ChildNum = row["ChildNum"].ToString(),
-                            PaymentType = row["PaymentType"].ToString(),
-                            Amount = (int)row["Amount"],
-                            ReceiptNo = row["ReceiptNo"].ToString(),
-                            InquiryId = row["InquiryId"] == DBNull.Value ? null : row["InquiryId"].ToString(),
-                            Apltype = row["AplType"].ToString()
-                        };
-                        if (row["TicketGroup"].ToString() == "1")
-                        {
-                            infoN.TicketName = infoN.TicketName + "[au]";
-                        }
-
-                        if (row["AplType"].ToString() == "1")
-                        {
-                            infoN.Apltype = "au";
-                        }
-                        else
-                        {
-                            infoN.Apltype = "-";
-                        }
-
-                        yield return infoN;
-                    }
+                            UserId = Convert.ToInt32(row["UserId"].ToString()),
+                            TranDate = Option<DateTime>(row["TranDate"]),
+                            BizCompanyCd = OptionString(row["BizCompanyCd"]),
+                            TicketType = OptionString(row["TicketType"]),
+                            TicketId = OptionString(row["TicketId"]),
+                            TicketGroup = OptionString(row["TicketGroup"]),
+                            SetNo = Convert.ToInt32(row["SetNo"].ToString()),
+                            Value = OptionString(row["Value"]),
+                            AdultNum = Convert.ToInt32(row["AdultNum"].ToString()),
+                            ChildNum = Convert.ToInt32(row["ChildNum"].ToString()),
+                            PaymentId = Convert.ToInt32(row["PaymentId"]),
+                            AplType = OptionString(row["AplType"]),
+                            PaymentType = OptionString(row["PaymentType"]),
+                            Amount = Option<int>(row["Amount"]),
+                            ReceiptNo = OptionString(row["ReceiptNo"]),
+                            InquiryId = OptionString(row["InquiryId"]),
+                        });
 
             }
-
         }
 
         /// <summary>
@@ -333,5 +347,6 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
         /// <returns></returns>
         public int GetPaymentsMaxCount(DateTime stDate, DateTime edDate, string userId, string paymentType, string ticketNumType, string transportType, string ticketId, string aplType)
             => GetPayments(stDate, edDate, userId, paymentType, ticketNumType, transportType, ticketId, aplType, null, null).Count();
+
     }
 }

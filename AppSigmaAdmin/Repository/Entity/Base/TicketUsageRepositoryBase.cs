@@ -1,6 +1,6 @@
-﻿using AppSigmaAdmin.Models;
-using AppSigmaAdmin.Repository.Database.Connection;
-using AppSigmaAdmin.Repository.Database.Query.AbstractLayer;
+﻿using AppSigmaAdmin.Repository.Database.Connection;
+using AppSigmaAdmin.Repository.Entity.Base.Models;
+using AppSigmaAdmin.Repository.Entity.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,57 +9,23 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace AppSigmaAdmin.Repository.Database.Query.Showabus
+namespace AppSigmaAdmin.Repository.Database.Entity.Base
 {
     /// <summary>
-    /// 保険付き乗車券データ
+    /// チケット利用状況基底クラス
     /// </summary>
-    public class InsuranceTicketRepository : AbstractShowabusBase
+    /// <typeparam name="TEntity"></typeparam>
+    public abstract class TicketUsageRepositoryBase<TEntity> : BizCompanyRepositoryBase
     {
+
+        protected TicketUsageRepositoryBase(params Company[] companies) : base(companies) { }
+
         /// <summary>
-        /// 券種ドロップダウンリスト項目取得
+        /// DBデータ変換
         /// </summary>
+        /// <param name="raw">利用実績クエリデータ</param>
         /// <returns></returns>
-        public IEnumerable<ShowabusPaymentInfo> GetTicketList()
-        {
-            using (var dbInterface = SqlDbInterfaceWrapper.Create())
-            using (var cmd = new SqlCommand())
-            {
-                StringBuilder sb = new StringBuilder();
-
-                sb.AppendLine("select fsm.TicketType");
-                sb.AppendLine("   ,cr.Value");
-                sb.AppendLine("   ,fsm.BizCompanyCd");
-                sb.AppendLine("   ,fsm.TicketId");
-                sb.AppendLine("   ,fsm.TicketGroup");
-                sb.AppendLine("   from FreeTicketSalesMaster fsm");
-                sb.AppendLine("   left join CharacterResource cr");
-                sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
-                sb.AppendLine("   and Language = 'ja'");
-                sb.AppendLine($"   WHERE fsm.BizCompanyCd IN ({string.Join(", ", _Companies.Select(c => $"'{c.Code}'").ToArray())})");
-                sb.AppendLine("   ORDER BY fsm.TicketGroup, fsm.TicketId");
-
-                cmd.CommandText = sb.ToString();
-
-                var dt = dbInterface.ExecuteReader(cmd);
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    var info = new ShowabusPaymentInfo()
-                    {
-                        TicketType = row["TicketType"].ToString(),
-                        TransportType = row["BizCompanyCd"].ToString(),
-                        TicketName = row["Value"].ToString(),
-                        TicketId = row["TicketId"].ToString(),
-                    };
-
-                    if (row["TicketGroup"].ToString() == "1")
-                        info.TicketName = info.TicketName + "[au]";
-                    
-                    yield return info;
-                }
-            }
-        }
+        protected abstract TEntity Parse(TicketUsageQueryRaw raw);
 
         /// <summary>
         /// 利用実績リスト取得(ページ指定)
@@ -70,7 +36,7 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
         /// <param name="pageNo"></param>
         /// <param name="listNoEnd"></param>
         /// <returns></returns>
-        public IEnumerable<ShowabusUsageInsuranceInfo> GetUsages(DateTime stDate, DateTime edDate, string userId, int? pageNo, int? listNoEnd)
+        public IEnumerable<TEntity> GetUsages(DateTime stDate, DateTime edDate, string userId, int? pageNo, int? listNoEnd)
         {
             using (var dbInterface = SqlDbInterfaceWrapper.Create())
             using (var cmd = new SqlCommand())
@@ -107,8 +73,8 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
                 sql.AppendLine("                inner join BizUnitMaster bum");
                 sql.AppendLine("                on bum.BizCompanyCd = ftsm.BizCompanyCd");
                 sql.AppendLine("               where ftm.UsageStartDatetime is not null");
-                sql.AppendLine($"                 and ftsm.BizCompanyCd in ({string.Join(", ", _Companies.Select(c => $"'{c.Code}'"))})");
-                sql.AppendLine($"                 and bum.ServiceId in ({string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)).Select(c => $"'{c.ServiceId}'"))})");
+                sql.AppendLine($"                 and ftsm.BizCompanyCd in ({BizCompanyCodes})");
+                sql.AppendLine($"                 and bum.ServiceId in ({ServiceIds})");
                 sql.AppendLine("                 and (bum.DeleteFlag is null or bum.DeleteFlag = 0)");
                 sql.AppendLine("              ) ticket");
 
@@ -164,13 +130,15 @@ namespace AppSigmaAdmin.Repository.Database.Query.Showabus
 
                 using (var dt = dbInterface.ExecuteReader(cmd))
                     foreach (DataRow row in dt.Rows)
-                        yield return new ShowabusUsageInsuranceInfo
+                        yield return Parse(new TicketUsageQueryRaw()
                         {
-                            UserId = row["UserId"].ToString(),
-                            UsageStartDatetime = ((DateTime)row["UsageStartDatetime"]).ToString("yyyy/MM/dd HH:mm:ss"),
-                            UsageEndDatetime = ((DateTime)row["UsageEndDatetime"]).ToString("yyyy/MM/dd HH:mm:ss"),
-                            InquiryId = OptionString(row["InquiryId"]),
-                        };
+                            UserId = Convert.ToInt32(row["UserId"].ToString()),
+                            TicketId = row["TicketId"].ToString(),
+                            SetNo = Convert.ToInt32(row["SetNo"].ToString()),
+                            UsageStartDatetime = Option<DateTime>(row["UsageStartDatetime"]),
+                            UsageEndDatetime = Option<DateTime>(row["UsageEndDatetime"]),
+                            InquiryId = OptionString(row["InquiryId"])
+                        });
             }
 
         }
