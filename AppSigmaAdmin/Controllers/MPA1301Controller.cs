@@ -361,6 +361,10 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write(',');
                     sw.Write("\"金額\"");
                     sw.Write(',');
+                    sw.Write("\"決済手段\"");
+                    sw.Write(',');
+                    sw.Write("\"仕向先\"");
+                    sw.Write(',');
                     sw.Write("\"領収書番号\"");
                     sw.Write(',');
                     sw.Write("\"アプリ種別\"");
@@ -386,6 +390,10 @@ namespace AppSigmaAdmin.Controllers
                         sw.Write("\"" + item.PaymentType + "\"");   //決済種別
                         sw.Write(',');
                         sw.Write("\"" + item.Amount.ToString() + "\"");        //金額
+                        sw.Write(',');
+                        sw.Write("\"" + item.PaymentName + "\""); //決済手段
+                        sw.Write(',');
+                        sw.Write("\"" + item.Forward + "\""); //仕向先
                         sw.Write(',');
                         sw.Write("\"" + item.ReceiptNo + "\""); //領収書番号
                         sw.Write(',');
@@ -545,6 +553,10 @@ namespace AppSigmaAdmin.Controllers
                     Amount = t.Amount,
                     PaymentType = t.PaymentType,
                     PaymentId = t.PaymentId,
+                    PaymentName = t.PaymentMeansCode == "1" ? t.PaymentName
+                                : t.PaymentMeansCode == "2" ? t.PaymentDetailName
+                                : null,
+                    Forward = t.ForwardCode,
                     ReceiptNo = t.ReceiptNo,
                     Apltype = t.Apltype,
                     InquiryId = t.InquiryId,

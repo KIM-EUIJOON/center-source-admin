@@ -40,8 +40,13 @@ namespace AppSigmaAdmin.Repository.Showabus
                 ChildNum = raw.ChildNum.ToString(),
                 PaymentType = raw.PaymentType,
                 Amount = raw.Amount.Value,
+                ForwardCode = raw.ForwardCode,
                 ReceiptNo = raw.ReceiptNo,
                 InquiryId = raw.InquiryId,
+                PaymentMeansCode = raw.PaymentMeansCode,
+                PaymentDetailCode = raw.PaymentDetailCode,
+                PaymentName = raw.PaymentName,
+                PaymentDetailName = raw.PaymentDetailName,
                 Apltype = raw.AplType,
             };
             if (raw.TicketGroup == "1")

@@ -132,6 +132,16 @@ namespace AppSigmaAdmin.Models
         public int Amount { get; set; }
 
         /// <summary>
+        /// 決済手段名
+        /// </summary>
+        public string PaymentName { get; set; }
+
+        /// <summary>
+        /// 仕向先
+        /// </summary>
+        public string Forward { get; set; }
+
+        /// <summary>
         /// 領収書番号
         /// </summary>
         public string ReceiptNo { get; set; }

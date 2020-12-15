@@ -65,7 +65,12 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("      ,MA.AplType");
                 sb.AppendLine("      ,MA.PaymentType");
                 sb.AppendLine("      ,MA.Amount");
+                sb.AppendLine("      ,MA.ForwardCode");
                 sb.AppendLine("      ,MA.ReceiptNo");
+                sb.AppendLine("      ,MA.PaymentMeansCode");
+                sb.AppendLine("      ,MA.PaymentDetailCode");
+                sb.AppendLine("      ,MA.PaymentName");
+                sb.AppendLine("      ,MA.PaymentDetailName");
                 sb.AppendLine("      ,MA.InquiryId");
 
                 sb.AppendLine("  from (");
@@ -90,7 +95,12 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("            when tbl.PaymentType = '5' then N'取消'");
                 sb.AppendLine("       else N'決済種別不明' end as PaymentType");
                 sb.AppendLine("     , tbl.Amount");
+                sb.AppendLine("     , tbl.ForwardCode");
                 sb.AppendLine("     , tbl.ReceiptNo");
+                sb.AppendLine("     , tbl.PaymentMeansCode");
+                sb.AppendLine("     , tbl.PaymentDetailCode");
+                sb.AppendLine("     , tbl.PaymentName");
+                sb.AppendLine("     , tbl.PaymentDetailName");
                 sb.AppendLine("     , tbl.InquiryId");
 
                 sb.AppendLine("  from (");
@@ -107,7 +117,14 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount");
+                sb.AppendLine("        	,pm.ForwardCode");
                 sb.AppendLine("        	,pm.ReceiptNo");
+                sb.AppendLine("        	,pm.PaymentMeansCode");
+                sb.AppendLine("        	,pm.PaymentDetailCode");
+
+                sb.AppendLine("        	,paym.PaymentName");
+                sb.AppendLine("        	,paym.PaymentDetailName");
+
                 sb.AppendLine("        	,fsm.BizCompanyCd");
                 sb.AppendLine("         ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
                 sb.AppendLine("         ,fsm.TicketGroup");
@@ -124,6 +141,23 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	and pm.PaymentType = '3'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
+
+                sb.AppendLine("         left join");
+                sb.AppendLine("         (");
+                sb.AppendLine("             select pmm.PaymentMeansCode");
+                sb.AppendLine("                  , pmdm.PaymentDetailCode");
+                sb.AppendLine("                  , pmm.PaymentName");
+                sb.AppendLine("                  , cr.Value as PaymentDetailName");
+                sb.AppendLine("               from PaymentMeansMaster pmm");
+                sb.AppendLine("               left join PaymentMeansDetailMaster pmdm");
+                sb.AppendLine("               on pmm.PaymentMeansCode = pmdm.PaymentMeansCode");
+                sb.AppendLine("               left join CharacterResource cr");
+                sb.AppendLine("               on pmdm.PaymentDetailName = cr.ResourceId");
+                sb.AppendLine("               and cr.Language = 'ja'");
+                sb.AppendLine("         ) paym");
+                sb.AppendLine("         on paym.PaymentMeansCode = pm.PaymentMeansCode");
+                sb.AppendLine("         and (pm.PaymentDetailCode is null or paym.PaymentDetailCode = pm.PaymentDetailCode)");
+
                 sb.AppendLine("        	left join CharacterResource cr");
                 sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
                 sb.AppendLine("        	and Language ='ja'");
@@ -144,7 +178,14 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount* -1 as Amount");
+                sb.AppendLine("        	,pm.ForwardCode");
                 sb.AppendLine("        	,pm.ReceiptNo");
+                sb.AppendLine("        	,pm.PaymentMeansCode");
+                sb.AppendLine("        	,pm.PaymentDetailCode");
+
+                sb.AppendLine("        	,paym.PaymentName");
+                sb.AppendLine("        	,paym.PaymentDetailName");
+
                 sb.AppendLine("        	,fsm.BizCompanyCd");
                 sb.AppendLine("         ,fsm.TicketId");                      /*チケットID*/
                 sb.AppendLine("         ,fsm.TicketGroup");
@@ -161,6 +202,23 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	and pm.PaymentType = '5'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '3'");
+
+                sb.AppendLine("         left join");
+                sb.AppendLine("         (");
+                sb.AppendLine("             select pmm.PaymentMeansCode");
+                sb.AppendLine("                  , pmdm.PaymentDetailCode");
+                sb.AppendLine("                  , pmm.PaymentName");
+                sb.AppendLine("                  , cr.Value as PaymentDetailName");
+                sb.AppendLine("               from PaymentMeansMaster pmm");
+                sb.AppendLine("               left join PaymentMeansDetailMaster pmdm");
+                sb.AppendLine("               on pmm.PaymentMeansCode = pmdm.PaymentMeansCode");
+                sb.AppendLine("               left join CharacterResource cr");
+                sb.AppendLine("               on pmdm.PaymentDetailName = cr.ResourceId");
+                sb.AppendLine("               and cr.Language = 'ja'");
+                sb.AppendLine("         ) paym");
+                sb.AppendLine("         on paym.PaymentMeansCode = pm.PaymentMeansCode");
+                sb.AppendLine("         and (pm.PaymentDetailCode is null or paym.PaymentDetailCode = pm.PaymentDetailCode)");
+
                 sb.AppendLine("        	left join CharacterResource cr");
                 sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
                 sb.AppendLine("        	and Language ='ja'");
@@ -181,7 +239,14 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount");
+                sb.AppendLine("        	,pm.ForwardCode");
                 sb.AppendLine("        	,pm.ReceiptNo");
+                sb.AppendLine("        	,pm.PaymentMeansCode");
+                sb.AppendLine("        	,pm.PaymentDetailCode");
+
+                sb.AppendLine("        	,paym.PaymentName");
+                sb.AppendLine("        	,paym.PaymentDetailName");
+
                 sb.AppendLine("        	,fsm.BizCompanyCd");
                 sb.AppendLine("         ,fsm.TicketId");                      /*チケットID*/
                 sb.AppendLine("         ,fsm.TicketGroup");
@@ -198,6 +263,23 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	and pm.PaymentType = '4'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
+
+                sb.AppendLine("         left join");
+                sb.AppendLine("         (");
+                sb.AppendLine("             select pmm.PaymentMeansCode");
+                sb.AppendLine("                  , pmdm.PaymentDetailCode");
+                sb.AppendLine("                  , pmm.PaymentName");
+                sb.AppendLine("                  , cr.Value as PaymentDetailName");
+                sb.AppendLine("               from PaymentMeansMaster pmm");
+                sb.AppendLine("               left join PaymentMeansDetailMaster pmdm");
+                sb.AppendLine("               on pmm.PaymentMeansCode = pmdm.PaymentMeansCode");
+                sb.AppendLine("               left join CharacterResource cr");
+                sb.AppendLine("               on pmdm.PaymentDetailName = cr.ResourceId");
+                sb.AppendLine("               and cr.Language = 'ja'");
+                sb.AppendLine("         ) paym");
+                sb.AppendLine("         on paym.PaymentMeansCode = pm.PaymentMeansCode");
+                sb.AppendLine("         and (pm.PaymentDetailCode is null or paym.PaymentDetailCode = pm.PaymentDetailCode)");
+
                 sb.AppendLine("        	left join CharacterResource cr");
                 sb.AppendLine("        	on fsm.TicketName = cr.ResourceId");
                 sb.AppendLine("        	and Language ='ja'");
@@ -311,7 +393,12 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                             AplType = OptionString(row["AplType"]),
                             PaymentType = OptionString(row["PaymentType"]),
                             Amount = Option<int>(row["Amount"]),
+                            ForwardCode = OptionString(row["ForwardCode"]),
                             ReceiptNo = OptionString(row["ReceiptNo"]),
+                            PaymentMeansCode = OptionString(row["PaymentMeansCode"]),
+                            PaymentDetailCode = OptionString(row["PaymentDetailCode"]),
+                            PaymentName = OptionString(row["PaymentName"]),
+                            PaymentDetailName = OptionString(row["PaymentDetailName"]),
                             InquiryId = OptionString(row["InquiryId"]),
                         });
 

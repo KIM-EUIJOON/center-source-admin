@@ -25,7 +25,12 @@ namespace AppSigmaAdmin.Repository.Entity.Base.Models
         public string AplType { get; set; }
         public string PaymentType { get; set; }
         public int? Amount { get; set; }
+        public string ForwardCode { get; set; }
         public string ReceiptNo { get; set; }
+        public string PaymentMeansCode { get; set; }
+        public string PaymentDetailCode { get; set; }
+        public string PaymentName { get; set; }
+        public string PaymentDetailName { get; set; }
         public string InquiryId { get; set; }
     }
 }
