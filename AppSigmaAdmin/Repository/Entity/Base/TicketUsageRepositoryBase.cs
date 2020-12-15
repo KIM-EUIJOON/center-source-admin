@@ -33,10 +33,11 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
         /// <param name="stDate"></param>
         /// <param name="edDate"></param>
         /// <param name="userId"></param>
+        /// <param name="ticketId"></param>
         /// <param name="pageNo"></param>
         /// <param name="listNoEnd"></param>
         /// <returns></returns>
-        public IEnumerable<TEntity> GetUsages(DateTime stDate, DateTime edDate, string userId, int? pageNo, int? listNoEnd)
+        public IEnumerable<TEntity> GetUsages(DateTime stDate, DateTime edDate, string userId, string ticketId, int? pageNo, int? listNoEnd)
         {
             using (var dbInterface = SqlDbInterfaceWrapper.Create())
             using (var cmd = new SqlCommand())
@@ -47,6 +48,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("     , tbl.UserId");
                 sql.AppendLine("     , tbl.TicketId");
                 sql.AppendLine("     , tbl.SetNo");
+                sql.AppendLine("     , tbl.TicketName");
                 sql.AppendLine("     , tbl.UsageStartDatetime");
                 sql.AppendLine("     , tbl.UsageEndDatetime");
                 sql.AppendLine("     , tbl.InquiryId");
@@ -56,6 +58,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("            , ticket.UserId");
                 sql.AppendLine("            , ticket.TicketId");
                 sql.AppendLine("            , ticket.SetNo");
+                sql.AppendLine("            , ticket.TicketName");
                 sql.AppendLine("            , ticket.UsageStartDatetime");
                 sql.AppendLine("            , ticket.UsageEndDatetime");
                 sql.AppendLine("            , insurance.InquiryId");
@@ -64,6 +67,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("              select ftm.UserId");
                 sql.AppendLine("                   , ftm.TicketId");
                 sql.AppendLine("                   , ftm.SetNo");
+                sql.AppendLine("                   , cr.Value as TicketName");
                 sql.AppendLine("                   , ftm.UsageStartDatetime");
                 sql.AppendLine("                   , ftm.UsageEndDatetime");
                 sql.AppendLine("                   , ftsm.BizCompanyCd");
@@ -72,6 +76,9 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("                on ftm.TicketId = ftsm.TicketId");
                 sql.AppendLine("                inner join BizUnitMaster bum");
                 sql.AppendLine("                on bum.BizCompanyCd = ftsm.BizCompanyCd");
+                sql.AppendLine("        	    left join CharacterResource cr");
+                sql.AppendLine("        	    on ftsm.TicketName = cr.ResourceId");
+                sql.AppendLine("        	    and cr.Language ='ja'");
                 sql.AppendLine("               where ftm.UsageStartDatetime is not null");
                 sql.AppendLine($"                 and ftsm.BizCompanyCd in ({BizCompanyCodes})");
                 sql.AppendLine($"                 and bum.ServiceId in ({ServiceIds})");
@@ -113,6 +120,13 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                     setParam(cmd, "@UserId", SqlDbType.Int, userId);
                 }
 
+                // 任意条件 - チケットID
+                if (ticketId != "-")
+                {
+                    wheres.Add("ticket.TicketId = @TicketId");
+                    setParam(cmd, "@TicketId", SqlDbType.NVarChar, ticketId);
+                }
+
                 if (wheres.Any())
                     sql.AppendLine($"where {string.Join(" and ", wheres.ToArray())}");
 
@@ -135,6 +149,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                             UserId = Convert.ToInt32(row["UserId"].ToString()),
                             TicketId = row["TicketId"].ToString(),
                             SetNo = Convert.ToInt32(row["SetNo"].ToString()),
+                            TicketName = OptionString(row["TicketName"]),
                             UsageStartDatetime = Option<DateTime>(row["UsageStartDatetime"]),
                             UsageEndDatetime = Option<DateTime>(row["UsageEndDatetime"]),
                             InquiryId = OptionString(row["InquiryId"])
@@ -149,8 +164,9 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
         /// <param name="stDate"></param>
         /// <param name="edDate"></param>
         /// <param name="userId"></param>
+        /// <param name="ticketId"></param>
         /// <returns></returns>
-        public int GetUsagesMaxCount(DateTime stDate, DateTime edDate, string userId)
-            => GetUsages(stDate, edDate, userId, null, null).Count();
+        public int GetUsagesMaxCount(DateTime stDate, DateTime edDate, string userId, string ticketId)
+            => GetUsages(stDate, edDate, userId, ticketId, null, null).Count();
     }
 }

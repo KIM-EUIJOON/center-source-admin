@@ -30,6 +30,7 @@ namespace AppSigmaAdmin.Repository.Showabus
             => new ShowabusUsageInsuranceInfo()
             {
                 UserId = raw.UserId.ToString(),
+                TicketName = raw.TicketName,
                 UsageStartDatetime = Option(raw.UsageStartDatetime, d => d.ToString("yyyy/MM/dd HH:mm:ss")),
                 UsageEndDatetime = Option(raw.UsageEndDatetime, d => d.ToString("yyyy/MM/dd HH:mm:ss")),
                 InquiryId = raw.InquiryId,

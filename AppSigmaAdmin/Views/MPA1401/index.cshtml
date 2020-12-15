@@ -4,7 +4,7 @@
 @using AppSigmaAdmin.Library
 
 @{
-    ViewBag.Title = "保険付き乗車券利用実績";
+    ViewBag.Title = "乗車券利用実績";
 }
 
 @section style{
@@ -18,7 +18,7 @@
 
 @section funcTitle {
     <div class="funcTitleBer">
-        保険付き乗車券利用実績検索及びダウンロード
+        乗車券利用実績検索及びダウンロード
     </div>
 }
 
@@ -71,6 +71,13 @@
                         <div class="GridTableCell">
                             <div class="GridTableCol">
                                 <div class="GridTableCell">
+                                    @{
+                                        //商品種別ドロップリスト項目作成
+                                        List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+                                        TicketTypeList = @ViewBag.TicketList;
+                                    }
+                                    商品種別：
+                                    @Html.DropDownListFor(Model => Model.TicketInfo, TicketTypeList, new { Class = "DropList" })
                                 </div>
                                 <div class="GridTableCell">
                                 </div>
@@ -105,9 +112,10 @@
                                                         headerStyle: "gridhead",
                                                         columns: grid.Columns(
                                                             grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                            grid.Column("TicketName", header: "商品", style: "gridbody18"),
                                                             grid.Column("UsageStartDatetime", header: "利用開始日時", style: "gridbody18"),
                                                             grid.Column("UsageEndDatetime", header: "利用終了日時", style: "gridbody18"),
-                                                            grid.Column("InquiryId", header: "問い合わせID", style: "gridbody18")
+                                                            grid.Column("InquiryId", header: "問い合わせID", style: "gridbody8")
                                                         )).ToHtmlString().Replace("{0}", "<br/>"))
                                     )
                                 </div>

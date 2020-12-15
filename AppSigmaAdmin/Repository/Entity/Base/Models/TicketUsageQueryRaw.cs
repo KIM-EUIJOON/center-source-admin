@@ -19,6 +19,10 @@ namespace AppSigmaAdmin.Repository.Entity.Base.Models
         /// </summary>
         public string TicketId { get; set; }
         /// <summary>
+        /// チケット名
+        /// </summary>
+        public string TicketName { get; set; }
+        /// <summary>
         /// セットNo
         /// </summary>
         public int SetNo { get; set; }

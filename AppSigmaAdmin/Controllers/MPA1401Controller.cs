@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using AppSigmaAdmin.Models;
 using AppSigmaAdmin.Exceptions;
 using AppSigmaAdmin.Repository.Showabus;
+using AppSigmaAdmin.Library;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -35,9 +36,19 @@ namespace AppSigmaAdmin.Controllers
         [SessionCheck(WindowName = "保険付き乗車券利用実績画面")]
         public ActionResult Index(string page)
         {
+            var UserRole = GetUserRole(Session);
+
+            //商品種別プルダウンリスト項目取得
+            var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+
             //初回Null判定
             if (string.IsNullOrEmpty(page))
+            {
+                //商品種別プルダウン
+                ViewBag.TicketList = CreatePDLItemsTicketList(tickets);
+
                 return View(new MPA1401Context());
+            }
 
             //セッション情報の取得
             Dictionary<string, string> searchKey = new Dictionary<string, string>();
@@ -50,10 +61,19 @@ namespace AppSigmaAdmin.Controllers
             string maxListCount = searchKey["maxListCount"];
             //検索条件：Myroute番号
             string MyrouteNo = searchKey["MyrouteNo"];
+            //検索条件：チケット情報
+            string TicketInfo = searchKey["TicketInfo"];
+            //検索条件：チケット種別
+            string TransportType = searchKey["TransportType"];
+            //検索条件：チケットID
+            string TicketId = searchKey["TicketId"];
             //リスト件数
             int ListNum = int.Parse(searchKey["ListNum"]);
 
 
+
+            //商品種別プルダウン
+            ViewBag.TicketList = CreatePDLItemsTicketList(tickets, TicketInfo); // 初期選択項目
 
             var targetDateStart = DateTime.Parse(TargetDateBegin);
             var targetDateLast = DateTime.Parse(TargetDateEnd);
@@ -84,7 +104,7 @@ namespace AppSigmaAdmin.Controllers
             var listNo = GetListRowNum(pageNo);
 
             //表示情報を取得
-            var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, listNo.Begin, listNo.End);
+            var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, TicketId, listNo.Begin, listNo.End);
 
 
 
@@ -92,6 +112,7 @@ namespace AppSigmaAdmin.Controllers
             {
                 TargetDateBegin = TargetDateBegin, // 開始日時
                 TargetDateEnd = TargetDateEnd, // 終了日時
+                TransportType = TransportType, // チケット種別
                 ListPageNo = pageNo, // 現在のページ位置
                 UserId = MyrouteNo, // 指定MyrouteID
             };
@@ -126,10 +147,25 @@ namespace AppSigmaAdmin.Controllers
             {
                 ViewData["message"] = "";
 
+                // 権限取得
+                var userRole = GetUserRole(Session);
+
+                //商品種別プルダウンリスト項目取得
+                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+
+                //商品種別プルダウン
+                ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
+
                 // 入力チェック
                 IsValidInput(model);
 
 
+
+                //選択交通種別(ここでは使用していないため、"-"固定)
+                const string transportType = "-";
+
+                //選択チケットID取得
+                var ticketId = GetSelectedTicket(model);
 
                 var targetDateStart = DateTime.Parse(model.TargetDateBegin);
                 var targetDateLast = DateTime.Parse(model.TargetDateEnd);
@@ -141,15 +177,17 @@ namespace AppSigmaAdmin.Controllers
 
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
+                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
 
                 //検索条件に一致したリストから表示件数分取得
-                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, listNo.End);
+                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, listNo.End);
 
                 var info = new MPA1401Context()
                 {
                     TargetDateBegin = targetDateStart.ToString(), // 開始日時
                     TargetDateEnd = targetDateLast.ToString(), // 終了日時
+                    TransportType = transportType, // チケット種別
+                    TicketInfo = model.TicketInfo, // ドロップダウンリスト用チケット種別
                     ListPageNo = model.ListPageNo, // 現在のページ位置
                 };
 
@@ -174,6 +212,9 @@ namespace AppSigmaAdmin.Controllers
                 searchKey.Add("TargetDateEnd", model.TargetDateEnd);
                 searchKey.Add("maxListCount", maxListCount.ToString());
                 searchKey.Add("MyrouteNo", model.UserId);
+                searchKey.Add("TransportType", transportType);
+                searchKey.Add("TicketInfo", model.TicketInfo);
+                searchKey.Add("TicketId", ticketId);
                 searchKey.Add("ListNum", LISTMAXROW.ToString());
                 Session.Add(SESSION_SEARCH_MPA1401, searchKey);
 
@@ -200,9 +241,21 @@ namespace AppSigmaAdmin.Controllers
             {
                 ViewData["message"] = "";
 
+                // 権限取得
+                var userRole = GetUserRole(Session);
+
+                //商品種別プルダウンリスト項目取得
+                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+
+                //商品種別プルダウン
+                ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
+
                 // 入力チェック
                 IsValidInput(model);
 
+
+                //選択チケットID取得
+                var ticketId = GetSelectedTicket(model);
 
                 var targetDateStart = DateTime.Parse(model.TargetDateBegin);
                 var targetDateLast = DateTime.Parse(model.TargetDateEnd);
@@ -212,10 +265,10 @@ namespace AppSigmaAdmin.Controllers
                 var listNo = GetListRowNum(model.ListPageNo + 1);
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId);
+                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
 
                 //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, listNo.Begin, maxListCount);
+                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, maxListCount);
 
 
 
@@ -380,6 +433,28 @@ namespace AppSigmaAdmin.Controllers
         }
 
         /// <summary>
+        /// 選択チケットID取得
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        private static string GetSelectedTicket(MPA1401Context model)
+        {
+            if (!string.IsNullOrEmpty(model.TicketInfo) && model.TicketInfo != "-")//商品種別が選択済でチケット種別が未選択の場合
+            {
+                //商品種別選択肢から交通種別を分離する
+                var sepPos = model.TicketInfo.IndexOf("/"); //「/」判定用
+                var tId = model.TicketInfo.Substring(0, sepPos);       //チケットID分離
+                var trp = model.TicketInfo.Substring(sepPos + 1).ToString();  //交通種別分離
+
+                // 選択されたチケットID
+                return tId;
+            }
+
+            // 未選択
+            return "-";
+        }
+
+        /// <summary>
         /// 検索結果リストデータ変換
         /// </summary>
         /// <returns></returns>
@@ -388,9 +463,66 @@ namespace AppSigmaAdmin.Controllers
                 new MPA1401ReportDataRow()
                 {
                     UserId = t.UserId,
+                    TicketName = t.TicketName,
                     UsageStartDatetime = t.UsageStartDatetime,
                     UsageEndDatetime = t.UsageEndDatetime,
                     InquiryId = t.InquiryId,
                 };
-   }
+
+        /// <summary>
+        /// 権限取得
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        private static string GetUserRole(HttpSessionStateBase session)
+        {
+            //セッションに保存されているユーザー情報を取得する
+            var userInfo = (UserInfoAdminEntity)session[SystemConst.SESSION_USER_INFO_ADMIN];
+            //現在ログイン中のUserRole取得
+            return userInfo.Role.ToString();
+        }
+
+        /// <summary>
+        /// 商品プルダウンリスト生成
+        /// </summary>
+        /// <param name="infos"></param>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        private static List<SelectListItem> CreatePDLItemsTicketList(IEnumerable<ShowabusPaymentInfo> infos, string selected = null)
+            => BuildDropDownList(infos,
+                    s => s.TicketName, // 商品種別名称
+                    s => $"{s.TicketId}/{s.TransportType}", //チケットID/交通手段
+                    selected);
+
+        /// <summary>
+        /// ドロップダウンリスト生成
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sources"></param>
+        /// <param name="textF">Textプロパティ設定値生成関数</param>
+        /// <param name="valueF">Valueプロパティ設定値生成関数</param>
+        /// <param name="needNoSelectedItem">未選択項目有無(true: 有, false: 無)</param>
+        /// <param name="selectedValue">初期選択項目Value値</param>
+        /// <returns></returns>
+        private static List<SelectListItem> BuildDropDownList<T>(IEnumerable<T> sources, Func<T, string> textF, Func<T, string> valueF, bool needNoSelectedItem, string selectedValue)
+        {
+            var results = new List<SelectListItem>();
+            var itemNoSelected = new SelectListItem { Text = "種別未選択", Value = "-" };
+
+            // 渡された要素をリスト項目化
+            results.AddRange(sources.Select(s => new SelectListItem() { Text = textF(s), Value = valueF(s) }));
+
+            // 未選択用アイテムの追加有無
+            if (needNoSelectedItem)
+                results.Add(itemNoSelected);
+
+            // 初期選択の設定
+            return results.Select(r => r.Value != (selectedValue ?? itemNoSelected.Value) ? r : new SelectListItem() { Text = r.Text, Value = r.Value, Selected = true }).ToList();
+        }
+        private static List<SelectListItem> BuildDropDownList<T>(IEnumerable<T> sources, Func<T, string> textF, Func<T, string> valueF)
+            => BuildDropDownList(sources, textF, valueF, true, null);
+        private static List<SelectListItem> BuildDropDownList<T>(IEnumerable<T> sources, Func<T, string> textF, Func<T, string> valueF, string selectedValue)
+            => BuildDropDownList(sources, textF, valueF, true, selectedValue);
+
+    }
 }

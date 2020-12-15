@@ -167,6 +167,16 @@ namespace AppSigmaAdmin.Models
         public string UserId { get; set; }
 
         /// <summary>
+        /// チケット種別
+        /// </summary>
+        public string TransportType { get; set; }
+
+        /// <summary>
+        /// 商品
+        /// </summary>
+        public string TicketInfo { get; set; }
+
+        /// <summary>
         /// 利用情報リスト
         /// </summary>
         public MPA1401ReportData UsageReportData { get; set; }
@@ -205,6 +215,11 @@ namespace AppSigmaAdmin.Models
         /// ユーザID
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// ユーザID
+        /// </summary>
+        public string TicketName { get; set; }
 
         /// <summary>
         /// 利用開始日時
@@ -283,6 +298,11 @@ namespace AppSigmaAdmin.Models
         /// ユーザID
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// 商品種別名
+        /// </summary>
+        public string TicketName { get; set; }
 
         /// <summary>
         /// 利用開始日時
