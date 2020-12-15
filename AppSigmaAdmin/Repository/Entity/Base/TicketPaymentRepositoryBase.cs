@@ -91,7 +91,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("       else N'決済種別不明' end as PaymentType");
                 sb.AppendLine("     , tbl.Amount");
                 sb.AppendLine("     , tbl.ReceiptNo");
-                sb.AppendLine("     , finance.InquiryId");
+                sb.AppendLine("     , tbl.InquiryId");
 
                 sb.AppendLine("  from (");
                 // 決済データ
@@ -103,6 +103,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
                 sb.AppendLine("        	,ftm.AdultNum");                    /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum");                    /*子供枚数*/
+                sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount");
@@ -139,6 +140,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
                 sb.AppendLine("        	,ftm.AdultNum");                    /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum");                    /*子供枚数*/
+                sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount* -1 as Amount");
@@ -175,6 +177,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称*/
                 sb.AppendLine("        	,ftm.AdultNum ");                   /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum ");                   /*子供枚数*/
+                sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
                 sb.AppendLine("        	,pm.Amount");
@@ -201,24 +204,6 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("          left join UserInfoOid uio");
                 sb.AppendLine("          on ftm.UserId=uio.UserId");
                 sb.AppendLine("       ) tbl");
-
-                // 乗車券オプション(決済データに外部結合)
-                sb.AppendLine("       left join");
-
-                sb.AppendLine("       (");
-                sb.AppendLine("         select om.UserId");
-                sb.AppendLine("              , om.TicketId");
-                sb.AppendLine("              , om.TicketSetNo");
-                sb.AppendLine("              , oi.InquiryId");
-                sb.AppendLine("           from OptionManage om");
-                sb.AppendLine("           left join OptionInquiry oi");
-                sb.AppendLine("           on om.UserId = oi.UserId");
-                sb.AppendLine("           and om.OptionId = oi.OptionId");
-                sb.AppendLine("           and om.OptionSetNo = oi.OptionSetNo");
-                sb.AppendLine("       ) finance");
-                sb.AppendLine("       on finance.UserId = tbl.UserId");
-                sb.AppendLine("       and finance.TicketId = tbl.TicketId");
-                sb.AppendLine("       and finance.TicketSetNo = tbl.SetNo");
 
                 var wheres = new List<string>();
 

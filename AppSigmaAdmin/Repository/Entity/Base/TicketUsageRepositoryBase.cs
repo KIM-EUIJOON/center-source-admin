@@ -61,7 +61,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("            , ticket.TicketName");
                 sql.AppendLine("            , ticket.UsageStartDatetime");
                 sql.AppendLine("            , ticket.UsageEndDatetime");
-                sql.AppendLine("            , insurance.InquiryId");
+                sql.AppendLine("            , ticket.InquiryId");
 
                 sql.AppendLine("         from (");
                 sql.AppendLine("              select ftm.UserId");
@@ -70,6 +70,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine("                   , cr.Value as TicketName");
                 sql.AppendLine("                   , ftm.UsageStartDatetime");
                 sql.AppendLine("                   , ftm.UsageEndDatetime");
+                sql.AppendLine("                   , ftm.InquiryId");
                 sql.AppendLine("                   , ftsm.BizCompanyCd");
                 sql.AppendLine("                from FreeTicketManage ftm");
                 sql.AppendLine("                inner join FreeTicketSalesMaster ftsm");
@@ -84,27 +85,6 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sql.AppendLine($"                 and bum.ServiceId in ({ServiceIds})");
                 sql.AppendLine("                 and (bum.DeleteFlag is null or bum.DeleteFlag = 0)");
                 sql.AppendLine("              ) ticket");
-
-                sql.AppendLine("              left join");
-
-                sql.AppendLine("              (");
-                sql.AppendLine("              select om.UserId");
-                sql.AppendLine("                   , om.TicketId");
-                sql.AppendLine("                   , om.TicketSetNo");
-                sql.AppendLine("                   , oi.InquiryId");
-                sql.AppendLine("                from OptionManage om");
-                sql.AppendLine("                inner join OptionMaster oms");
-                sql.AppendLine("                on oms.OptionId = om.OptionId");
-                sql.AppendLine("                left join OptionInquiry oi");
-                sql.AppendLine("                on oi.UserId = om.UserId");
-                sql.AppendLine("                and oi.OptionId = om.OptionId");
-                sql.AppendLine("                and oi.OptionSetNo = om.OptionSetNo");
-                sql.AppendLine("                where (oms.DeleteFlag is null or oms.DeleteFlag = 0)");
-                sql.AppendLine("              ) insurance");
-
-                sql.AppendLine("              on insurance.UserId = ticket.UserId");
-                sql.AppendLine("              and insurance.TicketId = ticket.TicketId");
-                sql.AppendLine("              and insurance.TicketSetNo = ticket.SetNo");
 
                 var wheres = new List<string>();
 
