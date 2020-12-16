@@ -556,7 +556,10 @@ namespace AppSigmaAdmin.Controllers
                     PaymentName = t.PaymentMeansCode == "1" ? t.PaymentName
                                 : t.PaymentMeansCode == "2" ? t.PaymentDetailName
                                 : null,
-                    Forward = t.ForwardCode,
+                    Forward = string.IsNullOrEmpty(t.ForwardCode) ? null // 空は出さない
+                            : t.ForwardCode == "2s77334" ? "TFC"
+                            : t.ForwardCode == "2a99661" ? "JCB"
+                            : "その他",
                     ReceiptNo = t.ReceiptNo,
                     Apltype = t.Apltype,
                     InquiryId = t.InquiryId,
