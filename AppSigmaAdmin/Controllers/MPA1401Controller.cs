@@ -301,6 +301,8 @@ namespace AppSigmaAdmin.Controllers
                     //ヘッダー部分を書き込む
                     sw.Write("\"myroute会員ID\"");
                     sw.Write(',');
+                    sw.Write("\"商品\"");
+                    sw.Write(',');
                     sw.Write("\"利用開始日時\"");
                     sw.Write(',');
                     sw.Write("\"利用終了日時\"");
@@ -311,6 +313,8 @@ namespace AppSigmaAdmin.Controllers
                     {
                         //文字列に"を追加して出力
                         sw.Write("\"" + item.UserId + "\"");        //myrouteID
+                        sw.Write(',');
+                        sw.Write("\"" + item.TicketName + "\"");  //商品種別名
                         sw.Write(',');
                         sw.Write("\"" + item.UsageStartDatetime + "\"");  //利用開始日時
                         sw.Write(',');
@@ -323,8 +327,8 @@ namespace AppSigmaAdmin.Controllers
                     //出力日を取得
                     var NowDate = System.DateTime.Now;
 
-                    //ファイル名を「Showa_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Insurance_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
+                    //ファイル名を「Usage_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
+                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Usage_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
                 }
             }
             // 入力エラー

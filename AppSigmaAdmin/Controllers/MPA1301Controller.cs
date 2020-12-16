@@ -406,8 +406,8 @@ namespace AppSigmaAdmin.Controllers
                     //出力日を取得
                     var NowDate = System.DateTime.Now;
 
-                    //ファイル名を「Showa_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Showa_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
+                    //ファイル名を「Payment_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
+                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Payment_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
                 }
             }
             // 入力エラー
@@ -553,7 +553,7 @@ namespace AppSigmaAdmin.Controllers
                     Amount = t.Amount,
                     PaymentType = t.PaymentType,
                     PaymentId = t.PaymentId,
-                    PaymentName = t.PaymentMeansCode == "1" ? t.PaymentName
+                    PaymentName = t.PaymentMeansCode == "1" ? t.PaymentMeansName
                                 : t.PaymentMeansCode == "2" ? t.PaymentDetailName
                                 : null,
                     Forward = string.IsNullOrEmpty(t.ForwardCode) ? null // 空は出さない

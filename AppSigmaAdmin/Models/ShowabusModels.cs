@@ -227,7 +227,7 @@ namespace AppSigmaAdmin.Models
         public string UserId { get; set; }
 
         /// <summary>
-        /// ユーザID
+        /// 商品種別名
         /// </summary>
         public string TicketName { get; set; }
 

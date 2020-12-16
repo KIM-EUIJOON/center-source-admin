@@ -45,7 +45,7 @@ namespace AppSigmaAdmin.Repository.Showabus
                 InquiryId = raw.InquiryId,
                 PaymentMeansCode = raw.PaymentMeansCode,
                 PaymentDetailCode = raw.PaymentDetailCode,
-                PaymentName = raw.PaymentName,
+                PaymentMeansName = raw.PaymentName,
                 PaymentDetailName = raw.PaymentDetailName,
                 Apltype = raw.AplType,
             };

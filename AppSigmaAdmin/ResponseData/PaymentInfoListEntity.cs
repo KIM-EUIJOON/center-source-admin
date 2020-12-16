@@ -73,7 +73,7 @@ namespace AppSigmaAdmin.ResponseData
         /// <summary>
         /// 決済手段名
         /// </summary>
-        public string PaymentName { get; set; }
+        public string PaymentMeansName { get; set; }
 
         /// <summary>
         /// 決済詳細名
