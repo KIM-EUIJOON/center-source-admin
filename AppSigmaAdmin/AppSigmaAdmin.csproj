@@ -233,6 +233,7 @@
     <Compile Include="Repository\Showabus\ShowabusTicketPaymentRepository.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketSaleRepository.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketUsageRepository.cs" />
+    <Compile Include="ResponseData\Extensions\PaymentInfoExtension.cs" />
     <Compile Include="ResponseData\MuseumInfoEntity.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
     <Compile Include="Utility\BundleHtmlTag.cs" />

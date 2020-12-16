@@ -11,6 +11,7 @@ using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
 using AppSigmaAdmin.Exceptions;
 using AppSigmaAdmin.Repository.Showabus;
+using AppSigmaAdmin.ResponseData.Extensions;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -553,13 +554,8 @@ namespace AppSigmaAdmin.Controllers
                     Amount = t.Amount,
                     PaymentType = t.PaymentType,
                     PaymentId = t.PaymentId,
-                    PaymentName = t.PaymentMeansCode == "1" ? t.PaymentMeansName
-                                : t.PaymentMeansCode == "2" ? t.PaymentDetailName
-                                : null,
-                    Forward = string.IsNullOrEmpty(t.ForwardCode) ? null // 空は出さない
-                            : t.ForwardCode == "2s77334" ? "TFC"
-                            : t.ForwardCode == "2a99661" ? "JCB"
-                            : "その他",
+                    PaymentName = t.GetPaymentName(),
+                    Forward = t.GetForwardName(),
                     ReceiptNo = t.ReceiptNo,
                     Apltype = t.Apltype,
                     InquiryId = t.InquiryId,
