@@ -195,6 +195,7 @@
     <Compile Include="Contstants\AbstractLayer\AbstractConstants.cs" />
     <Compile Include="Contstants\Extensions\AbstractConstantsExtension.cs" />
     <Compile Include="Contstants\PaymentType.cs" />
+    <Compile Include="Contstants\TicketNumType.cs" />
     <Compile Include="Exceptions\InvalidInputException.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
     <Compile Include="Models\DebugLogEntity.cs" />

@@ -21,6 +21,7 @@ namespace AppSigmaAdmin.Repository.Entity.Base.Models
         public string Value { get; set; }
         public int AdultNum { get; set; }
         public int ChildNum { get; set; }
+        public int? DiscountNum { get; set; }
         public int PaymentId { get; set; }
         public string AplType { get; set; }
         public string PaymentType { get; set; }

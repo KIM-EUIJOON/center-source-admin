@@ -63,6 +63,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("      ,MA.Value");
                 sb.AppendLine("      ,MA.AdultNum");
                 sb.AppendLine("      ,MA.ChildNum");
+                sb.AppendLine("      ,MA.DiscountNum");
                 sb.AppendLine("      ,MA.PaymentId");
                 sb.AppendLine("      ,MA.AplType");
                 sb.AppendLine("      ,MA.PaymentType");
@@ -90,6 +91,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("     , tbl.Value");                                                                   /*チケット名称*/
                 sb.AppendLine("     , tbl.AdultNum");
                 sb.AppendLine("     , tbl.ChildNum");
+                sb.AppendLine("     , tbl.DiscountNum");
                 sb.AppendLine("     , tbl.PaymentId");
                 sb.AppendLine("     , tbl.AplType");                                                                 /*アプリ種別*/
                 sb.AppendLine("     , case");
@@ -115,6 +117,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
                 sb.AppendLine("        	,ftm.AdultNum");                    /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum");                    /*子供枚数*/
+                sb.AppendLine("        	,ftm.DiscountNum");                 /*学割枚数*/
                 sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
@@ -179,6 +182,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
                 sb.AppendLine("        	,ftm.AdultNum");                    /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum");                    /*子供枚数*/
+                sb.AppendLine("        	,ftm.DiscountNum");                 /*学割枚数*/
                 sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
@@ -243,6 +247,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	,cr.Value");                        /*チケット名称*/
                 sb.AppendLine("        	,ftm.AdultNum ");                   /*大人枚数*/
                 sb.AppendLine("        	,ftm.ChildNum ");                   /*子供枚数*/
+                sb.AppendLine("        	,ftm.DiscountNum");                 /*学割枚数*/
                 sb.AppendLine("        	,ftm.InquiryId");                   /*問い合わせID*/
                 sb.AppendLine("        	,pm.PaymentId");
                 sb.AppendLine("        	,pm.PaymentType");
@@ -347,13 +352,23 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 }
 
                 // 任意条件 - 枚数種別
-                if (ticketNumType == "大人")
+                if (ticketNumType == TicketNumType.Adult.Value)
                 {
-                    wheres.Add("tbl.ChildNum = '0'"); // 大人を指定: 子供が0枚
+                    // 大人を指定:
+                    wheres.Add("tbl.ChildNum = 0"); // 子供が0枚、学割が対象外(null)、または0枚
+                    wheres.Add("(tbl.DiscountNum is null or tbl.DiscountNum = 0)");
                 }
-                else if (ticketNumType == "子供")
+                else if (ticketNumType == TicketNumType.Child.Value)
                 {
-                    wheres.Add("tbl.AdultNum = '0'"); // 子供を指定: 大人が0枚
+                    // 子供を指定:
+                    wheres.Add("tbl.AdultNum = 0"); // 大人が0枚、学割が対象外(null)、または0枚
+                    wheres.Add("(tbl.DiscountNum is null or tbl.DiscountNum = 0)");
+                }
+                else if (ticketNumType == TicketNumType.Discount.Value)
+                {
+                    // 学割を指定:
+                    wheres.Add("tbl.AdultNum = 0"); // 大人が0枚、子供が0枚
+                    wheres.Add("tbl.ChildNum = 0");
                 }
 
                 // 任意条件 - チケットID
@@ -400,6 +415,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                             Value = OptionString(row["Value"]),
                             AdultNum = Convert.ToInt32(row["AdultNum"].ToString()),
                             ChildNum = Convert.ToInt32(row["ChildNum"].ToString()),
+                            DiscountNum = Option<int>(row["DiscountNum"]),
                             PaymentId = Convert.ToInt32(row["PaymentId"]),
                             AplType = OptionString(row["AplType"]),
                             PaymentType = OptionString(row["PaymentType"]),

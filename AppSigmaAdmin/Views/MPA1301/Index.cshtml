@@ -81,29 +81,8 @@
                                     @Html.DropDownListFor(Model => Model.PaymentType, (List<SelectListItem>)@ViewBag.PaymentTypeList, new { Class = "DropList" })
                                 </div>
                                 <div class="GridTableCell">
-                                    @{
-                                        //大人/子供プルダウンリスト
-                                        List<SelectListItem> TicketNumTypeList = new List<SelectListItem>();
-
-                                        TicketNumTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "大人",
-                                            Value = "大人"
-                                        });
-                                        TicketNumTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "子供",
-                                            Value = "子供"
-                                        });
-                                        TicketNumTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "種別未選択",
-                                            Value = "-",
-                                            Selected = true
-                                        });
-                                    }
                                     大人/子供：
-                                    @Html.DropDownListFor(Model => Model.TicketNumType, TicketNumTypeList, new { Class = "DropList" })
+                                    @Html.DropDownListFor(Model => Model.TicketNumType, (List<SelectListItem>)@ViewBag.TicketNumTypeList, new { Class = "DropList" })
                                 </div>
                             </div>
                         </div>

@@ -37,6 +37,13 @@ namespace AppSigmaAdmin.Controllers
             ("au", "1"),
         };
 
+        // ドロップダウンリスト項目 - 枚数種別
+        private readonly IEnumerable<TicketNumType> ddlTicketNumType = new[]
+        {
+            TicketNumType.Adult,
+            TicketNumType.Child,
+        };
+
         /// <summary>
         /// 決済データ画面(初期, ページ遷移)
         /// </summary>
@@ -61,6 +68,9 @@ namespace AppSigmaAdmin.Controllers
 
                 //決済種別プルダウン
                 ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList();
+
+                //枚数種別プルダウン
+                ViewBag.TicketNumTypeList = CreatePDLItemsTicketNumTypeList();
 
                 return View(new MPA1301Context());
             }
@@ -98,6 +108,9 @@ namespace AppSigmaAdmin.Controllers
 
             //決済種別プルダウン
             ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(PaymentType);
+
+            //枚数種別プルダウン
+            ViewBag.TicketNumTypeList = CreatePDLItemsTicketNumTypeList(TicketNumType);
 
 
             var targetDateStart = DateTime.Parse(TargetDateBegin);
@@ -198,6 +211,9 @@ namespace AppSigmaAdmin.Controllers
 
                 //決済種別プルダウン
                 ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(model.PaymentType);
+
+                //枚数種別プルダウン
+                ViewBag.TicketNumTypeList = CreatePDLItemsTicketNumTypeList(model.TicketNumType);
 
                 // 入力チェック
                 IsValidInput(model);
@@ -304,6 +320,9 @@ namespace AppSigmaAdmin.Controllers
 
                 //決済種別プルダウン
                 ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(model.PaymentType);
+
+                //枚数種別プルダウン
+                ViewBag.TicketNumTypeList = CreatePDLItemsTicketNumTypeList(model.TicketNumType);
 
                 // 入力チェック
                 IsValidInput(model);
@@ -613,6 +632,17 @@ namespace AppSigmaAdmin.Controllers
         
         private List<SelectListItem> CreatePDLItemsPaymentTypeList(string selected = null)
             => BuildDropDownList(PaymentType.All,
+                    t => t.Name,
+                    t => t.Value,
+                    selected);
+
+        /// <summary>
+        /// 枚数種別プルダウンリスト生成
+        /// </summary>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        private List<SelectListItem> CreatePDLItemsTicketNumTypeList(string selected = null)
+            => BuildDropDownList(ddlTicketNumType,
                     t => t.Name,
                     t => t.Value,
                     selected);
