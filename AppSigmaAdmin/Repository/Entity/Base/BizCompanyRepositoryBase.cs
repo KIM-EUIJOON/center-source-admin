@@ -38,6 +38,8 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
         /// <returns></returns>
         protected string ServiceIds
             => string.Join(", ", _Companies.Where(c => !string.IsNullOrEmpty(c.ServiceId)) // 定義されているものだけ
-                                           .Select(c => $"'{c.ServiceId}'"));
+                                           .Select(c => c.ServiceId)
+                                           .GroupBy(c => c).Select(g => g.Key) // 重複排除
+                                           .Select(i => $"'{i}'"));
     }
 }
