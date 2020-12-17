@@ -57,14 +57,8 @@
                                 <div class="GridTableCell">
                                 </div>
                                 <div class="GridTableCell">
-                                    @{
-                                        //アプリ種別ドロップリスト項目作成
-                                        List<SelectListItem> AplTypeList = new List<SelectListItem>();
-                                        AplTypeList = @ViewBag.AplList;
-
-                                    }
                                     アプリ種別：
-                                    @Html.DropDownListFor(Model => Model.Apltype, AplTypeList, new { Class = "DropList", id = "AplTypeSelect" })
+                                    @Html.DropDownListFor(Model => Model.Apltype, (List<SelectListItem>)@ViewBag.AplList, new { Class = "DropList", id = "AplTypeSelect" })
                                 </div>
                             </div>
 
@@ -79,22 +73,12 @@
                         <div class="GridTableCell">
                             <div class="GridTableCol">
                                 <div class="GridTableCell">
-                                    @{
-                                        //商品種別ドロップリスト項目作成
-                                        List<SelectListItem> TicketTypeList = new List<SelectListItem>();
-                                        TicketTypeList = @ViewBag.TicketList;
-                                    }
                                     商品種別：
-                                    @Html.DropDownListFor(Model => Model.TicketInfo, TicketTypeList, new { Class = "DropList" })
+                                    @Html.DropDownListFor(Model => Model.TicketInfo, (List<SelectListItem>)@ViewBag.TicketList, new { Class = "DropList" })
                                 </div>
                                 <div class="GridTableCell">
-                                    @{
-                                        //決済種別プルダウンリスト
-                                        List<SelectListItem> PaymentTypeList = new List<SelectListItem>();
-                                        PaymentTypeList = @ViewBag.PaymentTypeList;
-                                    }
                                     決済種別：
-                                    @Html.DropDownListFor(Model => Model.PaymentType, PaymentTypeList, new { Class = "DropList" })
+                                    @Html.DropDownListFor(Model => Model.PaymentType, (List<SelectListItem>)@ViewBag.PaymentTypeList, new { Class = "DropList" })
                                 </div>
                                 <div class="GridTableCell">
                                     @{
