@@ -173,6 +173,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\MPA1402Controller.cs" />
     <Compile Include="Controllers\MPA1401Controller.cs" />
     <Compile Include="Controllers\MPA1301Controller.cs" />
     <Compile Include="Controllers\MPA0102Controller.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Models\MiyakohInfoModels.cs" />
     <Compile Include="Models\MobileInformationLogEntity.cs" />
     <Compile Include="Models\MuseumInfoModels.cs" />
+    <Compile Include="Models\NishitetsuModels.cs" />
     <Compile Include="Models\ShowabusModels.cs" />
     <Compile Include="Models\UserLogInfoEntity.cs" />
     <Compile Include="Models\CouponInfoEntity.cs" />
@@ -233,6 +235,9 @@
     <Compile Include="Repository\Entity\Models\Company.cs" />
     <Compile Include="Repository\Entity\Base\TicketUsageRepositoryBase.cs" />
     <Compile Include="Repository\Entity\Base\TicketSaleRespositoryBase.cs" />
+    <Compile Include="Repository\Nishitetsu\Constants\CompanyDefine.cs" />
+    <Compile Include="Repository\Nishitetsu\NishitetsuTicketSaleRepository.cs" />
+    <Compile Include="Repository\Nishitetsu\NishitetsuTicketUsageRepository.cs" />
     <Compile Include="Repository\Showabus\Constants\CompanyDefine.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketPaymentRepository.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketSaleRepository.cs" />
@@ -350,6 +355,7 @@
     <Content Include="Views\MPA1201\Index.cshtml" />
     <Content Include="Views\MPA1301\index.cshtml" />
     <Content Include="Views\MPA1401\index.cshtml" />
+    <Content Include="Views\MPA1402\index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
