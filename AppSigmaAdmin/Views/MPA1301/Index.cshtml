@@ -91,32 +91,7 @@
                                     @{
                                         //決済種別プルダウンリスト
                                         List<SelectListItem> PaymentTypeList = new List<SelectListItem>();
-                                        PaymentTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "即時決済",
-                                            Value = "3"
-                                        });
-                                        PaymentTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "払戻し",
-                                            Value = "4"
-                                        });
-                                        PaymentTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "取消",
-                                            Value = "5"
-                                        });
-                                        PaymentTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "決済種別不明",
-                                            Value = "決済種別不明"
-                                        });
-                                        PaymentTypeList.Add(new SelectListItem
-                                        {
-                                            Text = "種別未選択",
-                                            Value = "-",
-                                            Selected = true
-                                        });
+                                        PaymentTypeList = @ViewBag.PaymentTypeList;
                                     }
                                     決済種別：
                                     @Html.DropDownListFor(Model => Model.PaymentType, PaymentTypeList, new { Class = "DropList" })

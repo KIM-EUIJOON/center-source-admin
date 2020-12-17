@@ -192,6 +192,9 @@
     <Compile Include="Controllers\MPA0101Controller.cs" />
     <Compile Include="Controllers\MPA0201Controller.cs" />
     <Compile Include="Controllers\MPA0301Controller.cs" />
+    <Compile Include="Contstants\AbstractLayer\AbstractConstants.cs" />
+    <Compile Include="Contstants\Extensions\AbstractConstantsExtension.cs" />
+    <Compile Include="Contstants\PaymentType.cs" />
     <Compile Include="Exceptions\InvalidInputException.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
     <Compile Include="Models\DebugLogEntity.cs" />

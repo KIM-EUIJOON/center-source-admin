@@ -12,6 +12,7 @@ using AppSigmaAdmin.Models;
 using AppSigmaAdmin.Exceptions;
 using AppSigmaAdmin.Repository.Showabus;
 using AppSigmaAdmin.ResponseData.Extensions;
+using AppSigmaAdmin.Contstants;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -58,6 +59,9 @@ namespace AppSigmaAdmin.Controllers
                 //アプリ種別プルダウン
                 ViewBag.AplList = CreatePDLItemsAplList(UserRole);
 
+                //決済種別プルダウン
+                ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList();
+
                 return View(new MPA1301Context());
             }
 
@@ -92,6 +96,8 @@ namespace AppSigmaAdmin.Controllers
             //アプリ種別プルダウン
             ViewBag.AplList = CreatePDLItemsAplList(UserRole, AplType);
 
+            //決済種別プルダウン
+            ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(PaymentType);
 
 
             var targetDateStart = DateTime.Parse(TargetDateBegin);
@@ -189,6 +195,9 @@ namespace AppSigmaAdmin.Controllers
 
                 //アプリ種別プルダウン
                 ViewBag.AplList = CreatePDLItemsAplList(userRole, model.Apltype);
+
+                //決済種別プルダウン
+                ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(model.PaymentType);
 
                 // 入力チェック
                 IsValidInput(model);
@@ -292,6 +301,9 @@ namespace AppSigmaAdmin.Controllers
 
                 //アプリ種別プルダウン
                 ViewBag.AplList = CreatePDLItemsAplList(userRole, model.Apltype);
+
+                //決済種別プルダウン
+                ViewBag.PaymentTypeList = CreatePDLItemsPaymentTypeList(model.PaymentType);
 
                 // 入力チェック
                 IsValidInput(model);
@@ -599,6 +611,12 @@ namespace AppSigmaAdmin.Controllers
                     userRole == "13" ? false : true,
                     !string.IsNullOrEmpty(selected) ? selected : userRole == "13" ? "1" : "-");
         
+        private List<SelectListItem> CreatePDLItemsPaymentTypeList(string selected = null)
+            => BuildDropDownList(PaymentType.All,
+                    t => t.Name,
+                    t => t.Value,
+                    selected);
+
         /// <summary>
         /// ドロップダウンリスト生成
         /// </summary>

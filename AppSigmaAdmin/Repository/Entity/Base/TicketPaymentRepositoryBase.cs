@@ -1,4 +1,6 @@
-﻿using AppSigmaAdmin.Repository.Database.Connection;
+﻿using AppSigmaAdmin.Contstants;
+using AppSigmaAdmin.Contstants.Extensions;
+using AppSigmaAdmin.Repository.Database.Connection;
 using AppSigmaAdmin.Repository.Entity.Base.Models;
 using AppSigmaAdmin.Repository.Entity.Model;
 using System;
@@ -90,10 +92,10 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("     , tbl.ChildNum");
                 sb.AppendLine("     , tbl.PaymentId");
                 sb.AppendLine("     , tbl.AplType");                                                                 /*アプリ種別*/
-                sb.AppendLine("     , case when tbl.PaymentType = '3' then N'即時決済'");
-                sb.AppendLine("            when tbl.PaymentType = '4' then N'払戻し'");
-                sb.AppendLine("            when tbl.PaymentType = '5' then N'取消'");
-                sb.AppendLine("       else N'決済種別不明' end as PaymentType");
+                sb.AppendLine("     , case");
+                foreach (var p in PaymentType.Defines)
+                    sb.AppendLine($"       when tbl.PaymentType = '{p.Value}' then N'{p.Name}'");
+                sb.AppendLine($"       else N'{PaymentType.Unknown.Name}' end as PaymentType");
                 sb.AppendLine("     , tbl.Amount");
                 sb.AppendLine("     , tbl.ForwardCode");
                 sb.AppendLine("     , tbl.ReceiptNo");
@@ -138,7 +140,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
                 sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
-                sb.AppendLine("        	and pm.PaymentType = '3'");
+                sb.AppendLine($"         and pm.PaymentType = '{PaymentType.Settle.Value}'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
 
@@ -168,7 +170,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("         on ftm.UserId=uio.UserId");
 
                 sb.AppendLine("        	union all");
-                /*払戻し返金データ取得*/
+                /*決済取消データ取得*/
                 sb.AppendLine("        	select pm.TranDate");
                 sb.AppendLine("        	,ftm.UserId");
                 sb.AppendLine("        	,fsm.TrsType");
@@ -202,7 +204,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
                 sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
-                sb.AppendLine("        	and pm.PaymentType = '5'");
+                sb.AppendLine($"         and pm.PaymentType = '{PaymentType.Cancel.Value}'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '3'");
 
@@ -266,7 +268,7 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 sb.AppendLine("        	on ftm.UserId = pm.UserId");
                 sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
                 sb.AppendLine($"         and pm.ServiceId in ({ServiceIds})");
-                sb.AppendLine("        	and pm.PaymentType = '4'");
+                sb.AppendLine($"         and pm.PaymentType = '{PaymentType.Refund.Value}'");
                 sb.AppendLine("        	and pm.GmoStatus = '1'");
                 sb.AppendLine("        	and pm.GmoProcType = '2'");
 
@@ -332,10 +334,10 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
                 }
 
                 // 任意条件 - 決済種別
-                if (paymentType == "決済種別不明")
+                if (paymentType == PaymentType.Unknown.Value)
                 {
-                    //検索条件に決済種別：決済種別不明指定
-                    wheres.Add("tbl.PaymentType not in ('3','4','5')");
+                    //検索条件に決済種別：決済種別不明指定(定義された決済種別以外)
+                    wheres.Add($"tbl.PaymentType not in ({PaymentType.Defines.JoinDefines(",", c => $"'{c.Value}'")})");
                 }
                 else if (paymentType != "-")
                 {
