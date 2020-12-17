@@ -11,6 +11,7 @@ using AppSigmaAdmin.Models;
 using AppSigmaAdmin.Exceptions;
 using AppSigmaAdmin.Repository.Showabus;
 using AppSigmaAdmin.Library;
+using AppSigmaAdmin.Repository.Database.Entity.Base;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -33,13 +34,13 @@ namespace AppSigmaAdmin.Controllers
         /// 決済データ画面(初期, ページ遷移)
         /// </summary>
         /// <returns>ログイン画面</returns>
-        [SessionCheck(WindowName = "保険付き乗車券利用実績画面")]
+        [SessionCheck(WindowName = "乗車券利用実績画面(昭和自動車様)")]
         public ActionResult Index(string page)
         {
             var UserRole = GetUserRole(Session);
 
             //商品種別プルダウンリスト項目取得
-            var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+            var tickets = GetTicketListRespository().GetTicketList();
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
@@ -104,7 +105,7 @@ namespace AppSigmaAdmin.Controllers
             var listNo = GetListRowNum(pageNo);
 
             //表示情報を取得
-            var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, TicketId, listNo.Begin, listNo.End);
+            var usageList = GetTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, MyrouteNo, TicketId, listNo.Begin, listNo.End);
 
 
 
@@ -140,7 +141,7 @@ namespace AppSigmaAdmin.Controllers
         /// </summary>
         /// <returns>決済データ画面</returns>
         [HttpPost]
-        [SessionCheck(WindowName = "保険付き乗車券利用実績画面")]
+        [SessionCheck(WindowName = "乗車券利用実績画面(昭和自動車様)")]
         public ActionResult Index(MPA1401Context model)
         {
             try
@@ -151,7 +152,7 @@ namespace AppSigmaAdmin.Controllers
                 var userRole = GetUserRole(Session);
 
                 //商品種別プルダウンリスト項目取得
-                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+                var tickets = GetTicketListRespository().GetTicketList();
 
                 //商品種別プルダウン
                 ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
@@ -177,10 +178,10 @@ namespace AppSigmaAdmin.Controllers
 
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
+                var maxListCount = GetTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
 
                 //検索条件に一致したリストから表示件数分取得
-                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, listNo.End);
+                var usageList = GetTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, listNo.End);
 
                 var info = new MPA1401Context()
                 {
@@ -234,7 +235,7 @@ namespace AppSigmaAdmin.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [SessionCheck(WindowName = "保険付き乗車券利用実績画面")]
+        [SessionCheck(WindowName = "乗車券利用実績画面(昭和自動車様)")]
         public ActionResult OutPutCSV(MPA1401Context model)
         {
             try
@@ -245,7 +246,7 @@ namespace AppSigmaAdmin.Controllers
                 var userRole = GetUserRole(Session);
 
                 //商品種別プルダウンリスト項目取得
-                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+                var tickets = GetTicketListRespository().GetTicketList();
 
                 //商品種別プルダウン
                 ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
@@ -265,10 +266,10 @@ namespace AppSigmaAdmin.Controllers
                 var listNo = GetListRowNum(model.ListPageNo + 1);
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
+                var maxListCount = GetTicketUsageRepository().GetUsagesMaxCount(targetDateStart, targetDateLast, model.UserId, ticketId);
 
                 //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-                var usageList = new ShowabusTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, maxListCount);
+                var usageList = GetTicketUsageRepository().GetUsages(targetDateStart, targetDateLast, model.UserId, ticketId, listNo.Begin, maxListCount);
 
 
 
@@ -340,6 +341,24 @@ namespace AppSigmaAdmin.Controllers
         }
 
 
+
+        /// <summary>
+        /// チケットリストデータ取得
+        /// </summary>
+        /// <returns></returns>
+        private static ShowabusTicketSaleRepository GetTicketListRespository()
+        {
+            return new ShowabusTicketSaleRepository();
+        }
+
+        /// <summary>
+        /// 利用実績データ取得
+        /// </summary>
+        /// <returns></returns>
+        private static ShowabusTicketUsageRepository GetTicketUsageRepository()
+        {
+            return new ShowabusTicketUsageRepository();
+        }
 
         /// <summary>
         /// 入力チェック

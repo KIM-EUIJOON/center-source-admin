@@ -55,7 +55,7 @@ namespace AppSigmaAdmin.Controllers
             var UserRole = GetUserRole(Session);
 
             //商品種別プルダウンリスト項目取得
-            var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+            var tickets = GetTicketListRepository().GetTicketList();
 
             //初回Null判定
             if (string.IsNullOrEmpty(page))
@@ -150,7 +150,7 @@ namespace AppSigmaAdmin.Controllers
             var listNo = GetListRowNum(pageNo);
 
             //表示情報を取得
-            var paymentList = new ShowabusTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType, listNo.Begin, listNo.End);
+            var paymentList = GetTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType, listNo.Begin, listNo.End);
 
 
 
@@ -201,7 +201,7 @@ namespace AppSigmaAdmin.Controllers
                 var userRole = GetUserRole(Session);
 
                 //商品種別プルダウンリスト項目取得
-                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+                var tickets = GetTicketListRepository().GetTicketList();
 
                 //商品種別プルダウン
                 ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
@@ -235,10 +235,10 @@ namespace AppSigmaAdmin.Controllers
 
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketPaymentRepository().GetPaymentsMaxCount(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype);
+                var maxListCount = GetTicketPaymentRepository().GetPaymentsMaxCount(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype);
 
                 //検索条件に一致したリストから表示件数分取得
-                var paymentList = new ShowabusTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype, listNo.Begin, listNo.End);
+                var paymentList = GetTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype, listNo.Begin, listNo.End);
 
                 var info = new MPA1301Context()
                 {
@@ -310,7 +310,7 @@ namespace AppSigmaAdmin.Controllers
                 var userRole = GetUserRole(Session);
 
                 //商品種別プルダウンリスト項目取得
-                var tickets = new ShowabusTicketSaleRepository().GetTicketList();
+                var tickets = GetTicketListRepository().GetTicketList();
 
                 //商品種別プルダウン
                 ViewBag.TicketList = CreatePDLItemsTicketList(tickets, model.TicketInfo); // 初期選択項目
@@ -342,10 +342,10 @@ namespace AppSigmaAdmin.Controllers
                 var listNo = GetListRowNum(model.ListPageNo + 1);
 
                 //表示リストの総数
-                var maxListCount = new ShowabusTicketPaymentRepository().GetPaymentsMaxCount(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype);
+                var maxListCount = GetTicketPaymentRepository().GetPaymentsMaxCount(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype);
 
                 //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-                var paymentList = new ShowabusTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype, listNo.Begin, maxListCount);
+                var paymentList = GetTicketPaymentRepository().GetPayments(targetDateStart, targetDateLast, model.UserId, model.PaymentType, model.TicketNumType, transportType, ticketId, model.Apltype, listNo.Begin, maxListCount);
 
 
 
@@ -451,6 +451,24 @@ namespace AppSigmaAdmin.Controllers
         }
 
 
+
+        /// <summary>
+        /// チケットリストデータ取得
+        /// </summary>
+        /// <returns></returns>
+        private static ShowabusTicketSaleRepository GetTicketListRepository()
+        {
+            return new ShowabusTicketSaleRepository();
+        }
+
+        /// <summary>
+        /// 決済データ取得
+        /// </summary>
+        /// <returns></returns>
+        private static ShowabusTicketPaymentRepository GetTicketPaymentRepository()
+        {
+            return new ShowabusTicketPaymentRepository();
+        }
 
         /// <summary>
         /// 入力チェック
