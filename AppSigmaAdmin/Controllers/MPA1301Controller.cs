@@ -401,7 +401,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write(',');
                     sw.Write("\"アプリ種別\"");
                     sw.Write(',');
-                    sw.WriteLine("\"問い合わせID\"");
+                    sw.WriteLine("\"チケットID\"");
 
                     foreach (var item in info.PaymentReportData.ReportList)
                     {

@@ -307,7 +307,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write(',');
                     sw.Write("\"利用終了日時\"");
                     sw.Write(',');
-                    sw.WriteLine("\"問い合わせID\"");
+                    sw.WriteLine("\"チケットID\"");
 
                     foreach (var item in info.UsageReportData.ReportList)
                     {
@@ -320,7 +320,7 @@ namespace AppSigmaAdmin.Controllers
                         sw.Write(',');
                         sw.Write("\"" + item.UsageEndDatetime + "\"");     //利用終了日時
                         sw.Write(',');
-                        sw.WriteLine("\"" + item.InquiryId + "\""); //問い合わせID
+                        sw.WriteLine("\"" + item.InquiryId + "\""); //チケットID
                     }
                     sw.Close();
 
