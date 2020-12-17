@@ -216,7 +216,7 @@ namespace AppSigmaAdmin.Controllers
             List<MiyakohPaymentInfoListEntity> SelectMiyakohPaymentDateList = null;
 
             //表示情報を取得
-            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType);
+            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, MyrouteNo, PaymentType, TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             int ListCount = int.Parse(maxListCount);
 
@@ -471,10 +471,10 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            MiyakohPaymentDateListMaxCount = new MiyakohPaymentModel().MiyakohPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            MiyakohPaymentDateListMaxCount = new MiyakohPaymentModel().MiyakohPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             //検索条件に一致したリストから表示件数分取得
-            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, ListNoBegin, EndListNo, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             MiyakohPaymentInfoListEntity info = new MiyakohPaymentInfoListEntity();
 
@@ -743,13 +743,13 @@ namespace AppSigmaAdmin.Controllers
                 }
             }
             //検索条件に一致する全リスト件数取得
-            MiyakohPaymentDateListMaxCount = new MiyakohPaymentModel().MiyakohPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            MiyakohPaymentDateListMaxCount = new MiyakohPaymentModel().MiyakohPaymentDateListMaxCount(TargetDateStart, TargetDateLast, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
             //表示リストの総数
             int maxListCount = MiyakohPaymentDateListMaxCount.Count;
 
             //検索条件に一致したリストから表示件数分取得(CSV出力用リストのためリスト全件数分取得する)
-            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType);
+            SelectMiyakohPaymentDateList = new MiyakohPaymentModel().GetMiyakohPaymentDate(TargetDateStart, TargetDateLast, PageNo, maxListCount, UserId, model.PaymentType, model.TicketNumType, TransportType, TicketId, AplType, UserRole);
 
 
             //開始日時
@@ -801,7 +801,9 @@ namespace AppSigmaAdmin.Controllers
             Miyakohsw.Write(',');
             Miyakohsw.Write("\"領収書番号\"");
             Miyakohsw.Write(',');
-            Miyakohsw.WriteLine("\"アプリ種別\"");
+            Miyakohsw.Write("\"アプリ種別\"");
+            Miyakohsw.Write(',');
+            Miyakohsw.WriteLine("\"支払い方法\"");
 
             foreach (var item in info.MiyakohPaymentInfoList)
             {
@@ -828,7 +830,9 @@ namespace AppSigmaAdmin.Controllers
                 Miyakohsw.Write(',');
                 Miyakohsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
                 Miyakohsw.Write(',');
-                Miyakohsw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                Miyakohsw.Write("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                Miyakohsw.Write(',');
+                Miyakohsw.WriteLine("\"" + item.PaymentDetailName.ToString() + "\""); //支払い方法
             }
             Miyakohsw.Close();
 

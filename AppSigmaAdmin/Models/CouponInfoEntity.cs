@@ -159,6 +159,8 @@ namespace AppSigmaAdmin.Models
         public string DiscountNum { get; set; }
         public string ChildNum { get; set; }
 
+        public string TicketName { get; set; }
+
         /// <summary>
         /// コンストラクタ
         /// </summary>
