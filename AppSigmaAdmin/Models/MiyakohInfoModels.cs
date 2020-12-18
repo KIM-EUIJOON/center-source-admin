@@ -279,6 +279,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , CASE WHEN tbl.PaymentMeansCode = '1' AND tbl.PaymentDetailCode IS NULL THEN N'クレジット'");
                     sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '00' THEN N'TW残高'");
                     sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '02' THEN N'TSpay'");
+                    sb.AppendLine("            WHEN tbl.PaymentType = '4' THEN N'クレジット'");
                     sb.AppendLine("       END AS PaymentDetailName");
                     sb.AppendLine("  from (");
                     /* 即時決済データ取得*/
