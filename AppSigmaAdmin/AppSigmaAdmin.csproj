@@ -195,6 +195,7 @@
     <Compile Include="Controllers\MPA0301Controller.cs" />
     <Compile Include="Contstants\AbstractLayer\AbstractConstants.cs" />
     <Compile Include="Contstants\Extensions\AbstractConstantsExtension.cs" />
+    <Compile Include="Contstants\ForwardCode.cs" />
     <Compile Include="Contstants\PaymentType.cs" />
     <Compile Include="Contstants\TicketNumType.cs" />
     <Compile Include="Exceptions\InvalidInputException.cs" />

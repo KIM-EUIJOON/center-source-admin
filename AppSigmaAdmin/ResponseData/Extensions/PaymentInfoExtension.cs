@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AppSigmaAdmin.Contstants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -27,8 +28,6 @@ namespace AppSigmaAdmin.ResponseData.Extensions
         /// <returns></returns>
         public static string GetForwardName(this PaymentInfo self)
             => string.IsNullOrEmpty(self.ForwardCode) ? null // 空は出さない
-             : self.ForwardCode == "2s77334" ? "TFC"
-             : self.ForwardCode == "2a99661" ? "JCB"
-             : "その他"; // 定義がないものは、"その他"を返す
+             : ForwardCode.All.FirstOrDefault(c => c.Value == self.ForwardCode)?.Name ?? "その他"; // 定義がないものは、"その他"を返す
     }
 }
