@@ -11,7 +11,7 @@ using System.Web.Mvc;
 using static AppSigmaAdmin.Models.JRKyushuInfoModels;
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
-
+using AppSigmaAdmin.ResponseData.Extensions;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -800,6 +800,8 @@ namespace AppSigmaAdmin.Controllers
             JRKyushusw.Write(',');
             JRKyushusw.Write("\"決済種別\"");
             JRKyushusw.Write(',');
+            JRKyushusw.Write("\"仕向先\"");
+            JRKyushusw.Write(',');
             JRKyushusw.Write("\"金額\"");
             JRKyushusw.Write(',');
             JRKyushusw.Write("\"領収書番号\"");
@@ -824,6 +826,8 @@ namespace AppSigmaAdmin.Controllers
                 JRKyushusw.Write("\"" + item.ChildNum.ToString() + "\"");      //子供枚数
                 JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.PaymentType.ToString() + "\"");   //決済種別
+                JRKyushusw.Write(',');
+                JRKyushusw.Write("\"" + item.GetForwardName() + "\"");   //仕向先
                 JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 JRKyushusw.Write(',');

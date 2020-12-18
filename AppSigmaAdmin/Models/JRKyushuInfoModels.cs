@@ -204,6 +204,7 @@ namespace AppSigmaAdmin.Models
                             ChildNum = row["ChildNum"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
+                            ForwardCode = row["ForwardCode"] == DBNull.Value ? null : row["ForwardCode"].ToString(),
                             ReceiptNo = row["ReceiptNo"].ToString(),
                             Apltype = row["AplName"].ToString()
                         };
@@ -257,6 +258,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           when tbl.PaymentType = '5' then N'取消'");
                     sb.AppendLine("           else N'決済種別不明' end as PaymentType");
                     sb.AppendLine("     , tbl.Amount");
+                    sb.AppendLine("     , tbl.ForwardCode");
                     sb.AppendLine("     , tbl.ReceiptNo");
                     sb.AppendLine("     , tbl.TrsType");
                     sb.AppendLine("  from (");
@@ -272,6 +274,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.PaymentId");
                     sb.AppendLine("           , pm.PaymentType");
                     sb.AppendLine("           , pm.Amount");
+                    sb.AppendLine("           , pm.ForwardCode");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
@@ -307,6 +310,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.PaymentId");
                     sb.AppendLine("           , pm.PaymentType");
                     sb.AppendLine("           , pm.Amount* -1 as Amount");
+                    sb.AppendLine("           , pm.ForwardCode");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
@@ -342,6 +346,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           , pm.PaymentId");
                     sb.AppendLine("           , pm.PaymentType");
                     sb.AppendLine("           , pm.Amount");
+                    sb.AppendLine("           , pm.ForwardCode");
                     sb.AppendLine("           , pm.ReceiptNo");
                     sb.AppendLine("           ,fsm.BizCompanyCd");
                     sb.AppendLine("           ,fsm.TicketId");                      /*チケット種別(au,au以外)*/
