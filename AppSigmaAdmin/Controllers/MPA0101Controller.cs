@@ -826,7 +826,9 @@ namespace AppSigmaAdmin.Controllers
             Nishisw.Write(',');
             Nishisw.Write("\"領収書番号\"");
             Nishisw.Write(',');
-            Nishisw.WriteLine("\"アプリ種別\"");
+            Nishisw.Write("\"アプリ種別\"");
+            Nishisw.Write(',');
+            Nishisw.WriteLine("\"チケットID\"");
 
             foreach (var item in info.NishitetsuPaymentInfoList)
             {
@@ -851,7 +853,9 @@ namespace AppSigmaAdmin.Controllers
                 Nishisw.Write(',');
                 Nishisw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
                 Nishisw.Write(',');
-                Nishisw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                Nishisw.Write("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                Nishisw.Write(',');
+                Nishisw.WriteLine("\"" + item.InquiryId?.ToString() + "\""); //チケットID
             }
             Nishisw.Close();
 

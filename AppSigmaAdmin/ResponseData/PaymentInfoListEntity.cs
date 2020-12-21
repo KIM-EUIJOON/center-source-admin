@@ -231,9 +231,12 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public string ReceiptNo { get; set; }
 
-
-
+        /// <summary>
+        /// 問い合わせID
+        /// </summary>
+        public string InquiryId { get; set; }
     }
+
     /// <summary>
     /// 西鉄決済情報リスト作成用情報
     /// </summary>

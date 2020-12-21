@@ -442,6 +442,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("           else N'決済種別不明' end as PaymentType");
                     sb.AppendLine("     , tbl.Amount");
                     sb.AppendLine("     , tbl.ReceiptNo");
+                    sb.AppendLine("     , tbl.InquiryId");
                     sb.AppendLine("  from (");
                     // 即時決済データ取得
                     sb.AppendLine(" " + BusPayment.ToString() + "");        //旧テーブル取得
@@ -481,6 +482,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("            , cr.Value");
                     sb.AppendLine("            , nft.AdultNum");
                     sb.AppendLine("            , nft.ChildNum ");
+                    sb.AppendLine("        	   , null as InquiryId");                /*問い合わせID(非対応)*/
                     sb.AppendLine("            , pm.PaymentId");
                     sb.AppendLine("            , pm.PaymentType");
                     sb.AppendLine("            , pm.Amount");
@@ -517,6 +519,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("            , cr.Value");
                     sb.AppendLine("             , nft.AdultNum");
                     sb.AppendLine("             , nft.ChildNum ");
+                    sb.AppendLine("        	    , null as InquiryId");               /*問い合わせID(非対応)*/
                     sb.AppendLine("             , pm.PaymentId");
                     sb.AppendLine("             , pm.PaymentType");
                     sb.AppendLine("             , pm.Amount * -1 as Amount");
@@ -553,6 +556,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("            , cr.Value");
                     sb.AppendLine("             , nft.AdultNum");
                     sb.AppendLine("             , nft.ChildNum ");
+                    sb.AppendLine("        	    , null as InquiryId");               /*問い合わせID(非対応)*/
                     sb.AppendLine("             , pm.PaymentId");
                     sb.AppendLine("             , pm.PaymentType");
                     sb.AppendLine("             , pm.Amount");
@@ -601,6 +605,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	,cr.Value");                        /*チケット名称(日本語)*/
                     sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
                     sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, ftm.InquiryId");                  /*問い合わせID*/
                     sb.AppendLine("        	, pm.PaymentId");
                     sb.AppendLine("        	, pm.PaymentType");
                     sb.AppendLine("        	, pm.Amount");
@@ -635,6 +640,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	,cr.Value");                                /*チケット名称(日本語)*/
                     sb.AppendLine("        	, ftm.AdultNum ");                          /*大人枚数*/
                     sb.AppendLine("        	, ftm.ChildNum ");                          /*子供枚数*/
+                    sb.AppendLine("        	, ftm.InquiryId");                          /*問い合わせID*/
                     sb.AppendLine("        	, pm.PaymentId");
                     sb.AppendLine("        	, pm.PaymentType");
                     sb.AppendLine("        	, pm.Amount* -1 as Amount");
@@ -669,6 +675,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	,cr.Value");                        /*チケット名称*/
                     sb.AppendLine("        	, ftm.AdultNum ");                  /*大人枚数*/
                     sb.AppendLine("        	, ftm.ChildNum ");                  /*子供枚数*/
+                    sb.AppendLine("        	, ftm.InquiryId");                  /*問い合わせID*/
                     sb.AppendLine("        	, pm.PaymentId");
                     sb.AppendLine("        	, pm.PaymentType");
                     sb.AppendLine("        	, pm.Amount");
@@ -791,6 +798,7 @@ namespace AppSigmaAdmin.Models
                             TransportType = row["BizCompanyCd"].ToString(),
                             AdultNum = row["AdultNum"].ToString(),
                             ChildNum = row["ChildNum"].ToString(),
+                            InquiryId = row["InquiryId"] == DBNull.Value ? null : row["InquiryId"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
                             ReceiptNo = row["ReceiptNo"].ToString(),
