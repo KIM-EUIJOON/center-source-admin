@@ -806,7 +806,9 @@ namespace AppSigmaAdmin.Controllers
             JRKyushusw.Write(',');
             JRKyushusw.Write("\"領収書番号\"");
             JRKyushusw.Write(',');
-            JRKyushusw.WriteLine("\"アプリ種別\"");
+            JRKyushusw.Write("\"アプリ種別\"");
+            JRKyushusw.Write(',');
+            JRKyushusw.WriteLine("\"支払い方法\"");
 
             foreach (var item in info.NishitetsuPaymentInfoList)
             {
@@ -833,7 +835,9 @@ namespace AppSigmaAdmin.Controllers
                 JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
                 JRKyushusw.Write(',');
-                JRKyushusw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                JRKyushusw.Write("\"" + item.Apltype.ToString() + "\""); //アプリ種別
+                JRKyushusw.Write(',');
+                JRKyushusw.WriteLine("\"" + item.PaymentDetailName.ToString() + "\""); //支払い方法
             }
             JRKyushusw.Close();
 

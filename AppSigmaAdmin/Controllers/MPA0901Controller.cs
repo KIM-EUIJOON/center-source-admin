@@ -34,6 +34,7 @@ namespace AppSigmaAdmin.Controllers
             "大人枚数",
             "学割枚数",
             "子供枚数",
+            "商品",
         };
 
         /// <summary>
@@ -217,6 +218,7 @@ namespace AppSigmaAdmin.Controllers
                     AdultNum = !string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-",
                     DiscountNum = !string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-",
                     ChildNum = !string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-",
+                    TicketName = row["TicketName"].ToString(),
                 });
             }
 
@@ -316,6 +318,7 @@ namespace AppSigmaAdmin.Controllers
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["AdultNum"].ToString()) ? row["AdultNum"].ToString() : "-"));
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["discountNum"].ToString()) ? row["discountNum"].ToString() : "-"));
                     strings.Add(EncloseDbQuotes(!string.IsNullOrEmpty(row["ChildNum"].ToString()) ? row["ChildNum"].ToString() : "-"));
+                    strings.Add(EncloseDbQuotes(row["TicketName"].ToString()));
                     sw.WriteLine(string.Join(",", strings));
                 }
             }
