@@ -800,15 +800,15 @@ namespace AppSigmaAdmin.Controllers
             JRKyushusw.Write(',');
             JRKyushusw.Write("\"決済種別\"");
             JRKyushusw.Write(',');
-            JRKyushusw.Write("\"仕向先\"");
-            JRKyushusw.Write(',');
             JRKyushusw.Write("\"金額\"");
+            JRKyushusw.Write(',');
+            JRKyushusw.Write("\"決済手段\"");
+            JRKyushusw.Write(',');
+            JRKyushusw.Write("\"決済手段詳細\"");
             JRKyushusw.Write(',');
             JRKyushusw.Write("\"領収書番号\"");
             JRKyushusw.Write(',');
-            JRKyushusw.Write("\"アプリ種別\"");
-            JRKyushusw.Write(',');
-            JRKyushusw.WriteLine("\"支払い方法\"");
+            JRKyushusw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.NishitetsuPaymentInfoList)
             {
@@ -829,15 +829,15 @@ namespace AppSigmaAdmin.Controllers
                 JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.PaymentType.ToString() + "\"");   //決済種別
                 JRKyushusw.Write(',');
-                JRKyushusw.Write("\"" + item.GetForwardName() + "\"");   //仕向先
-                JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.Amount.ToString() + "\"");        //金額
+                JRKyushusw.Write(',');
+                JRKyushusw.Write("\"" + item.PaymentDetailName.ToString() + "\""); //決済手段
+                JRKyushusw.Write(',');
+                JRKyushusw.Write("\"" + item.GetForwardName() + "\"");   //決済手段詳細
                 JRKyushusw.Write(',');
                 JRKyushusw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
                 JRKyushusw.Write(',');
-                JRKyushusw.Write("\"" + item.Apltype.ToString() + "\""); //アプリ種別
-                JRKyushusw.Write(',');
-                JRKyushusw.WriteLine("\"" + item.PaymentDetailName.ToString() + "\""); //支払い方法
+                JRKyushusw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
             }
             JRKyushusw.Close();
 
