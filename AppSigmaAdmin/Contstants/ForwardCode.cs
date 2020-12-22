@@ -12,8 +12,8 @@ namespace AppSigmaAdmin.Contstants
     /// </summary>
     public class ForwardCode : AbstractConstants<ForwardCode>
     {
-        public static ForwardCode TFS = new ForwardCode("TFS", "2s77334");
-        public static ForwardCode JCB = new ForwardCode("JCB", "2a99661");
+        public static ForwardCode TFS = new ForwardCode("VISA/Master/TS CUBIC CARD", "2s77334");
+        public static ForwardCode JCB = new ForwardCode("JCB/AMEX/Diners", "2a99661");
 
         private ForwardCode(string name, string value) : base(name, value) { }
     }
