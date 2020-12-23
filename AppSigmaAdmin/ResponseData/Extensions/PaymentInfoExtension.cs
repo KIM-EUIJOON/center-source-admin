@@ -18,6 +18,10 @@ namespace AppSigmaAdmin.ResponseData.Extensions
         /// <returns></returns>
         public static string GetPaymentName(this PaymentInfo self)
         {
+            // GMO決済かどうかを判定する。
+            if (IsGMO(self))
+                return PaymentMeansCode.GMO.Name;
+
             if (PaymentMeansCode.All
                 .FirstOrDefault(c => c.Value == self.PaymentMeansCode) is PaymentMeansCode meansCode)
             {
@@ -40,7 +44,24 @@ namespace AppSigmaAdmin.ResponseData.Extensions
         /// <returns></returns>
         public static string GetForwardName(this PaymentInfo self)
             => string.IsNullOrEmpty(self.ForwardCode) ? null // 空は出さない
-             : self.PaymentMeansCode != PaymentMeansCode.GMO.Value ? null // 決済手段がGMO以外は出さない
+             : !IsGMO(self) ? null // 決済手段がGMO以外は出さない
              : ForwardCode.All.FirstOrDefault(c => c.Value == self.ForwardCode)?.Name ?? "その他"; // 定義がないものは、"その他"を返す
+
+        /// <summary>
+        /// GMO決済かどうかを返します。<para>
+        /// センター仕様より、クレジット決済の払戻時、手数料決済データに決済手段を設定していない(=null)
+        /// これを補完するため、当該データをGMO決済として扱うようにする
+        /// また、決済手段は必須項目であるため、補完を優先し決済種別(=払戻)は条件に含めないことにした
+        /// </para>
+        /// </summary>
+        /// <param name="self"></param>
+        /// <returns></returns>
+        private static bool IsGMO(PaymentInfo self)
+        {
+            return self.PaymentMeansCode == null // nullもGMOとして扱う
+                || self.PaymentMeansCode == PaymentMeansCode.GMO.Value;
+        }
+
     }
+
 }
