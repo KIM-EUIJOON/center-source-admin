@@ -206,10 +206,11 @@ namespace AppSigmaAdmin.Models
                             ChildNum = row["ChildNum"].ToString(),
                             PaymentType = row["PaymentType"].ToString(),
                             Amount = (int)row["Amount"],
+                            PaymentMeansCode = row["PaymentMeansCode"] == DBNull.Value ? null : row["PaymentMeansCode"].ToString(),
+                            PaymentDetailCode = row["PaymentDetailCode"] == DBNull.Value ? null : row["PaymentDetailCode"].ToString(),
                             ForwardCode = row["ForwardCode"] == DBNull.Value ? null : row["ForwardCode"].ToString(),
                             ReceiptNo = row["ReceiptNo"].ToString(),
                             Apltype = row["AplName"].ToString(),
-                            PaymentDetailName = row["PaymentDetailName"].ToString(),
                         };
                         if (row["TrsType"].ToString() == "10")
                         {
@@ -266,11 +267,6 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("     , tbl.TrsType");
                     sb.AppendLine("     , tbl.PaymentMeansCode");
                     sb.AppendLine("     , tbl.PaymentDetailCode");
-                    sb.AppendLine("     , CASE WHEN tbl.PaymentMeansCode = '1' AND tbl.PaymentDetailCode IS NULL THEN N'クレジット'");
-                    sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '00' THEN N'TW残高'");
-                    sb.AppendLine("            WHEN tbl.PaymentMeansCode = '2' AND tbl.PaymentDetailCode = '02' THEN N'TSpay'");
-                    sb.AppendLine("            WHEN tbl.PaymentType = '4' THEN N'クレジット'");
-                    sb.AppendLine("       END AS PaymentDetailName");
                     sb.AppendLine("  from (");
                     // 即時決済データ取得
                     sb.AppendLine("           select pm.TranDate");

@@ -831,7 +831,7 @@ namespace AppSigmaAdmin.Controllers
                 Miyakohsw.Write(',');
                 Miyakohsw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 Miyakohsw.Write(',');
-                Miyakohsw.Write("\"" + item.PaymentDetailName.ToString() + "\""); //決済手段
+                Miyakohsw.Write("\"" + item.GetPaymentName() + "\""); //決済手段
                 Miyakohsw.Write(',');
                 Miyakohsw.Write("\"" + item.GetForwardName() + "\"");   //決済手段詳細
                 Miyakohsw.Write(',');
