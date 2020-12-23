@@ -40,6 +40,7 @@ namespace AppSigmaAdmin.ResponseData.Extensions
         /// <returns></returns>
         public static string GetForwardName(this PaymentInfo self)
             => string.IsNullOrEmpty(self.ForwardCode) ? null // 空は出さない
+             : self.PaymentMeansCode != PaymentMeansCode.GMO.Value ? null // 決済手段がGMO以外は出さない
              : ForwardCode.All.FirstOrDefault(c => c.Value == self.ForwardCode)?.Name ?? "その他"; // 定義がないものは、"その他"を返す
     }
 }
