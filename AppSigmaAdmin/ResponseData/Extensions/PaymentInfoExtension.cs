@@ -17,9 +17,21 @@ namespace AppSigmaAdmin.ResponseData.Extensions
         /// <param name="self"></param>
         /// <returns></returns>
         public static string GetPaymentName(this PaymentInfo self)
-            => self.PaymentMeansCode == "1" ? self.PaymentMeansName  // "1"(GMO)の場合、決済手段名
-             : self.PaymentMeansCode == "2" ? self.PaymentDetailName // "2"(TW)の場合、決済詳細名
-             : null;
+        {
+            if (PaymentMeansCode.All
+                .FirstOrDefault(c => c.Value == self.PaymentMeansCode) is PaymentMeansCode meansCode)
+            {
+                if (PaymentDetailCode.All
+                    .FirstOrDefault(c => c.Value.meansCode.Value == meansCode.Value
+                                      && c.Value.detailCode == self.PaymentDetailCode) is PaymentDetailCode detailCode)
+                    // 決済手段詳細が優先
+                    return detailCode.Name;
+                // 決済手段詳細がなければ、決済手段
+                return meansCode.Name;
+            }
+            // 定義なしはnull
+            return null;
+        }
 
         /// <summary>
         /// 仕向先名取得
