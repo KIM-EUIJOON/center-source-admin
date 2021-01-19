@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using static AppSigmaAdmin.Models.MiyakohInfoModels;
 using AppSigmaAdmin.Library;
 using AppSigmaAdmin.Models;
+using AppSigmaAdmin.ResponseData.Extensions;
 
 namespace AppSigmaAdmin.Controllers
 {
@@ -799,11 +800,13 @@ namespace AppSigmaAdmin.Controllers
             Miyakohsw.Write(',');
             Miyakohsw.Write("\"金額\"");
             Miyakohsw.Write(',');
+            Miyakohsw.Write("\"決済手段\"");
+            Miyakohsw.Write(',');
+            Miyakohsw.Write("\"決済手段詳細\"");
+            Miyakohsw.Write(',');
             Miyakohsw.Write("\"領収書番号\"");
             Miyakohsw.Write(',');
-            Miyakohsw.Write("\"アプリ種別\"");
-            Miyakohsw.Write(',');
-            Miyakohsw.WriteLine("\"支払い方法\"");
+            Miyakohsw.WriteLine("\"アプリ種別\"");
 
             foreach (var item in info.MiyakohPaymentInfoList)
             {
@@ -828,11 +831,13 @@ namespace AppSigmaAdmin.Controllers
                 Miyakohsw.Write(',');
                 Miyakohsw.Write("\"" + item.Amount.ToString() + "\"");        //金額
                 Miyakohsw.Write(',');
+                Miyakohsw.Write("\"" + item.GetPaymentName() + "\""); //決済手段
+                Miyakohsw.Write(',');
+                Miyakohsw.Write("\"" + item.GetForwardName() + "\"");   //決済手段詳細
+                Miyakohsw.Write(',');
                 Miyakohsw.Write("\"" + item.ReceiptNo.ToString() + "\""); //領収書番号
                 Miyakohsw.Write(',');
-                Miyakohsw.Write("\"" + item.Apltype.ToString() + "\""); //アプリ種別
-                Miyakohsw.Write(',');
-                Miyakohsw.WriteLine("\"" + item.PaymentDetailName.ToString() + "\""); //支払い方法
+                Miyakohsw.WriteLine("\"" + item.Apltype.ToString() + "\""); //アプリ種別
             }
             Miyakohsw.Close();
 

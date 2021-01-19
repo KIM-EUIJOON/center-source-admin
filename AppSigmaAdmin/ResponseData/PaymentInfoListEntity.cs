@@ -55,9 +55,29 @@ namespace AppSigmaAdmin.ResponseData
         ///</summary>
         public string Apltype { get; set; }
 
-        ///<summary>
-        ///支払い方法
-        ///</summary>
+        /// <summary>
+        /// 仕向先コード
+        /// </summary>
+        public string ForwardCode { get; set; }
+
+        /// <summary>
+        /// 決済手段コード
+        /// </summary>
+        public string PaymentMeansCode { get; set; }
+
+        /// <summary>
+        /// 決済詳細コード
+        /// </summary>
+        public string PaymentDetailCode { get; set; }
+
+        /// <summary>
+        /// 決済手段名
+        /// </summary>
+        public string PaymentMeansName { get; set; }
+
+        /// <summary>
+        /// 決済詳細名
+        /// </summary>
         public string PaymentDetailName { get; set; }
     }
 
@@ -211,9 +231,12 @@ namespace AppSigmaAdmin.ResponseData
         /// </summary>
         public string ReceiptNo { get; set; }
 
-
-
+        /// <summary>
+        /// 問い合わせID
+        /// </summary>
+        public string InquiryId { get; set; }
     }
+
     /// <summary>
     /// 西鉄決済情報リスト作成用情報
     /// </summary>

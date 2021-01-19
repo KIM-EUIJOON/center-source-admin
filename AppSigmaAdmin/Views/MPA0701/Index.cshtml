@@ -2,6 +2,7 @@
 @using AppSigmaAdmin.Utility
 @using System.Data
 @using AppSigmaAdmin.Library
+@using AppSigmaAdmin.ResponseData.Extensions
 
 @{
     ViewBag.Title = "決済データ検索及びダウンロード(宮崎交通)";
@@ -184,16 +185,25 @@
                             var grid = new WebGrid(null, rowsPerPage: Model.ListNum, canSort: false);
                             grid.Bind(source: Model.MiyakohPaymentInfoList, autoSortAndPage: false, rowCount: Model.ListMaxCount);
                             <div class="grid-table">
-                                @(new HtmlString(grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
-                                                                            columns: grid.Columns(grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
-                                                                            grid.Column("TranDatetime", header: "決済日時", style: "gridbody18"),
-                                                                            grid.Column("PaymentId", header: "決済ID", style: "gridbody6"), grid.Column("TransportType", header: "バス/{0}鉄道", style: "gridbody5"),
-                                                                            grid.Column("TicketName", header: "商品", style: "gridbody18"), grid.Column("AdultNum", header: "大人枚数", style: "gridbody8"), grid.Column("discountNum", header: "学割枚数", style: "gridbody8")
-                                                                            , grid.Column("ChildNum", header: "子供枚数", style: "gridbody8"), grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
-                                                                            grid.Column("Amount", header: "金額", style: "gridbody6"), grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12")
-                                                                            , grid.Column("Apltype", header: "アプリ種別", style: "gridbody8")
-                                                                            , grid.Column("PaymentDetailName", header: "支払い方法", style: "gridbody8")
-                                                                            )).ToHtmlString().Replace("{0}", "<br/>"))
+                                @(new HtmlString(grid.GetHtml(
+                                                    tableStyle: "gridTable",
+                                                    headerStyle: "gridhead",
+                                                    columns: grid.Columns(
+                                                        grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                        grid.Column("TranDatetime", header: "決済日時", style: "gridbody18"),
+                                                        grid.Column("PaymentId", header: "決済ID", style: "gridbody6"),
+                                                        grid.Column("TransportType", header: "バス/{0}鉄道", style: "gridbody5"),
+                                                        grid.Column("TicketName", header: "商品", style: "gridbody18"),
+                                                        grid.Column("AdultNum", header: "大人枚数", style: "gridbody8"),
+                                                        grid.Column("discountNum", header: "学割枚数", style: "gridbody8"),
+                                                        grid.Column("ChildNum", header: "子供枚数", style: "gridbody8"),
+                                                        grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                                        grid.Column("Amount", header: "金額", style: "gridbody6"),
+                                                        grid.Column(header: "決済手段", style: "gridbody8", format: d => PaymentInfoExtension.GetPaymentName(d.Value)),
+                                                        grid.Column(header: "決済手段詳細", style: "gridbody8", format: d => PaymentInfoExtension.GetForwardName(d.Value)),
+                                                        grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12"),
+                                                        grid.Column("Apltype", header: "アプリ種別", style: "gridbody8")
+                                                    )).ToHtmlString().Replace("{0}", "<br/>"))
                                 )
                             </div>
                         }

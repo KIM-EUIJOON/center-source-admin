@@ -1,0 +1,131 @@
+﻿@model AppSigmaAdmin.Models.MPA1401Context
+@using AppSigmaAdmin.Utility
+@using System.Data
+@using AppSigmaAdmin.Library
+
+@{
+    ViewBag.Title = "乗車券利用実績";
+}
+
+@section style{
+    <style>
+        .GridTableCol {
+            margin-left: -25px;
+        }
+    </style>
+}
+
+
+@section funcTitle {
+    <div class="funcTitleBer">
+        乗車券利用実績検索及びダウンロード
+    </div>
+}
+
+    <input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+    <input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
+    <input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA1401", false)" />
+
+    <form action="@Common.CreateUrl("/MPA1401", false)" method="post">
+        <div class="ContentsBase">
+            <div class="userInfoBox">
+                <div class="GridTable">
+                    <div class="GridTableRow">
+                        <div class="GridTableCell">
+                            期間:
+                            @Html.TextBoxFor(Model => Model.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                            @Html.ValidationMessageFor(Model => Model.TargetDateBegin)
+                            から
+                            @Html.TextBoxFor(Model => Model.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                            @Html.ValidationMessageFor(Model => Model.TargetDateEnd)
+                            まで
+                        </div>
+                        <div class="GridTableCell">
+                        </div>
+                        <div class="GridTableCell">
+                            <input type="submit" formaction="@Common.CreateUrl("/MPA1401/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                        </div>
+                    </div>
+                    <div class="GridTableRow">
+                        <div class="GridTableCell">
+                            <div class="GridTableCol">
+                                <div class="GridTableCell">
+                                    myroute会員ID：
+                                    @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                                    @Html.ValidationMessageFor(Model => Model.UserId)
+                                </div>
+                                <div class="GridTableCell">
+                                </div>
+                                <div class="GridTableCell">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="GridTableCell">
+                        </div>
+                        <div class="GridTableCell">
+                            <input type="submit" formaction="@Common.CreateUrl("/MPA1401/OutPutCSV", false) " formmethod="post" id="NishitetsuOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                        </div>
+                    </div>
+                    <div class="GridTableRow">
+                        <div class="GridTableCell">
+                            <div class="GridTableCol">
+                                <div class="GridTableCell">
+                                    @{
+                                        //商品種別ドロップリスト項目作成
+                                        List<SelectListItem> TicketTypeList = new List<SelectListItem>();
+                                        TicketTypeList = @ViewBag.TicketList;
+                                    }
+                                    商品種別：
+                                    @Html.DropDownListFor(Model => Model.TicketInfo, TicketTypeList, new { Class = "DropList" })
+                                </div>
+                                <div class="GridTableCell">
+                                </div>
+                                <div class="GridTableCell">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="GridTableCell">
+                        </div>
+                        <div class="GridTableCell">
+                            <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                        </div>
+                    </div>
+                </div>
+                <div class="errorMessage">
+                    @Html.ValidationSummary(false, "")
+                </div>
+                <div>
+                </div>
+                <div>
+                    @{
+                        if (Model != null)
+                        {
+                            if (Model.UsageReportData != null)
+                            {
+                                @*表示件数：10件*@
+                                var grid = new WebGrid(null, rowsPerPage: Model.UsageReportData.ListNum, canSort: false);
+                                grid.Bind(source: Model.UsageReportData.ReportList, autoSortAndPage: false, rowCount: Model.UsageReportData.ListMaxCount);
+                                <div class="grid-table">
+                                    @(new HtmlString(grid.GetHtml(
+                                                        tableStyle: "gridTable",
+                                                        headerStyle: "gridhead",
+                                                        columns: grid.Columns(
+                                                            grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                            grid.Column("TicketName", header: "商品", style: "gridbody8"),
+                                                            grid.Column("UsageStartDatetime", header: "利用開始日時", style: "gridbody18"),
+                                                            grid.Column("UsageEndDatetime", header: "利用終了日時", style: "gridbody18"),
+                                                            grid.Column("InquiryId", header: "チケットID", style: "gridbody6")
+                                                        )).ToHtmlString().Replace("{0}", "<br/>"))
+                                    )
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                <div>
+                </div>
+            </div>
+        </div>
+    </form>
+
