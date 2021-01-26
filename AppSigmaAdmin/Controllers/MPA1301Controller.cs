@@ -383,7 +383,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write("\"決済ID\"");
 
                     sw.Write(',');
-                    sw.Write("\"商品種別\"");
+                    sw.Write("\"商品\"");
                     sw.Write(',');
                     sw.Write("\"大人枚数\"");
                     sw.Write(',');
@@ -395,7 +395,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write(',');
                     sw.Write("\"決済手段\"");
                     sw.Write(',');
-                    sw.Write("\"仕向先\"");
+                    sw.Write("\"決済手段詳細\"");
                     sw.Write(',');
                     sw.Write("\"領収書番号\"");
                     sw.Write(',');
