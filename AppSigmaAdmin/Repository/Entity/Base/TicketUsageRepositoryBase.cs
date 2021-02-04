@@ -90,8 +90,8 @@ namespace AppSigmaAdmin.Repository.Database.Entity.Base
 
                 // 必須条件 - 利用開始日時範囲
                 wheres.Add($"ticket.UsageStartDatetime between @StartDatatTime and @EndDatatTime");
-                setParam4NulDateTime(cmd, "@StartDatatTime", stDate);
-                setParam4NulDateTime(cmd, "@EndDatatTime", edDate);
+                setParam4NulDateTime(cmd, "@StartDatatTime", stDate.Date); // 指定日の00:00:00
+                setParam4NulDateTime(cmd, "@EndDatatTime", edDate.Date.AddDays(1).AddSeconds(-1)); // 指定日の23:59:59
 
                 // 任意条件 - ユーザID
                 if (userId != null)

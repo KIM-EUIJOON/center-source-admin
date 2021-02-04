@@ -383,7 +383,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write("\"決済ID\"");
 
                     sw.Write(',');
-                    sw.Write("\"商品種別\"");
+                    sw.Write("\"商品\"");
                     sw.Write(',');
                     sw.Write("\"大人枚数\"");
                     sw.Write(',');
@@ -395,7 +395,7 @@ namespace AppSigmaAdmin.Controllers
                     sw.Write(',');
                     sw.Write("\"決済手段\"");
                     sw.Write(',');
-                    sw.Write("\"仕向先\"");
+                    sw.Write("\"決済手段詳細\"");
                     sw.Write(',');
                     sw.Write("\"領収書番号\"");
                     sw.Write(',');
@@ -438,8 +438,8 @@ namespace AppSigmaAdmin.Controllers
                     //出力日を取得
                     var NowDate = System.DateTime.Now;
 
-                    //ファイル名を「Payment_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Payment_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
+                    //ファイル名を「Showa-bus_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
+                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Showa-bus_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
                 }
             }
             // 入力エラー
