@@ -1,0 +1,143 @@
+﻿@model AppSigmaAdmin.Models.MPA1501Context
+@using AppSigmaAdmin.Utility
+@using System.Data
+@using AppSigmaAdmin.Library
+
+@{
+    ViewBag.Title = "決済データ検索及びダウンロード（あいの風富山鉄道乗車券）";
+}
+
+@section style{
+    <style>
+        .GridTableCol {
+            margin-left: -25px;
+        }
+    </style>
+}
+
+
+@section funcTitle {
+    <div class="funcTitleBer">
+        決済データ検索及びダウンロード（あいの風富山鉄道乗車券）
+    </div>
+}
+
+<input type="hidden" id="DebugFlag" value="@ApplicationConfig.DeployEnv" />
+<input type="hidden" id="Debug" value="@ApplicationConfig.ENV_DEBUG" />
+<input type="hidden" id="CreateUrl" value="@Common.CreateUrl("/MPA1501", false)" />
+
+<form action="@Common.CreateUrl("/MPA1501", false)" method="post">
+    <div class="ContentsBase">
+        <div class="userInfoBox">
+            <div class="GridTable">
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        期間:
+                        @Html.TextBoxFor(Model => Model.TargetDateBegin, new { Class = "std-textbox", placeholder = "開始日時", onclick = " SetcalenderFrom();", id = "datetimepickerFrom", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateBegin)
+                        から
+                        @Html.TextBoxFor(Model => Model.TargetDateEnd, new { Class = "std-textbox", placeholder = "終了日時", onclick = " SetcalenderTo();", id = "datetimepickerTo", autocomplete = "off" })
+                        @Html.ValidationMessageFor(Model => Model.TargetDateEnd)
+                        まで
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA1501/Index", false)" formmethod="post" value="検索" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        <div class="GridTableCol">
+                            <div class="GridTableCell">
+                                myroute会員ID：
+                                @Html.TextBoxFor(Model => Model.UserId, new { Class = "std-textbox", placeholder = "myroute会員ID" })
+                                @Html.ValidationMessageFor(Model => Model.UserId)
+                            </div>
+                            <div class="GridTableCell">
+                            </div>
+                            <div class="GridTableCell">
+                                アプリ種別：
+                                @Html.DropDownListFor(Model => Model.Apltype, (List<SelectListItem>)@ViewBag.AplList, new { Class = "DropList", id = "AplTypeSelect" })
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="submit" formaction="@Common.CreateUrl("/MPA1501/OutPutCSV", false) " formmethod="post" id="ShowabusOutPutDate" value="CSVダウンロード" class="accent-color-button" style="margin-bottom:10px" />
+                    </div>
+                </div>
+                <div class="GridTableRow">
+                    <div class="GridTableCell">
+                        <div class="GridTableCol">
+                            <div class="GridTableCell">
+                                商品種別：
+                                @Html.DropDownListFor(Model => Model.TicketInfo, (List<SelectListItem>)@ViewBag.TicketList, new { Class = "DropList" })
+                            </div>
+                            <div class="GridTableCell">
+                                決済種別：
+                                @Html.DropDownListFor(Model => Model.PaymentType, (List<SelectListItem>)@ViewBag.PaymentTypeList, new { Class = "DropList" })
+                            </div>
+                            <div class="GridTableCell">
+                                大人/子供：
+                                @Html.DropDownListFor(Model => Model.TicketNumType, (List<SelectListItem>)@ViewBag.TicketNumTypeList, new { Class = "DropList" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="GridTableCell">
+                    </div>
+                    <div class="GridTableCell">
+                        <input type="button" value="条件クリア" class="action-enter" style="margin-bottom:10px" id="AllClear" />
+                    </div>
+                </div>
+            </div>
+            <div class="errorMessage">
+                @Html.ValidationSummary(false, "")
+                @Html.HiddenFor(Model => Model.Apltype, new { id = "ModelAplType" })
+
+            </div>
+            <div>
+            </div>
+            <div>
+                @{
+                    if (Model != null)
+                    {
+                        if (Model.PaymentReportData != null)
+                        {
+                            @*表示件数：10件*@
+                            var grid = new WebGrid(null, rowsPerPage: Model.PaymentReportData.ListNum, canSort: false);
+                            grid.Bind(source: Model.PaymentReportData.ReportList, autoSortAndPage: false, rowCount: Model.PaymentReportData.ListMaxCount);
+                            <div class="grid-table">
+                                @(new HtmlString(grid.GetHtml(
+                                                            tableStyle: "gridTable",
+                                                            headerStyle: "gridhead",
+                                                            columns: grid.Columns(
+                                                                grid.Column("UserId", header: "myroute会員ID", style: "gridbody6"),
+                                                                grid.Column("TranDatetime", header: "決済日時", style: "gridbody18"),
+                                                                grid.Column("PaymentId", header: "決済ID", style: "gridbody6"),
+                                                                //grid.Column("TransportType", header: "バス/{0}鉄道", style: "gridbody5"),
+                                                                grid.Column("TicketName", header: "商品", style: "gridbody18"),
+                                                                grid.Column("AdultNum", header: "大人枚数", style: "gridbody8"),
+                                                                grid.Column("ChildNum", header: "子供枚数", style: "gridbody8"),
+                                                                grid.Column("PaymentType", header: "決済種別", style: "gridbody8"),
+                                                                grid.Column("Amount", header: "金額", style: "gridbody6"),
+                                                                grid.Column("PaymentName", header: "決済手段", style: "gridbody6"),
+                                                                grid.Column("Forward", header: "決済手段詳細", style: "gridbody6"),
+                                                                grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12"),
+                                                                grid.Column("Apltype", header: "アプリ種別", style: "gridbody8"),
+                                                                grid.Column("InquiryId", header: "チケットID", style: "gridbody8")
+                                                            )).ToHtmlString().Replace("{0}", "<br/>"))
+                                )
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div>
+            </div>
+        </div>
+    </div>
+</form>
+
