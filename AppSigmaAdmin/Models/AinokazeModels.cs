@@ -159,7 +159,7 @@ namespace AppSigmaAdmin.Models
     }
 
 
-    /*public class MPA1502Context//利用実績用として、今後必要であれば利用する。
+    public class MPA1502Context
     {
         ///<summary>
         ///抽出開始指定日(YYYY-MM-DD)
@@ -189,7 +189,7 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 利用情報リスト
         /// </summary>
-        public MPA1401ReportData UsageReportData { get; set; }
+        public MPA1502ReportData UsageReportData { get; set; }
 
 
 
@@ -199,9 +199,9 @@ namespace AppSigmaAdmin.Models
         [DataMember(Name = "PageNo")]
         public int ListPageNo { get; set; }
 
-    }*/
+    }
 
-    /*public class MPA1501ReportData////利用実績用として、今後必要であれば利用する。
+    public class MPA1502ReportData
     {
         ///<summary>
         ///総リスト件数
@@ -216,10 +216,10 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 検索データ
         /// </summary>
-        public List<MPA1501ReportDataRow> ReportList { get; set; }
-    }*/
+        public List<MPA1502ReportDataRow> ReportList { get; set; }
+    }
 
-    /*public class MPA1501ReportDataRow////利用実績用として、今後必要であれば利用する。
+    public class MPA1502ReportDataRow
     {
         /// <summary>
         /// ユーザID
@@ -245,7 +245,7 @@ namespace AppSigmaAdmin.Models
         /// 問い合わせID
         /// </summary>
         public string InquiryId { get; set; }
-    }*/
+    }
 
     /// <summary>
     /// あいの風とやま独自情報<para>

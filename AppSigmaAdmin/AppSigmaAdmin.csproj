@@ -173,6 +173,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\MPA1602Controller.cs" />
+    <Compile Include="Controllers\MPA1502Controller.cs" />
     <Compile Include="Controllers\MPA1402Controller.cs" />
     <Compile Include="Controllers\MPA1401Controller.cs" />
     <Compile Include="Controllers\MPA1301Controller.cs" />
@@ -374,6 +376,8 @@
     <Content Include="Views\MPA1402\index.cshtml" />
     <Content Include="Views\MPA1501\index.cshtml" />
     <Content Include="Views\MPA1601\index.cshtml" />
+    <Content Include="Views\MPA1502\index.cshtml" />
+    <Content Include="Views\MPA1602\index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

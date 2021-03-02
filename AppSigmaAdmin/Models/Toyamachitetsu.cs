@@ -159,7 +159,7 @@ namespace AppSigmaAdmin.Models
     }
 
 
-    /*public class MPA1602Context//利用実績用として、今後必要であれば利用する。
+    public class MPA1602Context
     {
         ///<summary>
         ///抽出開始指定日(YYYY-MM-DD)
@@ -189,7 +189,7 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 利用情報リスト
         /// </summary>
-        public MPA1401ReportData UsageReportData { get; set; }
+        public MPA1602ReportData UsageReportData { get; set; }
 
 
 
@@ -199,9 +199,9 @@ namespace AppSigmaAdmin.Models
         [DataMember(Name = "PageNo")]
         public int ListPageNo { get; set; }
 
-    }*/
+    }
 
-    /*public class MPA1601ReportData////利用実績用として、今後必要であれば利用する。
+    public class MPA1602ReportData
     {
         ///<summary>
         ///総リスト件数
@@ -216,10 +216,10 @@ namespace AppSigmaAdmin.Models
         /// <summary>
         /// 検索データ
         /// </summary>
-        public List<MPA1601ReportDataRow> ReportList { get; set; }
-    }*/
+        public List<MPA1602ReportDataRow> ReportList { get; set; }
+    }
 
-    /*public class MPA1601ReportDataRow////利用実績用として、今後必要であれば利用する。
+    public class MPA1602ReportDataRow
     {
         /// <summary>
         /// ユーザID
@@ -245,7 +245,7 @@ namespace AppSigmaAdmin.Models
         /// 問い合わせID
         /// </summary>
         public string InquiryId { get; set; }
-    }*/
+    }
 
     /// <summary>
     /// 富山地方鉄道独自情報<para>
