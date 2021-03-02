@@ -438,8 +438,8 @@ namespace AppSigmaAdmin.Controllers
                     //出力日を取得
                     var NowDate = System.DateTime.Now;
 
-                    //ファイル名を「Showa-bus_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
-                    return File(ms.ToArray(), FILE_CONTENTTYPE, "Showa-bus_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
+                    //ファイル名を「AinokazeToyama_Report_検索開始日(yyyyMMdd)-終了日(yyyyMMdd)_作成日(yyyyMMdd)」で出力
+                    return File(ms.ToArray(), FILE_CONTENTTYPE, "AinokazeToyama_Report_" + targetDateStart.ToString("yyyyMMdd") + "-" + targetDateLast.ToString("yyyyMMdd") + "_" + NowDate.ToString("yyyyMMdd") + FILE_EXTENSION);
                 }
             }
             // 入力エラー
