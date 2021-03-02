@@ -11,7 +11,7 @@ using System.Web;
 namespace AppSigmaAdmin.Repository.Toyamachitetsu
 {
     /// <summary>
-    /// 昭和バス決済情報データ
+    /// 富山地方鉄道決済情報データ
     /// </summary>
     public class ToyamachitetsuTicketPaymentRepository : TicketPaymentRepositoryBase<ToyamachitetsuPaymentInfo>
     {
@@ -49,13 +49,14 @@ namespace AppSigmaAdmin.Repository.Toyamachitetsu
                 PaymentDetailName = raw.PaymentDetailName,
                 Apltype = raw.AplType,
             };
-            if (raw.TicketGroup == "1")
+            //au版での販売はない為、不要
+            /*if (raw.TicketGroup == "1")
                 infoN.TicketName += "[au]";
 
             if (raw.AplType == "1")
                 infoN.Apltype = "au";
             else
-                infoN.Apltype = "-";
+                infoN.Apltype = "-";*/
 
             return infoN;
         }

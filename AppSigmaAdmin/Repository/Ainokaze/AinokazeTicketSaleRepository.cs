@@ -30,7 +30,7 @@ namespace AppSigmaAdmin.Repository.Ainokaze
                 TicketType = raw.TicketType,
                 TicketName = raw.TicketName,
             };
-
+            //au版での販売はない為、不要
             /*if (raw.TicketGroup == "1")
                 info.TicketName += "[au]";*/
 

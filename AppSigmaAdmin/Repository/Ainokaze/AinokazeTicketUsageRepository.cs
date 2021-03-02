@@ -11,7 +11,7 @@ using System.Web;
 namespace AppSigmaAdmin.Repository.Ainokaze
 {
     /// <summary>
-    /// 利用実績データ
+    /// あいの風とやま利用実績データ
     /// </summary>
     public class AinokazeTicketUsageRepository : TicketUsageRepositoryBase<AinokazeUsageInsuranceInfo>
     {

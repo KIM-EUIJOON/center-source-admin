@@ -49,6 +49,7 @@ namespace AppSigmaAdmin.Repository.Ainokaze
                 PaymentDetailName = raw.PaymentDetailName,
                 Apltype = raw.AplType,
             };
+            //au版での販売はない為、不要
             /*if (raw.TicketGroup == "1")
                 infoN.TicketName += "[au]";
 

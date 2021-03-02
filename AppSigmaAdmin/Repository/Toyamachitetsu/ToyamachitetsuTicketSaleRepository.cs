@@ -30,9 +30,9 @@ namespace AppSigmaAdmin.Repository.Toyamachitetsu
                 TicketType = raw.TicketType,
                 TicketName = raw.TicketName,
             };
-
-            if (raw.TicketGroup == "1")
-                info.TicketName += "[au]";
+            //au版での販売はない為、不要
+            /*if (raw.TicketGroup == "1")
+                info.TicketName += "[au]";*/
 
             return info;
         }
