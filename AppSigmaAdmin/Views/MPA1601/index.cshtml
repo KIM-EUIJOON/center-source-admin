@@ -56,7 +56,8 @@
                             </div>
                             <div class="GridTableCell">
                             </div>
-                            <div class="GridTableCell">
+                            <div class="GridTableCell" style="display:none;">
+                                @{/*今後アプリ種別が増えることを考慮し、残しています*/ }
                                 アプリ種別：
                                 @Html.DropDownListFor(Model => Model.Apltype, (List<SelectListItem>)@ViewBag.AplList, new { Class = "DropList", id = "AplTypeSelect" })
                             </div>
@@ -126,7 +127,7 @@
                                                                 grid.Column("PaymentName", header: "決済手段", style: "gridbody6"),
                                                                 grid.Column("Forward", header: "決済手段詳細", style: "gridbody6"),
                                                                 grid.Column("ReceiptNo", header: "領収書番号", style: "gridbody12"),
-                                                                grid.Column("Apltype", header: "アプリ種別", style: "gridbody8"),
+                                                                //grid.Column("Apltype", header: "アプリ種別", style: "gridbody8"),今後、アプリ種別が増えることを考慮し、残しています
                                                                 grid.Column("InquiryId", header: "チケットID", style: "gridbody8")
                                                             )).ToHtmlString().Replace("{0}", "<br/>"))
                                 )
