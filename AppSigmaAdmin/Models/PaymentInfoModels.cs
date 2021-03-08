@@ -1158,7 +1158,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");      /*横浜*/
+                    sb.AppendLine("        	and (fsm.BizCompanyCd in ('TBCY','TBCYB'))");      /*横浜'TBCYB'追加*/
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -1194,7 +1194,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");　　　　　/*横浜*/
+                    sb.AppendLine("        	and (fsm.BizCompanyCd in ('TBCY','TBCYB'))");　/*横浜'TBCYB'追加*/
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -1230,7 +1230,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	from FreeTicketManage ftm");
                     sb.AppendLine("        	left join FreeTicketSalesMaster fsm");
                     sb.AppendLine("        	on ftm.TicketId = fsm.TicketId");
-                    sb.AppendLine("        	and (fsm.BizCompanyCd='TBCY')");　　　　　/*横浜*/
+                    sb.AppendLine("        	and (fsm.BizCompanyCd in ('TBCY','TBCYB'))");　/*横浜、'TBCYB'追加*/
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
@@ -1283,9 +1283,11 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("   on fsm.TicketName = cr.ResourceId");
                     sb.AppendLine("   and Language = @lang");
                     sb.AppendLine("   where BizCompanyCd = @Bizid");
+                    sb.AppendLine("   or BizCompanyCd = @Bizid2");
 
                     cmd.Parameters.Add("@lang", SqlDbType.NVarChar).Value = lang;
                     cmd.Parameters.Add("@Bizid", SqlDbType.NVarChar).Value = "TBCY";/*横浜のBizCompanyCD*/
+                    cmd.Parameters.Add("@Bizid2", SqlDbType.NVarChar).Value = "TBCYB";/*横浜市営バスのBizCompanyCD*/
                     cmd.CommandText = sb.ToString();
 
                     return NTdbInterface.ExecuteReader(cmd);

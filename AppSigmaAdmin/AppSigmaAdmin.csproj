@@ -173,6 +173,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\MPA1602Controller.cs" />
+    <Compile Include="Controllers\MPA1502Controller.cs" />
     <Compile Include="Controllers\MPA1402Controller.cs" />
     <Compile Include="Controllers\MPA1401Controller.cs" />
     <Compile Include="Controllers\MPA1301Controller.cs" />
@@ -186,6 +188,8 @@
     <Compile Include="Controllers\MPA1201Controller.cs" />
     <Compile Include="Controllers\MPA1001Controller.cs" />
     <Compile Include="Controllers\MPA1101Controller.cs" />
+    <Compile Include="Controllers\MPA1501Controller.cs" />
+    <Compile Include="Controllers\MPA1601Controller.cs" />
     <Compile Include="Controllers\MSA0501Controller.cs" />
     <Compile Include="Controllers\MSA0401Controller.cs" />
     <Compile Include="Controllers\MSA0301Controller.cs" />
@@ -202,8 +206,10 @@
     <Compile Include="Contstants\PaymentType.cs" />
     <Compile Include="Contstants\TicketNumType.cs" />
     <Compile Include="Exceptions\InvalidInputException.cs" />
+    <Compile Include="Models\AinokazeModels.cs" />
     <Compile Include="Models\AuthIpAddressModel.cs" />
     <Compile Include="Models\DebugLogEntity.cs" />
+    <Compile Include="Models\Toyamachitetsu.cs" />
     <Compile Include="Models\InformationLogEntity.cs" />
     <Compile Include="Models\JRKyushuInfoModels.cs" />
     <Compile Include="Models\MiyakohInfoModels.cs" />
@@ -228,6 +234,10 @@
     <Compile Include="Models\PaymentOverPeriodEntity.cs" />
     <Compile Include="Models\UserInfoAdminEntity.cs" />
     <Compile Include="Models\UserInfoModel.cs" />
+    <Compile Include="Repository\Ainokaze\AinokazeTicketPaymentRepository.cs" />
+    <Compile Include="Repository\Ainokaze\AinokazeTicketSaleRepository.cs" />
+    <Compile Include="Repository\Ainokaze\AinokazeTicketUsageRepository.cs" />
+    <Compile Include="Repository\Ainokaze\Constants\CompanyDefine.cs" />
     <Compile Include="Repository\Database\Connection\AbstractLayer\ISqlDbInterface.cs" />
     <Compile Include="Repository\Database\Connection\SqlDbInterfaceWrapper.cs" />
     <Compile Include="Repository\Database\Query\AbstractLayer\AbstractExecuteSQLBase.cs" />
@@ -246,6 +256,10 @@
     <Compile Include="Repository\Showabus\ShowabusTicketPaymentRepository.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketSaleRepository.cs" />
     <Compile Include="Repository\Showabus\ShowabusTicketUsageRepository.cs" />
+    <Compile Include="Repository\Toyamachitetsu\Constants\CompanyDefine.cs" />
+    <Compile Include="Repository\Toyamachitetsu\ToyamachitetsuTicketPaymentRepository.cs" />
+    <Compile Include="Repository\Toyamachitetsu\ToyamachitetsuTicketSaleRepository.cs" />
+    <Compile Include="Repository\Toyamachitetsu\ToyamachitetsuTicketUsageRepository.cs" />
     <Compile Include="ResponseData\Extensions\PaymentInfoExtension.cs" />
     <Compile Include="ResponseData\MuseumInfoEntity.cs" />
     <Compile Include="ResponseData\PaymentInfoListEntity.cs" />
@@ -360,6 +374,10 @@
     <Content Include="Views\MPA1301\index.cshtml" />
     <Content Include="Views\MPA1401\index.cshtml" />
     <Content Include="Views\MPA1402\index.cshtml" />
+    <Content Include="Views\MPA1501\index.cshtml" />
+    <Content Include="Views\MPA1601\index.cshtml" />
+    <Content Include="Views\MPA1502\index.cshtml" />
+    <Content Include="Views\MPA1602\index.cshtml" />
     <None Include="Web.Develop.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
