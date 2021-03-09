@@ -1162,7 +1162,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("        	and(pm.ServiceId in ('8','23'))");/*サービスID(横浜:8)、ver3.12にて横浜市営バスのサービスID(23)を追加*/
                     sb.AppendLine("        	and pm.PaymentType = '3'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -1198,7 +1198,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:)*/
+                    sb.AppendLine("        	and(pm.ServiceId in ('8','23'))");/*サービスID(横浜:8)、ver3.12にて横浜市営バスのサービスID(23)を追加*/
                     sb.AppendLine("        	and pm.PaymentType = '5'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '3'");
@@ -1234,7 +1234,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("        	inner join PaymentManage pm");
                     sb.AppendLine("        	on ftm.UserId = pm.UserId");
                     sb.AppendLine("        	and ftm.PaymentId = pm.PaymentId");
-                    sb.AppendLine("        	and(pm.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("        	and(pm.ServiceId in ('8','23'))");/*サービスID(横浜:8)、ver3.12にて横浜市営バスのサービスID(23)を追加*/
                     sb.AppendLine("        	and pm.PaymentType = '4'");
                     sb.AppendLine("        	and pm.GmoStatus = '1'");
                     sb.AppendLine("        	and pm.GmoProcType = '2'");
@@ -1251,7 +1251,7 @@ namespace AppSigmaAdmin.Models
                     sb.AppendLine("         where pe.UserId = tbl.UserId");
                     sb.AppendLine("           and pe.PaymentId = tbl.PaymentId");
                     sb.AppendLine("           and pe.PaymentType = tbl.PaymentType");
-                    sb.AppendLine("        	and(pe.ServiceId = '8')");/*サービスID(横浜:8)*/
+                    sb.AppendLine("        	and(pe.ServiceId in ('8','23'))");/*サービスID(横浜:8)、ver3.12にて横浜市営バスのサービスID(23)を追加*/
                     sb.AppendLine("           and pe.IsTreat = 0");         // 運用未処置
                     sb.AppendLine("     )");
                     sb.AppendLine("   and tbl.TranDate between @StartDatatTime and @EndDatatTime ");
