@@ -107,66 +107,130 @@ namespace AppSigmaAdmin.Controllers
         {
             ViewData["message"] = "";
 
-            //DBからIPアドレスリストを取得する
-            AuthIpAddressEntityList result = GetIPListTable();
-            List<AuthIpAddressEntityList> authIpAddressEntities;
-            authIpAddressEntities = result.IPAddressList;
+                //DBからIPアドレスリストを取得する
+                AuthIpAddressEntityList result = GetIPListTable();
 
-            List<string> IPAddCheck = new List<string>();
-
-            //IPアドレスリストからネットアドレスリストを作成する
-            if (authIpAddressEntities.Count > 0)
+            if (model.NetAddress != null && model.NetAddress != "" && model.IPAddressName != null && model.IPAddressName != "")
             {
-                foreach (var IpAddlist in authIpAddressEntities)
-                {
-                    string Address = IpAddlist.NetAddress.ToString();
-                    IPAddCheck.Add(Address);
-                }
-            }
-            //IPアドレスリストに入力されたIPアドレスが存在するか確認する
-            if (IPAddCheck.Contains(model.NetAddress) == true)
-            {
-                //既存IPアドレスのため更新処理を行う
-                string NetAddress = model.NetAddress;
-                string Memo = model.IPAddressName;
-                string EnvDev = "0";
-                string EnvPre = "0";
-                string EnvProd = "0";
-                //チェックリストの置き換えを行う
-                if (model.EnvDev != null)
-                {
-                    EnvDev = "1";
-                }
-                if (model.EnvPre != null)
-                {
-                    EnvPre = "1";
-                }
-                if (model.EnvProd != null)
-                {
-                    EnvProd = "1";
-                }
+                List<AuthIpAddressEntityList> authIpAddressEntities;
+                authIpAddressEntities = result.IPAddressList;
 
-                //IPアドレスの更新情報をDBに登録する
+                //入力内容が正しいか判定する
+                string IPAdd = "";
+                string SearchOb = "/";
+                string SubNetAdd = "";
+                int num;
                 try
                 {
-                    new AuthIpAddressEntityList().EditIPList(NetAddress, Memo, EnvDev, EnvPre, EnvProd);
+                    num = model.NetAddress.IndexOf(SearchOb);
+                    IPAdd = model.NetAddress.Substring(0, num);
                 }
                 catch (Exception error)
                 {
-                    ViewBag.IpUpdate = 2;
+                    //「/」が抜けている場合のエラー
                     Trace.TraceError(Logger.GetExceptionMessage(error));
+                    ModelState.AddModelError("", "入力されたネットワークアドレスの形式が正しくありません。再入力してください。");
                     return View("~/Views/MSA0301/Index.cshtml", result);
                 }
 
+                //入力されたIPアドレスの形式が正しいか判定する
+                //サブネットアドレスを取得
+                int SubNetAddLength = model.NetAddress.Length - (num + 1);
+                SubNetAdd = model.NetAddress.Substring(num + 1, SubNetAddLength);
+
+                string addtemp = @"^(([01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}([01]?\d{1,2}|2[0-4]\d|25[0-5])$";
+                bool IpAddcheck = Regex.IsMatch(IPAdd, addtemp);
+
+                if (IpAddcheck == false)
+                {
+                    ModelState.AddModelError("", "入力されたIPアドレスの形式が正しくありません。再入力してください。");
+                    return View("~/Views/MSA0301/Index.cshtml", result);
+                }
+
+                bool SubNetAddCheck = Regex.IsMatch(SubNetAdd, addtemp);
+                if (SubNetAddCheck == false)
+                {
+                    ModelState.AddModelError("", "入力されたサブネットアドレスの形式が正しくありません。再入力してください。");
+                    return View("~/Views/MSA0301/Index.cshtml", result);
+                }
+
+                List<string> IPAddCheck = new List<string>();
+
+                //IPアドレスリストからネットアドレスリストを作成する
+                if (authIpAddressEntities.Count > 0)
+                {
+                    foreach (var IpAddlist in authIpAddressEntities)
+                    {
+                        string Address = IpAddlist.NetAddress.ToString();
+                        IPAddCheck.Add(Address);
+                    }
+                }
+
+                //IPアドレスリストに入力されたIPアドレスが存在するか確認する
+                if (IPAddCheck.Contains(model.NetAddress) == true)
+                {
+                    //選択したネットアドレスと更新時のネットアドレスが異なる場合は更新を行わない。
+                    if (model.NetAddress != model.BeforeNetAddress)
+                    {
+                        //既存IPアドレスのためエラーを表示する
+                        ModelState.AddModelError("", "入力されたIPアドレスは既に登録されています。");
+                        return View("~/Views/MSA0301/Index.cshtml", result);
+                    }
+                    else
+                    {
+                        //既存IPアドレスのため更新処理を行う
+                        string BeforeNetAddress = model.BeforeNetAddress;
+                        string NetAddress = model.NetAddress;
+                        string Memo = model.IPAddressName;
+
+                        //IPアドレスの更新情報をDBに登録する
+                        try
+                        {
+                            new AuthIpAddressEntityList().EditIPList(BeforeNetAddress, NetAddress, Memo);
+                        }
+                        catch (Exception error)
+                        {
+                            ViewBag.IpUpdate = 2;
+                            Trace.TraceError(Logger.GetExceptionMessage(error));
+                            return View("~/Views/MSA0301/Index.cshtml", result);
+                        }
+                    }
+                }
+                else
+                {
+                    //既存IPアドレスのため更新処理を行う
+                    string BeforeNetAddress = model.BeforeNetAddress;
+                    string NetAddress = model.NetAddress;
+                    string Memo = model.IPAddressName;
+
+                    //IPアドレスの更新情報をDBに登録する
+                    try
+                    {
+                        new AuthIpAddressEntityList().EditIPList(BeforeNetAddress, NetAddress, Memo/*, EnvDev, EnvPre, EnvProd*/);
+                    }
+                    catch (Exception error)
+                    {
+                        ViewBag.IpUpdate = 2;
+                        Trace.TraceError(Logger.GetExceptionMessage(error));
+                        return View("~/Views/MSA0301/Index.cshtml", result);
+                    }
+                }
+
             }
-            else
+            else if (model.NetAddress == null || model.NetAddress == "")
             {
-                //新規IPアドレスのためエラーを表示し、変更前のリストを表示する
-                ModelState.AddModelError("", "一致するIPアドレスがありませんでした。");
+                ModelState.AddModelError("", "ネットアドレスが空白になっています。再度入力してください。");
                 return View("~/Views/MSA0301/Index.cshtml", result);
             }
+            else if (model.IPAddressName == null || model.IPAddressName == "")
+            {
+                ModelState.AddModelError("", "IPアドレス名が空白になっています。再度入力してください。");
+                return View("~/Views/MSA0301/Index.cshtml", result);
+            }
+
             //リストを再取得して表示する
             AuthIpAddressEntityList Newresult = GetIPListTable();
+
             //セッションを更新する
             try
             {
@@ -182,6 +246,7 @@ namespace AppSigmaAdmin.Controllers
                 Trace.TraceError(Logger.GetExceptionMessage(error));
                 return View("~/Views/MSA0301/Index.cshtml", Newresult);
             }
+
             
         }
 
@@ -198,10 +263,11 @@ namespace AppSigmaAdmin.Controllers
 
             //入力されたIPアドレス
             string NetAddress = model.NetAddress;
+            string IPAddressName = model.IPAddressName;
             //DBからIPアドレスを取得する
             AuthIpAddressEntityList IpList = GetIPListTable();
 
-            if (NetAddress != null && NetAddress != "")
+            if (NetAddress != null && NetAddress != "" && IPAddressName != null && IPAddressName != "")
             {
                 //DBから取得したIPアドレスからリストを取得する
                 List<AuthIpAddressEntityList> authIpAddressEntities;
@@ -270,7 +336,7 @@ namespace AppSigmaAdmin.Controllers
                 {
                     //新規IPアドレスのため追加処理を行う
                     string Memo = "";
-                    if (model.IPAddressName != null)
+                    if (IPAddressName != null)
                     {
                         Memo = model.IPAddressName;
                     }
@@ -304,14 +370,20 @@ namespace AppSigmaAdmin.Controllers
                     }
                 }
             }
-            else
+            else if(NetAddress == null || NetAddress == "")
             {
-                ModelState.AddModelError("", "IPアドレスが空白になっています。再度入力してください。");
+                ModelState.AddModelError("", "ネットアドレスが空白になっています。再度入力してください。");
+                return View("~/Views/MSA0301/Index.cshtml", IpList);
+            }
+            else if (IPAddressName == null || IPAddressName == "")
+            {
+                ModelState.AddModelError("", "IPアドレス名が空白になっています。再度入力してください。");
                 return View("~/Views/MSA0301/Index.cshtml", IpList);
             }
 
             //リストを再取得して表示する
             AuthIpAddressEntityList result = GetIPListTable();
+
             //セッションを更新する
             try
             {

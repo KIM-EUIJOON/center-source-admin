@@ -85,8 +85,13 @@ namespace AppSigmaAdmin.Models
     public class AuthIpAddressEntityList : AuthIpAddressModel
     {
         /// <summary>
+        /// 選択したネットアドレス名
+        /// </summary>
+        public string BeforeNetAddress { get; set; }
+        /// <summary>
         /// ネットアドレス名
         /// </summary>
+
         public string NetAddress { get; set; }
 
         /// <summary>
@@ -223,7 +228,7 @@ namespace AppSigmaAdmin.Models
         /// <param name="EnvDev"></param>
         /// <param name="EnvPre"></param>
         /// <param name="EnvProd"></param>
-        public void EditIPList(string NetAddress, string Memo, string EnvDev, string EnvPre, string EnvProd)
+        public void EditIPList(string BeforeNetAddress, string NetAddress, string Memo)
         {
             using (SqlDbInterface dblist = new SqlDbInterface())
             using (SqlCommand dbCommand = new SqlCommand())
@@ -231,19 +236,18 @@ namespace AppSigmaAdmin.Models
 
                 StringBuilder query = new StringBuilder();
                 query.AppendLine("update AuthIpAddress");
-                query.AppendLine(" set Memo=@Memo");
-                query.AppendLine(", IsEnvDevelop=@EnvDev");
-                query.AppendLine(", IsEnvPreProd=@EnvPre");
-                query.AppendLine(", IsEnvProd=@EnvProd");
-                query.AppendLine(" where NetAddress=@NetAddress;");
+                query.AppendLine(" set NetAddress=@NetAddress");
+                query.AppendLine(", Memo=@Memo");
+                query.AppendLine(", IsEnvDevelop=1");
+                query.AppendLine(", IsEnvPreProd=1");
+                query.AppendLine(", IsEnvProd=1");
+                query.AppendLine(" where NetAddress=@BeforeNetAddress;");
                 // クエリ発行
                 dbCommand.CommandText = query.ToString();
 
+                dbCommand.Parameters.Add("@BeforeNetAddress", SqlDbType.NVarChar).Value = BeforeNetAddress;
                 dbCommand.Parameters.Add("@NetAddress", SqlDbType.NVarChar).Value = NetAddress;
                 dbCommand.Parameters.Add("@Memo", SqlDbType.NVarChar).Value = Memo;
-                dbCommand.Parameters.Add("@EnvDev", SqlDbType.NVarChar).Value = EnvDev;
-                dbCommand.Parameters.Add("@EnvPre", SqlDbType.NVarChar).Value = EnvPre;
-                dbCommand.Parameters.Add("@EnvProd", SqlDbType.NVarChar).Value = EnvProd;
 
                 dblist.ExecuteReader(dbCommand);
 
