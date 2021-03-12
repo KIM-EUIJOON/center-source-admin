@@ -16,7 +16,6 @@ namespace AppSigmaAdmin.Models
     /// </summary>
     public class AuthIpAddressModel
     {
-
         /// <summary>
         /// 認証ネットワークアドレス
         /// </summary>
@@ -76,22 +75,16 @@ namespace AppSigmaAdmin.Models
                     };
                     resultEntitys.Add(authIpAddressEntity);
                 }
-
                 return resultEntitys;
             }
         }
-        
     }
+
     public class AuthIpAddressEntityList : AuthIpAddressModel
     {
         /// <summary>
-        /// 選択したネットアドレス名
+        /// ネットアドレス
         /// </summary>
-        public string BeforeNetAddress { get; set; }
-        /// <summary>
-        /// ネットアドレス名
-        /// </summary>
-
         public string NetAddress { get; set; }
 
         /// <summary>
@@ -124,6 +117,11 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         public string UpdateDate { get; set; }
 
+        /// <summary>
+        /// 選択したネットアドレス
+        /// </summary>
+        public string BeforeNetAddress { get; set; }
+
         ///<summary>
         ///IPアドレス表示・編集用リスト
         ///</summary>
@@ -145,95 +143,57 @@ namespace AppSigmaAdmin.Models
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
                     DataTable dt = dblist.ExecuteReader(dbCommand);
-
-                    string Devst = dataRow["IsEnvDevelop"].ToString();
-                    if (Devst == "True")
-                    {
-                        Devst = "○";
-                    }
-                    else
-                    {
-                        Devst = "-";
-                    }
-                    string Prest = dataRow["IsEnvPreProd"].ToString();
-                    if (Prest == "True")
-                    {
-                        Prest = "○";
-                    }
-                    else
-                    {
-                        Prest = "-";
-                    }
-                    string Predst = dataRow["IsEnvProd"].ToString();
-                    if (Predst== "True")
-                    {
-                        Predst = "○";
-                    }
-                    else
-                    {
-                        Predst = "-";
-                    }
                     AuthIpAddressEntityList IpAddressList = new AuthIpAddressEntityList
                     {
                         NetAddress = dataRow["NetAddress"].ToString(),
                         IPAddressName = dataRow["Memo"].ToString(),
-                        EnvDev = Devst,
-                        EnvPre = Prest,
-                        EnvProd = Predst,
+                        EnvDev = "1",
+                        EnvPre = "1",
+                        EnvProd = "1",
                         CreateDate = dataRow["CreateDatetime"].ToString(),
                         UpdateDate = dataRow["UpdateDatetime"].ToString()
                     };
                     resultIpList.Add(IpAddressList);
                 }
-
                 return resultIpList;
             }
         }
+
         /// <summary>
         /// IPアドレス新規追加処理
         /// </summary>
         /// <param name="NetAddress"></param>
         /// <param name="Memo"></param>
-        /// <param name="EnvDev"></param>
-        /// <param name="EnvPre"></param>
-        /// <param name="EnvProd"></param>
-        public void UpdateIPList(string NetAddress, string Memo, string EnvDev, string EnvPre, string EnvProd)
+        public void UpdateIPList(string NetAddress, string Memo)
         {
             using (SqlDbInterface dblist = new SqlDbInterface())
             using (SqlCommand dbCommand = new SqlCommand())
             {
+                StringBuilder query = new StringBuilder();
+                query.AppendLine("insert into AuthIpAddress");
+                query.AppendLine(" (NetAddress, Memo, IsEnvDevelop, IsEnvPreProd, IsEnvProd)");
+                query.AppendLine(" values(@NetAddress, @Memo, 1, 1, 1);");
+                // クエリ発行
+                dbCommand.CommandText = query.ToString();
 
-                    StringBuilder query = new StringBuilder();
-                    query.AppendLine("insert into AuthIpAddress");
-                    query.AppendLine(" (NetAddress, Memo, IsEnvDevelop, IsEnvPreProd, IsEnvProd)");
-                    query.AppendLine(" values(@NetAddress, @Memo, @EnvDev, @EnvPre, @EnvProd);");
-                    // クエリ発行
-                    dbCommand.CommandText = query.ToString();
+                dbCommand.Parameters.Add("@NetAddress", SqlDbType.NVarChar).Value = NetAddress;
+                dbCommand.Parameters.Add("@Memo", SqlDbType.NVarChar).Value = Memo;
 
-                    dbCommand.Parameters.Add("@NetAddress", SqlDbType.NVarChar).Value = NetAddress;
-                    dbCommand.Parameters.Add("@Memo", SqlDbType.NVarChar).Value = Memo;
-                    dbCommand.Parameters.Add("@EnvDev", SqlDbType.NVarChar).Value = EnvDev;
-                    dbCommand.Parameters.Add("@EnvPre", SqlDbType.NVarChar).Value = EnvPre;
-                    dbCommand.Parameters.Add("@EnvProd", SqlDbType.NVarChar).Value = EnvProd;
-
-                    dblist.ExecuteReader(dbCommand);
-
+                dblist.ExecuteReader(dbCommand);
             }
         }
+
         /// <summary>
         /// IPアドレスリスト更新処理
         /// </summary>
         /// <param name="NetAddress"></param>
         /// <param name="Memo"></param>
-        /// <param name="EnvDev"></param>
-        /// <param name="EnvPre"></param>
-        /// <param name="EnvProd"></param>
-        public void EditIPList(string BeforeNetAddress, string NetAddress, string Memo)
+        /// <param name="BeforeNetAddress"></param>
+        public void EditIPList(string NetAddress, string Memo, string BeforeNetAddress)
         {
             using (SqlDbInterface dblist = new SqlDbInterface())
             using (SqlCommand dbCommand = new SqlCommand())
             {
-
                 StringBuilder query = new StringBuilder();
                 query.AppendLine("update AuthIpAddress");
                 query.AppendLine(" set NetAddress=@NetAddress");
@@ -245,12 +205,11 @@ namespace AppSigmaAdmin.Models
                 // クエリ発行
                 dbCommand.CommandText = query.ToString();
 
-                dbCommand.Parameters.Add("@BeforeNetAddress", SqlDbType.NVarChar).Value = BeforeNetAddress;
                 dbCommand.Parameters.Add("@NetAddress", SqlDbType.NVarChar).Value = NetAddress;
                 dbCommand.Parameters.Add("@Memo", SqlDbType.NVarChar).Value = Memo;
+                dbCommand.Parameters.Add("@BeforeNetAddress", SqlDbType.NVarChar).Value = BeforeNetAddress;
 
                 dblist.ExecuteReader(dbCommand);
-
             }
         }
 
@@ -273,5 +232,4 @@ namespace AppSigmaAdmin.Models
             }
         }
     }
-    
 }

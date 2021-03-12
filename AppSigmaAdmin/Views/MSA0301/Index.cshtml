@@ -19,7 +19,6 @@
 
 @Scripts.RenderFormat(BundleHtmlTag.ScriptTag, "~/bundles/jquery/MSA0301")
 
-
 @section funcTitle {
     <div class="funcTitleBer">
         システム管理者機能
@@ -59,23 +58,18 @@
         @{
             if (Model != null)
             {
-
                 @*表示件数：10件*@
                 var grid = new WebGrid(null, canSort: false, canPage: false);
                 grid.Bind(source: Model.IPAddressList);
 
-
                 <div class="grid-table">
                     @grid.GetHtml(tableStyle: "gridTable", headerStyle: "gridhead",
                         columns: grid.Columns(grid.Column("NetAddress", header: "ネットアドレス", style: "gridbody14"),
-
                         grid.Column("IPAddressName", header: "IPアドレス名", style: "gridbody12"),
                         grid.Column("CreateDate", header: "作成日時", style: "gridbody18"), grid.Column("UpdateDate", header: "更新日時", style: "gridbody18"),
                         grid.Column("編集", style: "gridbody8",format:(item)=> { return new HtmlString("<input type='button' value ='編集' id='ListEdit' onclick='IPListEdit(\"" + item.NetAddress + "\",\"" + item.IPAddressName + "\",\"" + item.NetAddress + "\")' /><input type='button' value ='削除' id='ListDelete' onclick='IPListDelete(\"" + item.NetAddress + "\");' />"); }))
                         )
-
                 </div>
-
             }
         }
     </div>
@@ -92,12 +86,8 @@
             <label>IPアドレス名　：</label>
             @Html.TextBoxFor(m => m.IPAddressName, new { id = "IPAddName", autocomplete = "off", Class = "std-textbox" })
         </div>
-
-
-        <div>
-            @Html.HiddenFor(m => m.BeforeNetAddress, new { id = "BeforeNetAdd", autocomplete = "off", Class = "std-textbox" })
-        </div>
-
+            @*選択したネットアドレス*@
+            @Html.HiddenFor(m => m.BeforeNetAddress, new { id = "BeforeNetAdd"})
         <br />
     </form>
 </div>
