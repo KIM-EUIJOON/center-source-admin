@@ -48,7 +48,7 @@ function IPListEdit(NetAddress, IPAddressName) {
     // 選択した登録内容のネットアドレスとIPアドレス名をダイアログに表示
     $("#NetAdd").val(NetAddress);
     $("#IPAddName").val(IPAddressName);
-    // ネットアドレスの値を変更せずに更新処理を行ったときに参照する
+    // 入力したネットアドレスが既存のネットアドレスと一致したときに参照する
     $("#BeforeNetAdd").val(NetAddress);
 };
 

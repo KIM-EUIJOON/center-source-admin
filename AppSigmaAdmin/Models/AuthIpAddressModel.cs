@@ -83,7 +83,7 @@ namespace AppSigmaAdmin.Models
     public class AuthIpAddressEntityList : AuthIpAddressModel
     {
         /// <summary>
-        /// ネットアドレス
+        /// ネットアドレス名
         /// </summary>
         public string NetAddress { get; set; }
 
@@ -188,7 +188,7 @@ namespace AppSigmaAdmin.Models
         /// </summary>
         /// <param name="NetAddress"></param>
         /// <param name="Memo"></param>
-        /// <param name="BeforeNetAddress"></param>
+        /// <param name="BeforeNetAddress">選択したネットアドレス</param>
         public void EditIPList(string NetAddress, string Memo, string BeforeNetAddress)
         {
             using (SqlDbInterface dblist = new SqlDbInterface())
