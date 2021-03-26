@@ -149,7 +149,7 @@ namespace AppSigmaAdmin.Controllers
             int SubNetAddLength = model.NetAddress.Length - (num + 1);
             SubNetAdd = model.NetAddress.Substring(num + 1, SubNetAddLength);
 
-            string addtemp = @"^(([01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}([01]?\d{1,2}|2[0-4]\d|25[0-5])$";
+            string addtemp = @"^(([0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.){3}([0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$";
             bool IpAddcheck = Regex.IsMatch(IPAdd, addtemp);
 
             if (IpAddcheck == false)
@@ -275,7 +275,7 @@ namespace AppSigmaAdmin.Controllers
             int SubNetAddLength = model.NetAddress.Length - (num + 1);
             SubNetAdd = model.NetAddress.Substring(num + 1, SubNetAddLength);
 
-            string addtemp = @"^(([01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}([01]?\d{1,2}|2[0-4]\d|25[0-5])$";
+            string addtemp = @"^(([0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\.){3}([0-1]?[0-9]{1,2}|2[0-4][0-9]|25[0-5])$";
             bool IpAddcheck = Regex.IsMatch(IPAdd, addtemp);
 
             if (IpAddcheck == false)
