@@ -89,6 +89,7 @@ namespace AppSigmaAdmin.Controllers
                 //チケット種別プルダウン作成
                 TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
                 TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+                TranseTypeList.Add(new SelectListItem { Text = "バス(SUNQ)", Value = "SUNQ" });
                 TranseTypeList.Add(new SelectListItem { Text = "鉄道(福岡)", Value = "NNR" });
                 TranseTypeList.Add(new SelectListItem { Text = "鉄道(北九州モノレール)", Value = "NKUM" });
                 TranseTypeList.Add(new SelectListItem { Text = "鉄道(北九州)", Value = "NKCER" });
@@ -172,6 +173,7 @@ namespace AppSigmaAdmin.Controllers
             //チケット種別プルダウン作成
             TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
             TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(SUNQ)", Value = "SUNQ" });
             TranseTypeList.Add(new SelectListItem { Text = "西鉄バス北九州", Value = "NKB" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道(福岡)", Value = "NNR" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道(北九州モノレール)", Value = "NKUM" });
@@ -370,6 +372,7 @@ namespace AppSigmaAdmin.Controllers
 
             TranseTypeList.Add(new SelectListItem { Text = "バス(福岡)", Value = "NIS" });
             TranseTypeList.Add(new SelectListItem { Text = "バス(北九州)", Value = "NISK" });
+            TranseTypeList.Add(new SelectListItem { Text = "バス(SUNQ)", Value = "SUNQ" });
             TranseTypeList.Add(new SelectListItem { Text = "西鉄バス北九州", Value = "NKB" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道(福岡)", Value = "NNR" });
             TranseTypeList.Add(new SelectListItem { Text = "鉄道(北九州モノレール)", Value = "NKUM" });
